@@ -15,3 +15,4 @@ cryptopro_minimal/
 data/*.sqlite
 data/*.sqlite-shm
 data/*.sqlite-wal
+node_modules
