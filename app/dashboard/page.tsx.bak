@@ -1,0 +1,39 @@
+import { PageHeader } from "@/components/page-header";
+import { StatCard } from "@/components/stat-card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { AccountBalanceChart } from "@/components/charts/account-balance-chart";
+import { formatCurrencyFromCents } from "@/lib/currency";
+import { getDashboardData } from "@/services/dashboard.service";
+
+export default function DashboardPage() {
+  const data = getDashboardData();
+  return (
+    <>
+      <PageHeader title="Dashboard" description="Visão consolidada do caixa atual, do caixa projetado, das próximas faturas e dos lançamentos recentes." />
+      <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+        <StatCard title="Saldo consolidado" value={formatCurrencyFromCents(data.consolidatedCurrentCents)} description="Somatório das contas não-cartão." />
+        <StatCard title="Saldo projetado" value={formatCurrencyFromCents(data.consolidatedProjectedCents)} description="Desconta faturas abertas e lançamentos futuros." />
+        <StatCard title="Receitas do mês" value={formatCurrencyFromCents(data.incomeMonthCents)} />
+        <StatCard title="Despesas do mês" value={formatCurrencyFromCents(data.expenseMonthCents)} />
+      </section>
+      <section className="grid gap-4 xl:grid-cols-[1.4fr_1fr]">
+        <Card><CardHeader><CardTitle>Saldo por conta</CardTitle></CardHeader><CardContent><AccountBalanceChart data={data.chartSeries} /></CardContent></Card>
+        <Card>
+          <CardHeader><CardTitle>Patrimônio resumido</CardTitle></CardHeader>
+          <CardContent className="space-y-3 text-sm">
+            <div className="flex items-center justify-between"><span>Liquidez atual</span><strong>{formatCurrencyFromCents(data.netWorth.realizedLiquidCents)}</strong></div>
+            <div className="flex items-center justify-between"><span>Reservas manuais</span><strong>{formatCurrencyFromCents(data.netWorth.manualReservesCents)}</strong></div>
+            <div className="flex items-center justify-between"><span>Investimentos manuais</span><strong>{formatCurrencyFromCents(data.netWorth.manualInvestmentsCents)}</strong></div>
+            <div className="flex items-center justify-between"><span>Dívidas manuais</span><strong>{formatCurrencyFromCents(data.netWorth.manualDebtsCents)}</strong></div>
+            <div className="mt-4 rounded-2xl border border-[var(--border)] p-4 text-base font-semibold">Patrimônio total: {formatCurrencyFromCents(data.netWorth.totalNetWorthCents)}</div>
+          </CardContent>
+        </Card>
+      </section>
+      <section className="grid gap-4 xl:grid-cols-3">
+        <Card className="xl:col-span-2"><CardHeader><CardTitle>Últimas transações</CardTitle></CardHeader><CardContent><table><thead><tr><th>Data</th><th>Descrição</th><th>Direção</th><th>Valor</th></tr></thead><tbody>{data.recentTransactions.map((t) => <tr key={t.id}><td>{t.occurredOn}</td><td>{t.description}</td><td><Badge>{t.direction}</Badge></td><td>{formatCurrencyFromCents(t.amountCents)}</td></tr>)}</tbody></table></CardContent></Card>
+        <Card><CardHeader><CardTitle>Próximos compromissos</CardTitle></CardHeader><CardContent className="space-y-3 text-sm">{data.upcomingBills.map((bill) => <div key={bill.id} className="rounded-2xl border border-[var(--border)] p-3"><div className="flex items-center justify-between"><strong>Fatura {bill.billMonth}</strong><Badge>{bill.status}</Badge></div><p className="mt-1 text-[var(--muted-foreground)]">Vencimento: {bill.dueOn}</p><p>{formatCurrencyFromCents(bill.totalAmountCents - bill.paidAmountCents)}</p></div>)}{data.recurring.map((o) => <div key={o.id} className="rounded-2xl border border-[var(--border)] p-3"><div className="flex items-center justify-between"><strong>Recorrência</strong><Badge>{o.direction}</Badge></div><p className="mt-1 text-[var(--muted-foreground)]">Prevista para {o.dueOn}</p><p>{formatCurrencyFromCents(o.amountCents)}</p></div>)}</CardContent></Card>
+      </section>
+    </>
+  );
+}
