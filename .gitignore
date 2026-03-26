@@ -1,18 +1,74 @@
-# backups
-*.bak
+# dependencies
+node_modules/
 
-# scans / auditoria
-project-scan.md
-project-scan-lite.md
+# next.js
+.next/
+out/
 
-# build cache
+# build / cache
+dist/
+build/
+coverage/
+.turbo/
 *.tsbuildinfo
 
-# pasta estranha ao app
-cryptopro_minimal/
+# logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+*.log
 
-# sqlite local
+# env files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# keep only examples
+!.env.example
+!.env.local.example
+
+# sqlite local data
 data/*.sqlite
 data/*.sqlite-shm
 data/*.sqlite-wal
-node_modules
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
+
+# backups / temp
+*.bak
+*.tmp
+*.temp
+*.orig
+*.rej
+
+# os / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# python / accidental foreign project stuff
+.venv/
+venv/
+__pycache__/
+*.pyc
+
+# local scans / audit artifacts
+project-scan.md
+project-scan-lite.md
+REPO_CLEANUP_REPORT.md
+RAR_TREE_INVENTORY.json
+DELIVERY_STATUS.md
+
+# accidental folders not part of app
+cryptopro_minimal/
+
+# optional: local exports / dumps
+backup/
+backups/
+tmp/
+temp/
