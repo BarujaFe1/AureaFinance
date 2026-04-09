@@ -1,77 +1,128 @@
 # Aurea Finance
 
+![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)
+![Next.js](https://img.shields.io/badge/Next.js-15-black)
+![React](https://img.shields.io/badge/React-19-149eca)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178c6)
+![SQLite](https://img.shields.io/badge/SQLite-local--first-003b57)
+
 **Finanças pessoais local-first, com foco em operação diária, corrigibilidade e rastreabilidade.**
+
+---
+
+## Sumário
+
+* [Visão geral](#visão-geral)
+* [Principais capacidades](#principais-capacidades)
+* [Princípios do produto](#princípios-do-produto)
+* [Stack técnica](#stack-técnica)
+* [Arquitetura resumida](#arquitetura-resumida)
+* [Módulos do sistema](#módulos-do-sistema)
+* [Editabilidade operacional](#editabilidade-operacional)
+* [Estado atual do projeto](#estado-atual-do-projeto)
+* [Requisitos](#requisitos)
+* [Instalação](#instalação)
+* [Configuração e banco](#configuração-e-banco)
+* [Comandos úteis](#comandos-úteis)
+* [Fluxo recomendado de uso diário](#fluxo-recomendado-de-uso-diário)
+* [Fluxo de importação](#fluxo-de-importação)
+* [Estrutura de pastas](#estrutura-de-pastas)
+* [Testes e qualidade](#testes-e-qualidade)
+* [Performance e observações](#performance-e-observações)
+* [Roadmap curto](#roadmap-curto)
+* [Contribuição](#contribuição)
+* [Licença](#licença)
+
+---
 
 ## Visão geral
 
-O **Aurea Finance** é um sistema web de finanças pessoais pensado para substituir uma planilha operacional por um fluxo mais consistente, auditável e editável. Em vez de depender de uma base remota ou de automações opacas, o projeto adota uma abordagem **local-first**, com banco **SQLite local**, regras de domínio explícitas e forte ênfase em correção operacional pela interface.
+O **Aurea Finance** é um sistema web de finanças pessoais criado para substituir uma planilha operacional por um fluxo mais consistente, auditável e editável. Em vez de depender de um backend remoto como requisito básico, o projeto adota uma abordagem **local-first**, com **SQLite local**, regras de domínio explícitas e forte ênfase em correção operacional pela interface.
 
-Ele é voltado para quem faz gestão financeira pessoal de forma ativa e recorrente, especialmente em cenários como:
+Ele atende especialmente quem faz controle financeiro pessoal de forma ativa, recorrente e detalhada, incluindo cenários como:
 
-* acompanhamento diário de saldo real por conta;
-* controle de cartões, faturas e parcelamentos;
+* conferência diária de saldo real por conta;
+* lançamento frequente de receitas e despesas;
+* controle de cartões, parcelamentos e faturas;
 * atualização manual de investimentos, cripto e outras reservas;
-* comparação entre projeção e realidade;
-* migração gradual de planilhas para um fluxo mais estruturado.
+* comparação entre projeção, cálculo e valor conferido;
+* migração gradual de planilhas para um sistema mais estruturado.
 
-A proposta do produto não é “automatizar tudo a qualquer custo”, e sim oferecer um sistema confiável para o uso diário, no qual dados podem ser conferidos, corrigidos, reconciliados e evoluídos sem depender de edição manual no código.
+A proposta do produto não é “automatizar tudo a qualquer custo”, mas oferecer um sistema confiável para uso diário, em que os dados possam ser **conferidos, corrigidos, reconciliados e evoluídos** sem depender de ajustes manuais no código.
 
-A abordagem **local-first** importa porque ela:
+### Por que local-first?
+
+A abordagem local-first importa porque:
 
 * reduz dependência de serviços externos para a operação principal;
-* facilita backup, restauração e portabilidade do banco;
-* torna o comportamento mais previsível;
-* favorece privacidade e controle direto sobre os dados;
-* permite iteração rápida de produto sem transformar o sistema em uma caixa-preta remota.
+* mantém o banco sob controle direto do usuário;
+* facilita backup, restauração e portabilidade;
+* melhora previsibilidade de comportamento;
+* favorece privacidade;
+* simplifica a operação de um produto pessoal e técnico ao mesmo tempo.
+
+---
 
 ## Principais capacidades
 
 O Aurea Finance já cobre, ou busca cobrir de forma operacionalmente útil, os seguintes fluxos:
 
-* **Dashboard financeiro** com visão consolidada, alertas, vencimentos e links de correção.
-* **Contas** com saldo calculado, saldo conferido, saldo projetado e histórico de conferências.
-* **Conferência diária** para registrar saldos reais, atualizar ativos e fechar o dia operacionalmente.
-* **Transações** com lançamento de receitas e despesas, edição, exclusão, observações, categorias e tags.
-* **Cartões e compras** com parcelamento, competência de fatura, limite disponível e vínculo com conta pagadora.
-* **Faturas** com visão de composição, estado de pagamento e impacto em caixa.
+* **Dashboard financeiro** com visão consolidada, alertas, vencimentos e atalhos para correção.
+* **Contas** com saldo calculado, saldo conferido e saldo projetado.
+* **Conferência diária** para registrar realidade operacional do dia.
+* **Transações** com criação, edição, exclusão, observações, categorias e tags.
+* **Cartões** com compras, parcelamento, vínculo com conta pagadora e controle de limite.
+* **Faturas** com competência, composição e status de pagamento.
 * **Recorrências** com edição por ocorrência e por série, além de pausa, reativação e duplicação.
-* **Calendário financeiro** para visualização temporal de eventos e movimentações.
-* **Fechamentos mensais** para consolidar períodos e manter histórico.
-* **Visão futura** de caixa projetado e eventos recorrentes.
-* **Patrimônio** com snapshots, posições manuais e atualização de ativos.
-* **Categorias e tags** editáveis, com foco em reclassificação e organização contínua.
-* **Importação de planilhas/workbooks** para acelerar onboarding e migração da planilha.
-* **Configurações e onboarding** para preparar o sistema para uso diário.
+* **Calendário financeiro** para visualizar eventos e movimentações ao longo do tempo.
+* **Fechamentos mensais** com histórico de consolidação por período.
+* **Visão futura** de caixa e compromissos projetados.
+* **Patrimônio** com ativos, snapshots e atualização manual de posições.
+* **Categorias e tags** editáveis, com foco em revisão e organização contínua.
+* **Importação de workbooks/planilhas** para acelerar onboarding e migração.
+* **Configurações** com informações operacionais e manutenção local.
+* **Onboarding** para preparar a base inicial de uso.
 
-O sistema foi desenhado para lidar com um fato simples do mundo real: **dados financeiros frequentemente chegam incompletos, inconsistentes ou errados**. Por isso, a editabilidade operacional não é um detalhe; ela é parte central do produto.
+Destaques de produto:
+
+* **Conferência diária** como fluxo central de operação;
+* **patrimônio** com snapshots e atualização manual;
+* **importação** como aceleração, não como dependência;
+* **recorrências** com granularidade de edição;
+* **cartões/faturas** com preocupação real de domínio financeiro;
+* **editabilidade operacional** como princípio de arquitetura e UX.
+
+---
 
 ## Princípios do produto
 
 ### 1. Local-first
 
-O banco principal é local, persistido em **SQLite**, para que a operação diária não dependa de infraestrutura remota como requisito básico. O objetivo é manter o sistema previsível, portátil e controlável.
+O banco principal é um **SQLite local**. O sistema deve continuar útil e previsível sem exigir infraestrutura remota para funcionar.
 
 ### 2. Corrigibilidade pela interface
 
-Qualquer dado que possa estar errado no uso real deve poder ser corrigido pela UI, sem exigir alteração manual no código. Isso inclui nomes, vínculos, categorias, instituições, ativos, compras, recorrências e snapshots.
+Qualquer dado que possa estar errado no uso real deve poder ser corrigido pela UI. Isso inclui nomes, vínculos, categorias, instituições, ativos, compras, recorrências e snapshots.
 
 ### 3. Evitar hardcodes e estados irreversíveis
 
-O projeto evita transformar catálogos operacionais em listas rígidas. Bancos, categorias, ativos e outras entidades precisam ser editáveis, arquiváveis, restauráveis ou conciliáveis sempre que possível.
+Bancos, ativos, categorias e outros cadastros operacionais não devem ser tratados como listas rígidas ou irreversíveis. O sistema favorece edição, arquivamento, restauração, reclassificação e conciliação.
 
 ### 4. Separação entre cálculo, projeção e conferência
 
 O sistema diferencia:
 
-* o que foi **calculado** a partir das movimentações;
-* o que está **projetado** para o futuro;
-* o que foi **conferido manualmente** como valor real.
+* **valor calculado** a partir das movimentações;
+* **valor projetado** com base em regras e eventos futuros;
+* **valor conferido** manualmente como realidade operacional.
 
-Essa separação é importante para não misturar previsão com realidade.
+Essa separação é central para leitura financeira confiável.
 
-### 5. Importação como aceleração, não como prisão
+### 5. Importação como aceleração, não prisão
 
-Importar dados de uma planilha ou workbook serve para acelerar a adoção e a migração inicial, não para prender o sistema a um formato legado. Dados importados continuam sendo parte editável do produto.
+Importar dados de planilha ou workbook serve para acelerar adoção e migração. Os dados importados continuam editáveis depois do commit.
+
+---
 
 ## Stack técnica
 
@@ -96,7 +147,7 @@ Importar dados de uma planilha ou workbook serve para acelerar a adoção e a mi
 
 * **Recharts**
 
-### Importação de planilhas
+### Importação
 
 * **xlsx**
 
@@ -104,157 +155,170 @@ Importar dados de uma planilha ou workbook serve para acelerar a adoção e a mi
 
 * **Vitest**
 * **TypeScript typecheck**
-* validação de regras de domínio financeiro
 
 ### Tooling
 
 * **pnpm**
 * **tsx**
 * **Drizzle Kit**
-* scripts utilitários para migração, seed e manutenção local
+
+---
 
 ## Arquitetura resumida
 
-O projeto usa o **App Router** do Next.js e organiza a área principal do produto dentro de um **route group** do workspace. A ideia é manter uma separação clara entre interface, regras de domínio, persistência e utilitários.
+O projeto usa o **App Router** do Next.js e organiza a área principal do produto dentro de um **route group** de workspace. A arquitetura é pragmática: separa interface, regras de domínio, persistência e utilitários sem adicionar complexidade desnecessária.
 
-Em alto nível, a organização segue esta lógica:
+### Camadas principais
 
 * **`app/`**
-  Define as rotas, layouts, páginas e fluxos do App Router. É a camada de composição da UI e dos módulos.
-
-* **`features/`**
-  Concentra ações orientadas a caso de uso, geralmente ligadas a formulários, mutações e fluxos específicos de tela.
-
-* **`services/`**
-  Abriga regras de domínio, consultas, agregações e operações de negócio. É a camada mais importante para consistência financeira.
-
-* **`db/`**
-  Contém schema, cliente e migrações do banco SQLite.
-
-* **`lib/`**
-  Reúne utilitários compartilhados, helpers de datas, formatadores, lógica complementar de domínio e validações.
+  Rotas, layouts, páginas e fluxos do App Router.
 
 * **`components/`**
-  Componentes de interface, blocos visuais, tabelas, gráficos e wrappers de interação.
+  Componentes visuais, blocos reutilizáveis, tabelas, formulários, gráficos e wrappers de UI.
 
-A arquitetura busca ser pragmática: sem complexidade “enterprise” desnecessária, mas com separação suficiente para que regras financeiras não fiquem espalhadas pela interface.
+* **`features/`**
+  Ações e fluxos específicos de caso de uso, normalmente ligados a formulários e mutações.
+
+* **`services/`**
+  Regras de domínio, agregações, consultas e operações de negócio.
+
+* **`db/`**
+  Schema, cliente e migrações do banco SQLite.
+
+* **`lib/`**
+  Helpers, formatadores, funções de datas e lógica compartilhada.
+
+A ideia geral é manter as regras financeiras fora da camada visual sempre que possível.
+
+---
 
 ## Módulos do sistema
 
 ### Dashboard
 
-Ponto de entrada operacional com visão consolidada do estado financeiro. Reúne indicadores, alertas, vencimentos, divergências e atalhos para correção.
+Visão consolidada do estado financeiro atual. Reúne indicadores, alertas, vencimentos, divergências e atalhos de correção.
 
 ### Contas
 
-Gerencia contas correntes, reservas, contas de pagamento e saldos. Diferencia saldo calculado, saldo real conferido e saldo projetado.
+Gerencia contas correntes, reservas e contas operacionais. Diferencia saldo calculado, saldo real conferido e saldo projetado.
 
 ### Conferência diária
 
-Fluxo central para o uso cotidiano. Permite registrar saldos reais, atualizar ativos, revisar divergências e fechar o dia com mais segurança operacional.
+Fluxo central de uso diário. Permite registrar saldos reais, atualizar ativos, revisar divergências e fechar o dia com mais segurança operacional.
 
 ### Transações
 
-Área de lançamento e manutenção de receitas e despesas. Deve ser tratada como base confiável para cálculo, projeção e reconciliação.
+Área de lançamento e manutenção de receitas e despesas. É a base do cálculo financeiro do sistema.
 
 ### Cartões
 
-Controla cartões, compras, parcelamentos, vínculo com conta pagadora e impacto das despesas em faturas e caixa.
+Gerencia cartões, compras, parcelamentos, vínculo com conta pagadora e impacto em caixa.
 
 ### Faturas
 
-Mostra o fechamento por competência, composição das compras e status de pagamento. É o elo entre compras no cartão e saída real de caixa.
+Exibe a composição de faturas por competência, o estado de pagamento e a relação entre compra no cartão e saída real de caixa.
 
 ### Recorrências
 
-Gerencia entradas e saídas recorrentes com granularidade operacional. O objetivo é permitir correção por ocorrência, por série e por mudança futura.
+Controla entradas e saídas recorrentes com edição por ocorrência e por série, além de pausa, reativação e duplicação.
 
 ### Calendário financeiro
 
-Distribui visualmente eventos, recorrências e movimentações em uma linha temporal. Ajuda a enxergar o comportamento financeiro ao longo do mês.
+Organiza eventos e movimentações em uma visão temporal para facilitar leitura e planejamento.
 
 ### Fechamentos mensais
 
-Consolida períodos e preserva histórico de fechamento. É o módulo destinado a registrar o estado de um mês de forma mais estável e revisável.
+Permite consolidar um mês, preservar histórico e observar a composição do período.
 
 ### Visão futura
 
-Projeta caixa e compromissos futuros com base nas regras existentes. Serve para planejamento, antecipação de problemas e leitura de tendência.
+Projeta caixa e compromissos futuros com base no que já está cadastrado no sistema.
 
 ### Patrimônio
 
-Centraliza ativos, reservas, posições e snapshots patrimoniais. Permite acompanhar valor total, composição e evolução ao longo do tempo.
+Centraliza ativos, reservas, snapshots e evolução patrimonial ao longo do tempo.
 
 ### Categorias e tags
 
-Mantém a organização semântica das transações e eventos. Foi pensado para ser editável, não um catálogo estático.
+Mantém a classificação das transações e eventos de forma editável, sem depender de catálogos rígidos.
 
 ### Importação
 
-Acelera a migração de planilhas e workbooks para o sistema. O foco é absorver dados legados sem torná-los imutáveis.
+Acelera onboarding e migração de planilhas, com foco em revisão, staging, mapeamento e commit.
 
 ### Configurações
 
-Reúne parâmetros operacionais, orientações de manutenção, comandos úteis e comportamento global do sistema.
+Reúne parâmetros operacionais, manutenção local e orientações úteis de uso do sistema.
 
 ### Onboarding
 
-Ajuda a preparar a base inicial do usuário, reduzindo fricção na primeira configuração e na migração do fluxo manual.
+Ajuda a preparar a base inicial do usuário, reduzindo fricção de primeira configuração.
+
+---
 
 ## Editabilidade operacional
 
-O Aurea Finance parte de um princípio simples: **dado financeiro errado precisa ser corrigível pela interface**.
+O Aurea Finance foi pensado para permitir correção pela interface. Isso significa que o sistema precisa tolerar erro humano, importação imperfeita e evolução de cadastro sem exigir intervenção no código.
 
-Na prática, isso significa permitir operações como:
+Exemplos concretos de editabilidade operacional:
 
 * renomear banco ou instituição;
-* corrigir nome, tipo ou vínculo de uma conta;
-* ajustar saldo real de conta por conferência;
+* corrigir conta e seus vínculos;
+* ajustar saldo real de uma conta;
 * editar ativo patrimonial;
 * corrigir ticker, nome ou classificação de um ativo;
 * ajustar quantidade ou valor manual;
 * corrigir compra lançada no cartão;
-* alterar vínculo entre cartão e conta pagadora;
-* pausar, reativar ou duplicar recorrências;
-* revisar categorias e tags;
+* pausar, reativar ou duplicar recorrência;
 * mesclar categorias duplicadas;
-* revisar dados importados depois do commit;
-* arquivar ou restaurar entidades quando o dado não deve mais aparecer no dia a dia, mas ainda precisa existir historicamente.
+* revisar e corrigir dados importados;
+* arquivar ou restaurar entidades;
+* preferir soft delete quando fizer mais sentido do que exclusão dura.
 
-A editabilidade operacional é uma defesa contra dois problemas comuns em software financeiro pessoal:
+Esse princípio existe para evitar um problema comum em sistemas financeiros pessoais: **ficar preso a um dado errado por limitação da UI**.
 
-1. importar ou cadastrar algo errado e ficar “preso” ao erro;
-2. precisar voltar ao código ou ao banco manualmente para corrigir algo que deveria ser tratável pela UI.
+---
 
 ## Estado atual do projeto
 
-O projeto já está além de um protótipo que apenas “abre telas”. Ele possui estrutura funcional, módulos operacionais relevantes, persistência local, rotas principais, migrações, seeds, testes de domínio e fluxo de trabalho coerente para uso diário.
+O Aurea Finance já está além de um protótipo que apenas “abre telas”. O projeto possui:
 
-Ao mesmo tempo, o Aurea Finance **ainda está em evolução**. Isso significa que:
+* build e fluxo local de desenvolvimento;
+* banco SQLite com migrações;
+* módulos operacionais relevantes;
+* testes de domínio financeiro;
+* fluxo de conferência diária;
+* controle de patrimônio, cartões, recorrências e importação;
+* base consistente para evolução contínua.
+
+Ao mesmo tempo, o projeto **ainda está em evolução**. Isso significa que:
 
 * o sistema já é utilizável como base operacional local;
-* há fluxos importantes de conferência, patrimônio, cartões, recorrências e importação;
-* build, typecheck, testes e domínio financeiro precisam continuar sendo tratados com rigor;
-* testes de domínio não são burocracia: eles são contrato para regras como fatura, parcelamento, recorrência e mapeamento de importação;
-* performance de navegação, agregações pesadas e refinamento de UX ainda são frentes reais de melhoria;
-* alguns módulos ainda podem ganhar mais profundidade, especialmente em acabamento operacional e conciliação.
+* testes de domínio devem ser tratados como contrato importante;
+* performance de navegação e agregações pesadas continuam sendo frente de melhoria;
+* refinamento de UX operacional ainda faz parte do roadmap;
+* alguns módulos ainda podem ganhar profundidade adicional, especialmente em acabamento e reconciliação.
 
-Em outras palavras: o projeto já é sério o suficiente para operação local e evolução contínua, mas não deve ser apresentado como “100% finalizado”.
+O posicionamento honesto é este: **o projeto já é sério e funcional, mas ainda não deve ser tratado como “produto final imutável”**.
+
+---
 
 ## Requisitos
 
-Para rodar o projeto localmente, recomenda-se:
+Recomendado para desenvolvimento local:
 
 * **Node.js 20+**
 * **pnpm**
-* ambiente local com permissão de leitura e escrita para a pasta `data/`
-* sistema operacional compatível com execução local de scripts Node/TypeScript
+* acesso local de leitura e escrita à pasta `data/`
+* ambiente compatível com execução de scripts TypeScript via Node
 
-Observações importantes:
+Observações:
 
-* o projeto usa **SQLite local**, então o arquivo do banco precisa estar acessível em disco;
-* em alguns ambientes, o `pnpm` pode exibir aviso sobre scripts ignorados de dependências como `esbuild` e `sharp`;
-* quando isso acontecer, use `pnpm approve-builds` para liberar os scripts necessários.
+* o projeto usa **SQLite local**;
+* em alguns ambientes, dependências como `esbuild` e `sharp` podem exigir aprovação de scripts;
+* quando isso acontecer, use `pnpm approve-builds`.
+
+---
 
 ## Instalação
 
@@ -265,19 +329,19 @@ pnpm install
 pnpm approve-builds
 ```
 
-Depois da instalação, siga para migração, seed e execução local.
+Depois da instalação, siga com migração, seed e execução local.
+
+---
 
 ## Configuração e banco
 
-O banco principal do projeto é um **SQLite local**. Por padrão, ele fica em:
+O banco principal do projeto é um arquivo SQLite local, armazenado por padrão em:
 
 ```text
 data/aurea-finance.sqlite
 ```
 
 ### Migrar o banco
-
-Use o alias operacional recomendado:
 
 ```bash
 pnpm dbmigrate
@@ -295,7 +359,7 @@ pnpm dbseed
 pnpm dev
 ```
 
-### Build de produção local
+### Gerar build de produção local
 
 ```bash
 pnpm build
@@ -303,7 +367,7 @@ pnpm build
 
 ### Backup do banco
 
-O backup mais confiável e simples continua sendo a cópia do arquivo SQLite.
+A forma mais simples e confiável de backup é copiar o arquivo SQLite.
 
 #### PowerShell
 
@@ -321,8 +385,6 @@ cp ./data/aurea-finance.sqlite ./backups/aurea-finance-$(date +%Y%m%d-%H%M%S).sq
 
 ### Restore do banco
 
-O restore pode ser feito substituindo o arquivo do banco por um backup válido.
-
 #### PowerShell
 
 ```powershell
@@ -335,80 +397,85 @@ Copy-Item .\backups\aurea-finance-YYYYMMDD-HHMMSS.sqlite .\data\aurea-finance.sq
 cp ./backups/aurea-finance-YYYYMMDD-HHMMSS.sqlite ./data/aurea-finance.sqlite
 ```
 
-> Antes de restaurar, feche o servidor de desenvolvimento para evitar conflito de escrita no arquivo do SQLite.
+> Antes de restaurar um backup, pare o servidor de desenvolvimento para evitar conflito de escrita no arquivo SQLite.
 
 ### Aliases operacionais
 
-Este repositório adota aliases mais curtos para reduzir fricção no dia a dia:
+O projeto usa aliases mais curtos para reduzir fricção no dia a dia:
 
 * `pnpm dbmigrate`
 * `pnpm dbseed`
 
+---
+
 ## Comandos úteis
 
-| Comando                           | Finalidade                                                |
-| --------------------------------- | --------------------------------------------------------- |
-| `pnpm install`                    | Instala dependências do projeto                           |
-| `pnpm approve-builds`             | Aprova scripts de build de dependências quando necessário |
-| `pnpm dbmigrate`                  | Aplica migrações do banco SQLite                          |
-| `pnpm dbseed`                     | Popula a base com dados de seed                           |
-| `pnpm typecheck`                  | Executa verificação de tipos do app e dos testes          |
-| `pnpm test`                       | Executa a suíte de testes                                 |
-| `pnpm build`                      | Gera o build de produção                                  |
-| `pnpm dev`                        | Sobe o ambiente local de desenvolvimento                  |
-| `Copy-Item ...` / `cp ...`        | Faz backup manual do arquivo SQLite                       |
-| `Copy-Item ... -Force` / `cp ...` | Restaura um backup do arquivo SQLite                      |
+| Comando                           | Finalidade                                                 |
+| --------------------------------- | ---------------------------------------------------------- |
+| `pnpm install`                    | Instalar dependências                                      |
+| `pnpm approve-builds`             | Aprovar scripts de build de dependências quando necessário |
+| `pnpm dbmigrate`                  | Aplicar migrações do banco                                 |
+| `pnpm dbseed`                     | Popular a base com seed                                    |
+| `pnpm typecheck`                  | Executar verificação de tipos do app e dos testes          |
+| `pnpm test`                       | Executar a suíte de testes                                 |
+| `pnpm build`                      | Gerar o build de produção                                  |
+| `pnpm dev`                        | Rodar o ambiente local de desenvolvimento                  |
+| `Copy-Item ...` / `cp ...`        | Fazer backup manual do SQLite                              |
+| `Copy-Item ... -Force` / `cp ...` | Restaurar backup do SQLite                                 |
+
+---
 
 ## Fluxo recomendado de uso diário
 
-A ordem de uso faz diferença. O fluxo mais seguro para operação diária é:
+A ordem de uso faz diferença. O fluxo mais seguro e útil para o dia a dia é:
 
 1. **Abrir a Conferência diária**
-   Comece pelo ponto de conferência, não pelo dashboard. Isso ajuda a separar realidade de projeção.
+   Comece pela realidade operacional, não pela projeção.
 
 2. **Salvar os saldos reais das contas**
-   Registre o valor conferido de cada conta relevante naquele dia.
+   Registre o valor conferido das contas relevantes.
 
-3. **Atualizar ativos e patrimônio**
-   Ajuste manualmente posições, reservas, investimentos e cripto quando necessário.
+3. **Atualizar ativos**
+   Ajuste investimentos, cripto, reservas e demais posições patrimoniais.
 
-4. **Lançar despesas e receitas do dia**
-   Registre os fatos financeiros já realizados, incluindo ajustes em transações e compras de cartão.
+4. **Lançar despesas e receitas**
+   Registre o que de fato aconteceu no dia.
 
 5. **Revisar divergências**
-   Compare saldo calculado com saldo conferido, revise inconsistências e corrija vínculos ou classificações quando necessário.
+   Compare saldo calculado com saldo conferido e corrija inconsistências.
 
-6. **Só então olhar projeção, dashboard e patrimônio consolidado**
-   Depois que o dia estiver conferido, a leitura do dashboard, da visão futura e do patrimônio se torna mais confiável.
+6. **Só então olhar dashboard, visão futura e patrimônio**
+   Depois da conferência, os painéis ficam muito mais confiáveis.
 
-Esse fluxo reduz a chance de interpretar projeção como realidade e melhora a utilidade do sistema no uso diário.
+Esse fluxo ajuda a evitar um erro comum: interpretar projeção como realidade.
+
+---
 
 ## Fluxo de importação
 
-A importação existe para acelerar a adoção do sistema, especialmente em dois cenários:
+A importação existe para acelerar adoção e migração de planilhas legadas.
 
-* migração de uma planilha já existente;
-* onboarding inicial com histórico prévio.
+Seu papel é:
 
-O papel da importação é:
-
-* ler dados de workbook/planilha;
+* ler workbook ou planilha;
 * sugerir mapeamento de colunas;
-* permitir análise, revisão e commit;
+* permitir revisão e ajuste antes do commit;
 * transformar dados legados em dados operacionais do sistema.
 
 Pontos importantes:
 
-* importação **não** deve ser tratada como etapa irreversível;
-* dados importados continuam passíveis de edição;
-* conta, categoria, ativo, cartão, instituição e outros vínculos podem exigir revisão posterior;
-* revisão pós-importação faz parte do processo normal, não de uma falha do sistema.
+* importação não deve ser tratada como etapa irreversível;
+* conta, categoria, ativo, cartão e instituição podem exigir revisão posterior;
+* dados importados continuam sendo passíveis de correção pela UI;
+* revisão pós-importação faz parte do fluxo normal do produto.
 
-Em termos de produto, a importação é uma **porta de entrada**. A manutenção do dia a dia continua acontecendo na UI do próprio Aurea Finance.
+A importação é uma **aceleração do onboarding**, não um mecanismo que congela dados legados.
+
+---
 
 ## Estrutura de pastas
 
-Abaixo está uma visão resumida da estrutura principal do repositório:
+Visão resumida da estrutura principal:
 
 ```text
 app/
@@ -423,19 +490,19 @@ tests/
 
 ### `app/`
 
-Rotas, layouts, páginas e fluxos do App Router. É a camada onde os módulos do sistema são expostos.
+Rotas, layouts, páginas e fluxos do App Router.
 
 ### `components/`
 
-Componentes visuais e blocos reutilizáveis, incluindo tabelas, formulários, cartões, shells e gráficos.
+Componentes de interface, gráficos, formulários, blocos reutilizáveis e wrappers visuais.
 
 ### `features/`
 
-Ações e fluxos específicos de caso de uso, normalmente conectando formulários, mutações e comportamento de tela.
+Fluxos específicos de tela e ações de mutação.
 
 ### `services/`
 
-Camada de domínio e negócio. Reúne consultas, agregações, regras financeiras e operações de manutenção dos dados.
+Camada principal de domínio, regras financeiras, agregações e manutenção de dados.
 
 ### `db/`
 
@@ -443,19 +510,21 @@ Schema, migrações e integração com SQLite/Drizzle.
 
 ### `lib/`
 
-Helpers, utilitários, formatadores, funções de data e lógica compartilhada entre módulos.
+Helpers, funções de datas, formatadores e utilitários compartilhados.
 
 ### `scripts/`
 
-Scripts operacionais do projeto, como migração, seed e manutenção do banco.
+Scripts operacionais como migração, seed e manutenção do banco.
 
 ### `tests/`
 
-Testes de domínio e confiabilidade, especialmente para regras sensíveis de finanças.
+Testes de domínio e confiabilidade do sistema.
+
+---
 
 ## Testes e qualidade
 
-Use estes comandos como rotina mínima de qualidade:
+Comandos recomendados para verificação local:
 
 ```bash
 pnpm typecheck
@@ -463,41 +532,53 @@ pnpm test
 pnpm build
 ```
 
-Os testes são especialmente importantes em áreas de domínio financeiro, como:
+Os testes de domínio são especialmente importantes em áreas como:
 
 * recorrências;
 * competência de fatura;
 * parcelamento;
-* geração de vencimentos;
+* vencimento de parcelas;
+* materialização de eventos;
 * mapeamento de importação;
-* consistência de regras de projeção e materialização.
+* coerência entre cálculo e projeção.
 
-No Aurea Finance, testes de domínio não são enfeite. Eles servem para proteger regras que, se estiverem erradas, afetam diretamente a confiança do usuário no produto.
+No Aurea Finance, testes de domínio não são decoração. Eles protegem regras financeiras que impactam diretamente a confiança do produto.
+
+---
 
 ## Performance e observações
 
-Performance é uma preocupação contínua do projeto, especialmente em páginas que agregam muitos dados, calculam projeções ou renderizam gráficos e tabelas mais pesadas.
+Performance é uma preocupação contínua do projeto, sobretudo em páginas que:
 
-Áreas típicas de atenção incluem:
+* agregam muitos dados;
+* recalculam projeções;
+* renderizam gráficos mais pesados;
+* fazem leitura consolidada de contas, patrimônio e recorrências.
 
-* agregações redundantes no dashboard e na visão futura;
-* consultas repetidas entre módulos correlatos;
-* custo de renderização de gráficos;
-* peso inicial de páginas ligadas à importação;
-* trabalho server-side desnecessário em navegação local.
+Áreas típicas de evolução incluem:
 
-O projeto já trata esse tema como uma frente técnica importante, e otimizações de query, carregamento e renderização fazem parte natural da evolução do sistema.
+* redução de agregações redundantes;
+* otimização de queries e leituras repetidas;
+* lazy loading de blocos mais pesados;
+* melhoria da experiência percebida em navegação;
+* refinamento de renderização de gráficos e painéis.
+
+O tema é tratado como parte normal da evolução do sistema, não como detalhe secundário.
+
+---
 
 ## Roadmap curto
 
-Alguns eixos plausíveis e prioritários para evolução do projeto são:
+Itens plausíveis para evolução de curto e médio prazo:
 
 * melhorar performance de navegação e agregações críticas;
 * aprofundar o fluxo de fechamento mensal;
 * fortalecer ainda mais os testes de domínio financeiro;
-* melhorar a conciliação e revisão pós-importação;
-* refinar UX operacional para edição, conferência e reconciliação;
-* ampliar trilha de auditoria e segurança para operações sensíveis.
+* melhorar conciliação e revisão pós-importação;
+* refinar UX operacional de conferência, recorrências e patrimônio;
+* ampliar trilha de auditoria para operações sensíveis.
+
+---
 
 ## Contribuição
 
@@ -511,12 +592,20 @@ Contribuições são bem-vindas, especialmente nas frentes de:
 
 Para contribuir:
 
-1. abra uma issue clara, com contexto e resultado esperado;
-2. descreva o problema de produto ou técnico de forma objetiva;
-3. quando possível, inclua passos de reprodução e impacto;
+1. abra uma issue com contexto claro;
+2. descreva problema, impacto e comportamento esperado;
+3. inclua passos de reprodução quando possível;
 4. proponha PRs pequenos, verificáveis e com baixo raio de explosão;
-5. preserve o princípio central do projeto: **dados corrigíveis pela interface e operação local confiável**.
+5. preserve os princípios centrais do projeto:
+
+   * operação local-first;
+   * dados corrigíveis pela interface;
+   * confiabilidade das regras financeiras.
+
+---
 
 ## Licença
 
-**Licença ainda não definida neste repositório.**
+Este projeto está licenciado sob a **MIT License**.
+
+Consulte o arquivo `LICENSE` na raiz do repositório para o texto completo da licença.
