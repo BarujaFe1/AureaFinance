@@ -1,7 +1,0 @@
-
-> aurea-finance@0.1.0 db:doctor D:\Dev\Projetos VibeCoding\aurea-finance
-> tsx scripts/doctor.ts
-
-Banco: D:\Dev\Projetos VibeCoding\aurea-finance\data\aurea-finance.sqlite
-Existe: true
-Tamanho: 348160 bytes
