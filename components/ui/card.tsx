@@ -1,22 +1,30 @@
-import * as React from "react";
+import type { HTMLAttributes, JSX } from "react";
 import { cn } from "@/lib/utils";
 
-export const Card = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(function Card({ className, ...props }, ref) {
-  return <div ref={ref} className={cn("rounded-3xl border border-[var(--border)] bg-[var(--card)] text-[var(--card-foreground)] shadow-sm", className)} {...props} />;
-});
+type DivProps = HTMLAttributes<HTMLDivElement>;
+type HeadingProps = HTMLAttributes<HTMLHeadingElement>;
+type ParagraphProps = HTMLAttributes<HTMLParagraphElement>;
 
-export const CardHeader = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(function CardHeader({ className, ...props }, ref) {
-  return <div ref={ref} className={cn("flex flex-col gap-1.5 p-6", className)} {...props} />;
-});
+export function Card({ className, ...props }: DivProps): JSX.Element {
+  return <div className={cn("rounded-2xl border bg-card text-card-foreground shadow-sm", className)} {...props} />;
+}
 
-export const CardTitle = React.forwardRef<HTMLParagraphElement, React.HTMLAttributes<HTMLHeadingElement>>(function CardTitle({ className, ...props }, ref) {
-  return <h3 ref={ref} className={cn("text-lg font-semibold tracking-tight", className)} {...props} />;
-});
+export function CardHeader({ className, ...props }: DivProps): JSX.Element {
+  return <div className={cn("flex flex-col space-y-1.5 p-6", className)} {...props} />;
+}
 
-export const CardDescription = React.forwardRef<HTMLParagraphElement, React.HTMLAttributes<HTMLParagraphElement>>(function CardDescription({ className, ...props }, ref) {
-  return <p ref={ref} className={cn("text-sm text-[var(--muted-foreground)]", className)} {...props} />;
-});
+export function CardTitle({ className, ...props }: HeadingProps): JSX.Element {
+  return <h3 className={cn("text-lg font-semibold leading-none tracking-tight", className)} {...props} />;
+}
 
-export const CardContent = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(function CardContent({ className, ...props }, ref) {
-  return <div ref={ref} className={cn("p-6 pt-0", className)} {...props} />;
-});
+export function CardDescription({ className, ...props }: ParagraphProps): JSX.Element {
+  return <p className={cn("text-sm text-muted-foreground", className)} {...props} />;
+}
+
+export function CardContent({ className, ...props }: DivProps): JSX.Element {
+  return <div className={cn("p-6 pt-0", className)} {...props} />;
+}
+
+export function CardFooter({ className, ...props }: DivProps): JSX.Element {
+  return <div className={cn("flex items-center p-6 pt-0", className)} {...props} />;
+}

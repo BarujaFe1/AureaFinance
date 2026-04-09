@@ -14,7 +14,7 @@ export const accounts = sqliteTable("accounts", {
   sortOrder: integer("sort_order").notNull().default(0),
   createdAt: integer("created_at").notNull(),
   updatedAt: integer("updated_at").notNull()
-}, (table) => ({
+}, (table: any) => ({
   slugUnique: uniqueIndex("accounts_slug_unique").on(table.slug),
   typeIdx: index("accounts_type_idx").on(table.type)
 }));
@@ -26,7 +26,7 @@ export const accountBalanceSnapshots = sqliteTable("account_balance_snapshots", 
   balanceCents: integer("balance_cents").notNull(),
   source: text("source").notNull().default("manual"),
   createdAt: integer("created_at").notNull()
-}, (table) => ({
+}, (table: any) => ({
   accountDateUnique: uniqueIndex("account_balance_snapshots_account_date_unique").on(table.accountId, table.snapshotDate)
 }));
 
@@ -39,7 +39,7 @@ export const categories = sqliteTable("categories", {
   icon: text("icon").default("circle"),
   createdAt: integer("created_at").notNull(),
   updatedAt: integer("updated_at").notNull()
-}, (table) => ({
+}, (table: any) => ({
   slugUnique: uniqueIndex("categories_slug_unique").on(table.slug)
 }));
 
@@ -51,7 +51,7 @@ export const subcategories = sqliteTable("subcategories", {
   color: text("color").default("#8f96ff"),
   createdAt: integer("created_at").notNull(),
   updatedAt: integer("updated_at").notNull()
-}, (table) => ({
+}, (table: any) => ({
   categoryIdx: index("subcategories_category_idx").on(table.categoryId),
   slugUnique: uniqueIndex("subcategories_slug_unique").on(table.categoryId, table.slug)
 }));
@@ -62,7 +62,7 @@ export const tags = sqliteTable("tags", {
   slug: text("slug").notNull(),
   color: text("color").default("#9498a4"),
   createdAt: integer("created_at").notNull()
-}, (table) => ({
+}, (table: any) => ({
   slugUnique: uniqueIndex("tags_slug_unique").on(table.slug)
 }));
 
@@ -86,7 +86,7 @@ export const transactions = sqliteTable("transactions", {
   isProjected: integer("is_projected", { mode: "boolean" }).notNull().default(false),
   createdAt: integer("created_at").notNull(),
   updatedAt: integer("updated_at").notNull()
-}, (table) => ({
+}, (table: any) => ({
   accountIdx: index("transactions_account_idx").on(table.accountId),
   dateIdx: index("transactions_occurred_on_idx").on(table.occurredOn),
   monthIdx: index("transactions_competence_month_idx").on(table.competenceMonth)
@@ -95,7 +95,7 @@ export const transactions = sqliteTable("transactions", {
 export const transactionTags = sqliteTable("transaction_tags", {
   transactionId: text("transaction_id").notNull().references(() => transactions.id, { onDelete: "cascade" }),
   tagId: text("tag_id").notNull().references(() => tags.id, { onDelete: "cascade" })
-}, (table) => ({
+}, (table: any) => ({
   unique: uniqueIndex("transaction_tags_unique").on(table.transactionId, table.tagId)
 }));
 
@@ -140,7 +140,7 @@ export const recurringOccurrences = sqliteTable("recurring_occurrences", {
   notes: text("notes").default(""),
   createdAt: integer("created_at").notNull(),
   updatedAt: integer("updated_at").notNull()
-}, (table) => ({
+}, (table: any) => ({
   ruleDueUnique: uniqueIndex("recurring_occurrences_rule_due_unique").on(table.ruleId, table.dueOn)
 }));
 
@@ -158,7 +158,7 @@ export const creditCards = sqliteTable("credit_cards", {
   isArchived: integer("is_archived", { mode: "boolean" }).notNull().default(false),
   createdAt: integer("created_at").notNull(),
   updatedAt: integer("updated_at").notNull()
-}, (table) => ({
+}, (table: any) => ({
   slugUnique: uniqueIndex("credit_cards_slug_unique").on(table.slug)
 }));
 
@@ -174,7 +174,7 @@ export const creditCardBills = sqliteTable("credit_card_bills", {
   settlementTransactionId: text("settlement_transaction_id").references(() => transactions.id, { onDelete: "set null" }),
   createdAt: integer("created_at").notNull(),
   updatedAt: integer("updated_at").notNull()
-}, (table) => ({
+}, (table: any) => ({
   uniqueMonth: uniqueIndex("credit_card_bills_card_month_unique").on(table.creditCardId, table.billMonth),
   dueIdx: index("credit_card_bills_due_on_idx").on(table.dueOn)
 }));
@@ -207,7 +207,7 @@ export const cardInstallments = sqliteTable("card_installments", {
   status: text("status").notNull().default("billed"),
   dueOn: text("due_on").notNull(),
   createdAt: integer("created_at").notNull()
-}, (table) => ({
+}, (table: any) => ({
   billIdx: index("card_installments_bill_idx").on(table.billId),
   uniqueInstallment: uniqueIndex("card_installments_purchase_number_unique").on(table.purchaseId, table.installmentNumber)
 }));
@@ -263,7 +263,7 @@ export const importMappings = sqliteTable("import_mappings", {
   optionsJson: text("options_json").notNull().default("{}"),
   createdAt: integer("created_at").notNull(),
   updatedAt: integer("updated_at").notNull()
-}, (table) => ({
+}, (table: any) => ({
   uniqueSheet: uniqueIndex("import_mappings_batch_sheet_unique").on(table.batchId, table.sheetName)
 }));
 
@@ -292,7 +292,7 @@ export const monthlyClosings = sqliteTable("monthly_closings", {
   snapshotJson: text("snapshot_json").notNull().default("{}"),
   createdAt: integer("created_at").notNull(),
   updatedAt: integer("updated_at").notNull()
-}, (table) => ({
+}, (table: any) => ({
   monthUnique: uniqueIndex("monthly_closings_month_unique").on(table.month)
 }));
 
@@ -306,7 +306,7 @@ export const netWorthSummaries = sqliteTable("net_worth_summaries", {
   source: text("source").notNull().default("manual"),
   createdAt: integer("created_at").notNull(),
   updatedAt: integer("updated_at").notNull()
-}, (table) => ({
+}, (table: any) => ({
   monthUnique: uniqueIndex("net_worth_summaries_month_unique").on(table.month)
 }));
 
@@ -326,11 +326,11 @@ export const reserves = sqliteTable("reserves", {
   accountId: text("account_id").references(() => accounts.id, { onDelete: "set null" }),
   createdAt: integer("created_at").notNull(),
   updatedAt: integer("updated_at").notNull()
-}, (table) => ({
+}, (table: any) => ({
   nameUnique: uniqueIndex("reserves_name_unique").on(table.name)
 }));
 
-/** PosiÃ§Ãµes em aÃ§Ãµes importadas da planilha. */
+/** Posições em ações importadas da planilha. */
 export const stockPositions = sqliteTable("stock_positions", {
   id: text("id").primaryKey(),
   ticker: text("ticker").notNull(),
@@ -343,11 +343,11 @@ export const stockPositions = sqliteTable("stock_positions", {
   rentabilityTotalPercent: real("rentability_total_percent"),
   createdAt: integer("created_at").notNull(),
   updatedAt: integer("updated_at").notNull()
-}, (table) => ({
+}, (table: any) => ({
   tickerUnique: uniqueIndex("stock_positions_ticker_unique").on(table.ticker)
 }));
 
-/** PosiÃ§Ãµes em criptomoedas importadas da planilha. */
+/** Posições em criptomoedas importadas da planilha. */
 export const cryptoPositions = sqliteTable("crypto_positions", {
   id: text("id").primaryKey(),
   name: text("name").notNull(),
@@ -358,11 +358,11 @@ export const cryptoPositions = sqliteTable("crypto_positions", {
   totalProfitCents: integer("total_profit_cents").notNull().default(0),
   createdAt: integer("created_at").notNull(),
   updatedAt: integer("updated_at").notNull()
-}, (table) => ({
+}, (table: any) => ({
   nameUnique: uniqueIndex("crypto_positions_name_unique").on(table.name)
 }));
 
-/** HistÃ³rico de compras e vendas de ativos financeiros. */
+/** Histórico de compras e vendas de ativos financeiros. */
 export const assetTrades = sqliteTable("asset_trades", {
   id: text("id").primaryKey(),
   action: text("action").notNull(),
@@ -377,11 +377,11 @@ export const assetTrades = sqliteTable("asset_trades", {
   descriptionText: text("description_text").default(""),
   isCompleted: integer("is_completed", { mode: "boolean" }).notNull().default(true),
   createdAt: integer("created_at").notNull()
-}, (table) => ({
+}, (table: any) => ({
   tradeDateIdx: index("asset_trades_trade_date_idx").on(table.tradeDate)
 }));
 
-/** SÃ©rie histÃ³rica diÃ¡ria do patrimÃ´nio total importada da planilha. */
+/** Série histórica diária do patrimônio total importada da planilha. */
 export const netWorthSnapshots = sqliteTable("net_worth_snapshots", {
   id: text("id").primaryKey(),
   date: text("date").notNull(),
@@ -391,16 +391,48 @@ export const netWorthSnapshots = sqliteTable("net_worth_snapshots", {
   totalCents: integer("total_cents").notNull().default(0),
   variationType: text("variation_type").default(""),
   createdAt: integer("created_at").notNull()
-}, (table) => ({
+}, (table: any) => ({
   dateUnique: uniqueIndex("net_worth_snapshots_date_unique").on(table.date)
 }));
+
+export const assetValueSnapshots = sqliteTable("asset_value_snapshots", {
+  id: text("id").primaryKey(),
+  assetType: text("asset_type").notNull(),
+  assetId: text("asset_id"),
+  assetLabel: text("asset_label").notNull(),
+  snapshotDate: text("snapshot_date").notNull(),
+  quantity: real("quantity"),
+  valueCents: integer("value_cents").notNull().default(0),
+  notes: text("notes").default(""),
+  createdAt: integer("created_at").notNull(),
+  updatedAt: integer("updated_at").notNull()
+}, (table: any) => ({
+  assetDayUnique: uniqueIndex("asset_value_snapshots_type_asset_date_unique").on(table.assetType, table.assetId, table.snapshotDate),
+  dayIdx: index("asset_value_snapshots_snapshot_date_idx").on(table.snapshotDate)
+}));
+
+export const entityArchives = sqliteTable("entity_archives", {
+  id: text("id").primaryKey(),
+  entityType: text("entity_type").notNull(),
+  entityId: text("entity_id").notNull(),
+  reason: text("reason").default(""),
+  metadataJson: text("metadata_json").notNull().default("{}"),
+  archivedAt: integer("archived_at").notNull(),
+  restoredAt: integer("restored_at"),
+  createdAt: integer("created_at").notNull(),
+  updatedAt: integer("updated_at").notNull()
+}, (table: any) => ({
+  entityUnique: uniqueIndex("entity_archives_entity_unique").on(table.entityType, table.entityId),
+  entityTypeIdx: index("entity_archives_type_idx").on(table.entityType)
+}));
+
 export const settings = sqliteTable("settings", {
   id: text("id").primaryKey(),
   baseCurrency: text("base_currency").notNull().default("BRL"),
   locale: text("locale").notNull().default("pt-BR"),
   projectionMonths: integer("projection_months").notNull().default(6),
   themePreference: text("theme_preference").notNull().default("system"),
-  userDisplayName: text("user_display_name").notNull().default("VocÃª"),
+  userDisplayName: text("user_display_name").notNull().default("Você"),
   isOnboarded: integer("is_onboarded", { mode: "boolean" }).notNull().default(false),
   createdAt: integer("created_at").notNull(),
   updatedAt: integer("updated_at").notNull()

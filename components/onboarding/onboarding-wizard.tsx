@@ -1,7 +1,7 @@
 "use client";
 
-import Link from "next/link";
 import { useMemo, useState } from "react";
+import Link from "next/link";
 import { completeFinancialOnboardingAction } from "@/features/onboarding/actions";
 import type { MoneyBootstrapDataset } from "@/lib/money-bootstrap";
 import { formatCurrencyFromCents } from "@/lib/currency";
@@ -59,12 +59,12 @@ type NetWorthDraft = {
 
 const steps = [
   "Boas-vindas",
-  "PreferÃªncias",
+  "Preferências",
   "Contas",
-  "CartÃµes",
-  "PatrimÃ´nio",
-  "RecorrÃªncias",
-  "RevisÃ£o"
+  "Cartões",
+  "Patrimônio",
+  "Recorrências",
+  "Revisão"
 ] as const;
 
 function makeId(prefix: string) {
@@ -191,7 +191,7 @@ export function OnboardingWizard({
 
   const [step, setStep] = useState(0);
   const [source] = useState<WizardMode>(mode);
-  const [userDisplayName, setUserDisplayName] = useState(initialSettings.userDisplayName || "VocÃª");
+  const [userDisplayName, setUserDisplayName] = useState(initialSettings.userDisplayName || "Você");
   const [baseCurrency, setBaseCurrency] = useState(initialSettings.baseCurrency || "BRL");
   const [locale, setLocale] = useState(initialSettings.locale || "pt-BR");
   const [themePreference, setThemePreference] = useState(initialSettings.themePreference || "system");
@@ -304,15 +304,15 @@ export function OnboardingWizard({
               <div className="space-y-4">
                 <div className="rounded-3xl border border-[var(--border)] bg-[var(--secondary)] p-6">
                   <h3 className="text-xl font-semibold">
-                    {source === "money" ? "A Money jÃ¡ foi reconhecida." : "VocÃª pode comeÃ§ar manualmente ou migrando sua planilha."}
+                    {source === "money" ? "A Money já foi reconhecida." : "Você pode começar manualmente ou migrando sua planilha."}
                   </h3>
                   <p className="mt-2 text-sm text-[var(--muted-foreground)]">
                     O Aurea Finance foi pensado para substituir a planilha como fonte de verdade. Ele pode nascer vazio,
-                    mas fica muito melhor quando recebe suas contas, faturas, patrimÃ´nio e compromissos desde o primeiro dia.
+                    mas fica muito melhor quando recebe suas contas, faturas, patrimônio e compromissos desde o primeiro dia.
                   </p>
                   <div className="mt-4 flex flex-wrap gap-3">
                     <Link href="/onboarding?mode=money" className="inline-flex h-10 items-center rounded-xl border border-[var(--border)] px-4 text-sm">
-                      Quero comeÃ§ar com meus dados da planilha
+                      Quero começar com meus dados da planilha
                     </Link>
                     <Link href="/onboarding?mode=manual" className="inline-flex h-10 items-center rounded-xl border border-[var(--border)] px-4 text-sm">
                       Quero configurar manualmente
@@ -324,23 +324,23 @@ export function OnboardingWizard({
                   <div className="grid gap-4 md:grid-cols-2">
                     <Card>
                       <CardHeader>
-                        <CardTitle className="text-base">O que a Money jÃ¡ entregou</CardTitle>
+                        <CardTitle className="text-base">O que a Money já entregou</CardTitle>
                       </CardHeader>
                       <CardContent className="space-y-2 text-sm">
                         <p>{dataset.accounts.length} contas reconhecidas</p>
-                        <p>{dataset.cards.length} cartÃµes com vencimento detectado</p>
+                        <p>{dataset.cards.length} cartões com vencimento detectado</p>
                         <p>{dataset.cardBills.length} faturas futuras estruturadas</p>
-                        <p>{dataset.recurring.length} recorrÃªncias sugeridas</p>
+                        <p>{dataset.recurring.length} recorrências sugeridas</p>
                       </CardContent>
                     </Card>
                     <Card>
                       <CardHeader>
-                        <CardTitle className="text-base">PatrimÃ´nio identificado</CardTitle>
+                        <CardTitle className="text-base">Patrimônio identificado</CardTitle>
                       </CardHeader>
                       <CardContent className="space-y-2 text-sm">
                         <p>Reservas: {formatCurrencyFromCents(dataset.netWorthSummary.reservesCents)}</p>
                         <p>Investimentos: {formatCurrencyFromCents(dataset.netWorthSummary.investmentsCents)}</p>
-                        <p>DÃ­vidas abertas: {formatCurrencyFromCents(dataset.netWorthSummary.debtsCents)}</p>
+                        <p>Dívidas abertas: {formatCurrencyFromCents(dataset.netWorthSummary.debtsCents)}</p>
                       </CardContent>
                     </Card>
                   </div>
@@ -349,11 +349,11 @@ export function OnboardingWizard({
 
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-base">PrÃ³ximo passo</CardTitle>
+                  <CardTitle className="text-base">Próximo passo</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-3 text-sm text-[var(--muted-foreground)]">
-                  <p>Nas prÃ³ximas etapas vocÃª ajusta preferÃªncias, confirma contas, valida cartÃµes, patrimÃ´nio e compromissos fixos.</p>
-                  <p>Partes opcionais podem ser puladas. O objetivo Ã© sair do onboarding com o app inteligÃ­vel e usÃ¡vel.</p>
+                  <p>Nas próximas etapas você ajusta preferências, confirma contas, valida cartões, patrimônio e compromissos fixos.</p>
+                  <p>Partes opcionais podem ser puladas. O objetivo é sair do onboarding com o app inteligível e usável.</p>
                 </CardContent>
               </Card>
             </section>
@@ -362,23 +362,23 @@ export function OnboardingWizard({
           {step === 1 ? (
             <section className="grid gap-4 md:grid-cols-2">
               <div className="space-y-2 md:col-span-2">
-                <Label>Nome de exibiÃ§Ã£o</Label>
+                <Label>Nome de exibição</Label>
                 <Input value={userDisplayName} onChange={(event) => setUserDisplayName(event.target.value)} />
               </div>
               <div className="space-y-2">
                 <Label>Moeda base</Label>
                 <Select value={baseCurrency} onChange={(event) => setBaseCurrency(event.target.value)}>
-                  <option value="BRL">BRL â€” Real brasileiro</option>
-                  <option value="USD">USD â€” DÃ³lar americano</option>
-                  <option value="EUR">EUR â€” Euro</option>
+                  <option value="BRL">BRL  Real brasileiro</option>
+                  <option value="USD">USD  Dólar americano</option>
+                  <option value="EUR">EUR  Euro</option>
                 </Select>
               </div>
               <div className="space-y-2">
                 <Label>Locale</Label>
                 <Select value={locale} onChange={(event) => setLocale(event.target.value)}>
-                  <option value="pt-BR">PortuguÃªs (Brasil)</option>
+                  <option value="pt-BR">Português (Brasil)</option>
                   <option value="en-US">English (US)</option>
-                  <option value="es-ES">EspaÃ±ol</option>
+                  <option value="es-ES">Español</option>
                 </Select>
               </div>
               <div className="space-y-2">
@@ -390,7 +390,7 @@ export function OnboardingWizard({
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label>Horizonte futuro padrÃ£o</Label>
+                <Label>Horizonte futuro padrão</Label>
                 <Input
                   type="number"
                   min={1}
@@ -411,14 +411,14 @@ export function OnboardingWizard({
                     <Input value={account.name} onChange={(event) => updateAccount(account.clientId, { name: event.target.value })} />
                   </div>
                   <div className="space-y-2">
-                    <Label>InstituiÃ§Ã£o</Label>
+                    <Label>Instituição</Label>
                     <Input value={account.institution} onChange={(event) => updateAccount(account.clientId, { institution: event.target.value })} />
                   </div>
                   <div className="space-y-2">
                     <Label>Tipo</Label>
                     <Select value={account.type} onChange={(event) => updateAccount(account.clientId, { type: event.target.value as AccountDraft["type"] })}>
                       <option value="checking">Conta corrente</option>
-                      <option value="savings">PoupanÃ§a / CDI</option>
+                      <option value="savings">Poupança / CDI</option>
                       <option value="cash">Dinheiro</option>
                       <option value="investment">Investimentos</option>
                       <option value="reserve">Reserva</option>
@@ -430,7 +430,7 @@ export function OnboardingWizard({
                     <Input value={account.openingBalance} onChange={(event) => updateAccount(account.clientId, { openingBalance: event.target.value })} />
                   </div>
                   <div className="space-y-2 md:col-span-2">
-                    <Label>ObservaÃ§Ãµes</Label>
+                    <Label>Observações</Label>
                     <Input value={account.notes} onChange={(event) => updateAccount(account.clientId, { notes: event.target.value })} />
                   </div>
                   <div className="flex items-center justify-between md:col-span-2">
@@ -440,7 +440,7 @@ export function OnboardingWizard({
                         checked={account.includeInNetWorth}
                         onChange={(event) => updateAccount(account.clientId, { includeInNetWorth: event.target.checked })}
                       />
-                      Entra no patrimÃ´nio
+                      Entra no patrimônio
                     </label>
                     <Button type="button" variant="outline" onClick={() => removeAccount(account.clientId)}>
                       Remover
@@ -515,10 +515,10 @@ export function OnboardingWizard({
                   variant="outline"
                   onClick={() => setCards((current) => [...current, emptyCard(accountOptions[0]?.id ?? "")])}
                 >
-                  Adicionar cartÃ£o
+                  Adicionar cartão
                 </Button>
                 <Button type="button" variant="ghost" onClick={() => setCards([])}>
-                  Pular cartÃµes
+                  Pular cartões
                 </Button>
               </div>
             </section>
@@ -527,7 +527,7 @@ export function OnboardingWizard({
           {step === 4 ? (
             <section className="grid gap-4 md:grid-cols-2">
               <div className="space-y-2">
-                <Label>MÃªs do snapshot</Label>
+                <Label>Mês do snapshot</Label>
                 <Input type="month" value={netWorth.month} onChange={(event) => setNetWorth((current) => ({ ...current, month: event.target.value }))} />
               </div>
               <div className="space-y-2">
@@ -539,11 +539,11 @@ export function OnboardingWizard({
                 <Input value={netWorth.investments} onChange={(event) => setNetWorth((current) => ({ ...current, investments: event.target.value }))} />
               </div>
               <div className="space-y-2">
-                <Label>DÃ­vidas</Label>
+                <Label>Dívidas</Label>
                 <Input value={netWorth.debts} onChange={(event) => setNetWorth((current) => ({ ...current, debts: event.target.value }))} />
               </div>
               <div className="space-y-2 md:col-span-2">
-                <Label>ObservaÃ§Ãµes</Label>
+                <Label>Observações</Label>
                 <Input value={netWorth.notes} onChange={(event) => setNetWorth((current) => ({ ...current, notes: event.target.value }))} />
               </div>
             </section>
@@ -554,7 +554,7 @@ export function OnboardingWizard({
               {recurring.map((item) => (
                 <div key={item.clientId} className="grid gap-4 rounded-2xl border border-[var(--border)] p-4 md:grid-cols-2">
                   <div className="space-y-2">
-                    <Label>TÃ­tulo</Label>
+                    <Label>Título</Label>
                     <Input value={item.title} onChange={(event) => updateRecurring(item.clientId, { title: event.target.value })} />
                   </div>
                   <div className="space-y-2">
@@ -573,14 +573,14 @@ export function OnboardingWizard({
                     <Input value={item.amount} onChange={(event) => updateRecurring(item.clientId, { amount: event.target.value })} />
                   </div>
                   <div className="space-y-2">
-                    <Label>DireÃ§Ã£o</Label>
+                    <Label>Direção</Label>
                     <Select value={item.direction} onChange={(event) => updateRecurring(item.clientId, { direction: event.target.value as RecurringDraft["direction"] })}>
                       <option value="expense">Despesa</option>
                       <option value="income">Receita</option>
                     </Select>
                   </div>
                   <div className="space-y-2">
-                    <Label>FrequÃªncia</Label>
+                    <Label>Frequência</Label>
                     <Select value={item.frequency} onChange={(event) => updateRecurring(item.clientId, { frequency: event.target.value as RecurringDraft["frequency"] })}>
                       <option value="monthly">Mensal</option>
                       <option value="weekly">Semanal</option>
@@ -602,15 +602,15 @@ export function OnboardingWizard({
                     </Select>
                   </div>
                   <div className="space-y-2">
-                    <Label>ComeÃ§a em</Label>
+                    <Label>Começa em</Label>
                     <Input type="date" value={item.startsOn} onChange={(event) => updateRecurring(item.clientId, { startsOn: event.target.value })} />
                   </div>
                   <div className="space-y-2">
-                    <Label>PrÃ³xima ocorrÃªncia</Label>
+                    <Label>Próxima ocorrência</Label>
                     <Input type="date" value={item.nextRunOn} onChange={(event) => updateRecurring(item.clientId, { nextRunOn: event.target.value })} />
                   </div>
                   <div className="space-y-2 md:col-span-2">
-                    <Label>ObservaÃ§Ãµes</Label>
+                    <Label>Observações</Label>
                     <Input value={item.notes} onChange={(event) => updateRecurring(item.clientId, { notes: event.target.value })} />
                   </div>
                 </div>
@@ -624,7 +624,7 @@ export function OnboardingWizard({
                   Adicionar compromisso fixo
                 </Button>
                 <Button type="button" variant="ghost" onClick={() => setRecurring([])}>
-                  Pular recorrÃªncias
+                  Pular recorrências
                 </Button>
               </div>
             </section>
@@ -638,9 +638,9 @@ export function OnboardingWizard({
                 </CardHeader>
                 <CardContent className="space-y-4 text-sm">
                   <div>
-                    <p className="font-medium">PreferÃªncias</p>
+                    <p className="font-medium">Preferências</p>
                     <p className="text-[var(--muted-foreground)]">
-                      {userDisplayName} Â· {baseCurrency} Â· {locale} Â· {themePreference} Â· horizonte {projectionMonths} meses
+                      {userDisplayName} · {baseCurrency} · {locale} · {themePreference} · horizonte {projectionMonths} meses
                     </p>
                   </div>
                   <div>
@@ -648,35 +648,35 @@ export function OnboardingWizard({
                     <ul className="mt-2 space-y-1 text-[var(--muted-foreground)]">
                       {preparedAccounts.map((account) => (
                         <li key={account.clientId}>
-                          {account.name} â€” {account.institution || "sem instituiÃ§Ã£o"} â€” {account.openingBalance}
+                          {account.name}  {account.institution || "sem instituição"}  {account.openingBalance}
                         </li>
                       ))}
                     </ul>
                   </div>
                   <div>
-                    <p className="font-medium">CartÃµes</p>
+                    <p className="font-medium">Cartões</p>
                     <ul className="mt-2 space-y-1 text-[var(--muted-foreground)]">
                       {preparedCards.length ? preparedCards.map((card) => (
                         <li key={card.clientId}>
-                          {card.name} â€” limite {card.limitAmount} â€” fecha dia {card.closeDay}, vence dia {card.dueDay}
+                          {card.name}  limite {card.limitAmount}  fecha dia {card.closeDay}, vence dia {card.dueDay}
                         </li>
-                      )) : <li>Sem cartÃµes iniciais.</li>}
+                      )) : <li>Sem cartões iniciais.</li>}
                     </ul>
                   </div>
                   <div>
-                    <p className="font-medium">PatrimÃ´nio</p>
+                    <p className="font-medium">Patrimônio</p>
                     <p className="text-[var(--muted-foreground)]">
-                      Reservas {netWorth.reserves} Â· Investimentos {netWorth.investments} Â· DÃ­vidas {netWorth.debts}
+                      Reservas {netWorth.reserves} · Investimentos {netWorth.investments} · Dívidas {netWorth.debts}
                     </p>
                   </div>
                   <div>
-                    <p className="font-medium">RecorrÃªncias</p>
+                    <p className="font-medium">Recorrências</p>
                     <ul className="mt-2 space-y-1 text-[var(--muted-foreground)]">
                       {preparedRecurring.length ? preparedRecurring.map((item) => (
                         <li key={item.clientId}>
-                          {item.title} â€” {item.amount} â€” {item.direction === "income" ? "receita" : "despesa"}
+                          {item.title}  {item.amount}  {item.direction === "income" ? "receita" : "despesa"}
                         </li>
-                      )) : <li>Sem recorrÃªncias iniciais.</li>}
+                      )) : <li>Sem recorrências iniciais.</li>}
                     </ul>
                   </div>
                 </CardContent>
@@ -684,20 +684,20 @@ export function OnboardingWizard({
 
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-base">ApÃ³s concluir</CardTitle>
+                  <CardTitle className="text-base">Após concluir</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4 text-sm">
                   <div className="space-y-2">
                     <Label>Destino final</Label>
                     <Select value={destination} onChange={(event) => setDestination(event.target.value as "dashboard" | "import")}>
                       <option value="dashboard">Ir para o dashboard</option>
-                      <option value="import">Ir para a central de importaÃ§Ã£o</option>
+                      <option value="import">Ir para a central de importação</option>
                     </Select>
                   </div>
                   <p className="text-[var(--muted-foreground)]">
                     {source === "money"
-                      ? "Como vocÃª escolheu a Money, faz sentido seguir para a central de importaÃ§Ã£o e rodar o bootstrap completo."
-                      : "Se preferir, finalize e comece usando o app manualmente; a importaÃ§Ã£o continua disponÃ­vel depois."}
+                      ? "Como você escolheu a Money, faz sentido seguir para a central de importação e rodar o bootstrap completo."
+                      : "Se preferir, finalize e comece usando o app manualmente; a importação continua disponível depois."}
                   </p>
                   <Button type="submit" className="w-full">
                     Concluir onboarding

@@ -2,6 +2,7 @@ import { EmptyState } from "@/components/empty-state";
 import { PageHeader } from "@/components/page-header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatCurrencyFromCents } from "@/lib/currency";
+import { formatTransactionDirectionLabel } from "@/lib/formatters";
 import { listBills } from "@/services/cards.service";
 import { listRecurringRules } from "@/services/recurring.service";
 
@@ -52,7 +53,7 @@ export default function CalendarPage() {
                   <tr key={`${item.date}-${index}`}>
                     <td>{item.date}</td>
                     <td>{item.title}</td>
-                    <td>{item.kind}</td>
+                    <td>{item.kind === "Fatura" ? item.kind : formatTransactionDirectionLabel(item.kind)}</td>
                     <td>{formatCurrencyFromCents(item.amountCents)}</td>
                   </tr>
                 ))}

@@ -11,7 +11,7 @@ import { ensureSettings } from "@/services/settings.service";
 export async function updateSettingsAction(formData: FormData) {
   ensureSettings();
   const parsed = settingsUpdateSchema.parse({
-    userDisplayName: String(formData.get("userDisplayName") ?? "VocÃª"),
+    userDisplayName: String(formData.get("userDisplayName") ?? "Você"),
     baseCurrency: String(formData.get("baseCurrency") ?? "BRL"),
     locale: String(formData.get("locale") ?? "pt-BR"),
     themePreference: String(formData.get("themePreference") ?? "system"),
@@ -28,7 +28,7 @@ export async function updateSettingsAction(formData: FormData) {
 export async function completeOnboardingAction(formData: FormData) {
   ensureSettings();
   const parsed = settingsUpdateSchema.parse({
-    userDisplayName: String(formData.get("userDisplayName") ?? "VocÃª"),
+    userDisplayName: String(formData.get("userDisplayName") ?? "Você"),
     baseCurrency: String(formData.get("baseCurrency") ?? "BRL"),
     locale: String(formData.get("locale") ?? "pt-BR"),
     themePreference: String(formData.get("themePreference") ?? "system"),

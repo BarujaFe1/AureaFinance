@@ -19,7 +19,7 @@ export function ensureSettings() {
       locale: "pt-BR",
       projectionMonths: 6,
       themePreference: "system",
-      userDisplayName: "VocÃª",
+      userDisplayName: "Você",
       isOnboarded: false,
       createdAt: now,
       updatedAt: now

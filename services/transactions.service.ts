@@ -5,12 +5,18 @@ import { parseCurrencyToCents } from "@/lib/currency";
 import { uid } from "@/lib/utils";
 import { desc, eq } from "drizzle-orm";
 import type { TransactionCreateInput } from "@/lib/validation";
+import { repairMojibake } from "@/lib/text";
 
 export function listTransactions(params?: { month?: string; accountId?: string; limit?: number }) {
   let rows = db.select().from(transactions).orderBy(desc(transactions.occurredOn), desc(transactions.createdAt)).all();
   if (params?.month) rows = rows.filter((row) => row.competenceMonth === params.month);
   if (params?.accountId) rows = rows.filter((row) => row.accountId === params.accountId);
-  return rows.slice(0, params?.limit ?? rows.length);
+  return rows.slice(0, params?.limit ?? rows.length).map((row) => ({
+    ...row,
+    description: repairMojibake(row.description),
+    counterparty: repairMojibake(row.counterparty ?? ""),
+    notes: repairMojibake(row.notes ?? "")
+  }));
 }
 
 export function createTransaction(input: TransactionCreateInput) {
@@ -20,6 +26,9 @@ export function createTransaction(input: TransactionCreateInput) {
     accountId: input.accountId,
     categoryId: input.categoryId ?? null,
     subcategoryId: input.subcategoryId ?? null,
+    transferId: null,
+    recurringOccurrenceId: null,
+    sourceImportRowId: null,
     direction: input.direction,
     status: input.status,
     description: input.description,
@@ -33,6 +42,27 @@ export function createTransaction(input: TransactionCreateInput) {
     createdAt: now,
     updatedAt: now
   }).run();
+}
+
+export function updateTransaction(id: string, input: TransactionCreateInput) {
+  const existing = db.select().from(transactions).where(eq(transactions.id, id)).get();
+  if (!existing) throw new Error("Transação não encontrada.");
+  const now = nowTs();
+  db.update(transactions).set({
+    accountId: input.accountId,
+    categoryId: input.categoryId ?? null,
+    subcategoryId: input.subcategoryId ?? null,
+    direction: input.direction,
+    status: input.status,
+    description: input.description,
+    amountCents: parseCurrencyToCents(input.amount),
+    occurredOn: input.occurredOn,
+    dueOn: input.dueOn ?? input.occurredOn,
+    competenceMonth: isoMonth(input.occurredOn),
+    notes: input.notes ?? "",
+    isProjected: input.status !== "posted",
+    updatedAt: now
+  }).where(eq(transactions.id, id)).run();
 }
 
 export function deleteTransaction(id: string) {

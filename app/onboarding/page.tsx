@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { PageHeader } from "@/components/page-header";
 import { OnboardingWizard } from "@/components/onboarding/onboarding-wizard";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -6,30 +5,31 @@ import { listCategories } from "@/services/categories.service";
 import { ensureSettings } from "@/services/settings.service";
 import { getMoneyOnboardingDefaults } from "@/services/money-bootstrap.service";
 
-export default function OnboardingPage({
+export default async function OnboardingPage({
   searchParams
 }: {
-  searchParams?: Record<string, string | string[] | undefined>;
+  searchParams?: Promise<Record<string, string | string[] | undefined>>;
 }) {
   const settings = ensureSettings();
   const categories = listCategories().map((category) => ({ id: category.id, name: category.name }));
   const moneyDefaults = getMoneyOnboardingDefaults();
-  const requestedMode = typeof searchParams?.mode === "string" ? searchParams.mode : "money";
+  const resolvedSearchParams = searchParams ? await searchParams : undefined;
+  const requestedMode = typeof resolvedSearchParams?.mode === "string" ? resolvedSearchParams.mode : "money";
   const mode = requestedMode === "manual" ? "manual" : "money";
 
   return (
     <div className="mx-auto flex min-h-screen w-full max-w-6xl flex-col gap-6 px-6 py-10">
       <PageHeader
         title="Primeiro acesso"
-        description="O Aurea Finance pode nascer manualmente ou jÃ¡ carregando contexto Ãºtil da sua planilha Money."
+        description="O Aurea Finance pode nascer manualmente ou já carregando contexto útil da sua planilha Money."
         actions={
           <div className="flex flex-wrap gap-3">
-            <Link href="/onboarding?mode=money" className="inline-flex h-10 items-center rounded-xl border border-[var(--border)] px-4 text-sm">
+            <a href="/onboarding?mode=money" className="inline-flex h-10 items-center rounded-xl border border-[var(--border)] px-4 text-sm">
               Usar a Money
-            </Link>
-            <Link href="/onboarding?mode=manual" className="inline-flex h-10 items-center rounded-xl border border-[var(--border)] px-4 text-sm">
+            </a>
+            <a href="/onboarding?mode=manual" className="inline-flex h-10 items-center rounded-xl border border-[var(--border)] px-4 text-sm">
               Configurar manualmente
-            </Link>
+            </a>
           </div>
         }
       />
@@ -37,10 +37,10 @@ export default function OnboardingPage({
       <section className="grid gap-4 lg:grid-cols-3">
         <Card className={mode === "money" ? "border-[var(--primary)]" : ""}>
           <CardHeader>
-            <CardTitle className="text-base">ComeÃ§ar com a Money</CardTitle>
+            <CardTitle className="text-base">Começar com a Money</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2 text-sm text-[var(--muted-foreground)]">
-            <p>PrÃ©-preenche contas, cartÃµes, patrimÃ´nio, compromissos fixos e leva vocÃª para a central de migraÃ§Ã£o assistida.</p>
+            <p>Pré-preenche contas, cartões, patrimônio, compromissos fixos e leva você para a central de migração assistida.</p>
             <p>Ideal para fazer o app nascer com contexto real desde o primeiro uso.</p>
           </CardContent>
         </Card>
@@ -50,7 +50,7 @@ export default function OnboardingPage({
           </CardHeader>
           <CardContent className="space-y-2 text-sm text-[var(--muted-foreground)]">
             <p>Fluxo mais enxuto para montar a base a partir do zero, pulando o que for opcional.</p>
-            <p>Depois vocÃª continua podendo importar dados histÃ³ricos pela tela /import.</p>
+            <p>Depois você continua podendo importar dados históricos pela tela /import.</p>
           </CardContent>
         </Card>
         <Card>
@@ -58,7 +58,7 @@ export default function OnboardingPage({
             <CardTitle className="text-base">Seu estado atual</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2 text-sm text-[var(--muted-foreground)]">
-            <p>UsuÃ¡rio atual: {settings.userDisplayName}</p>
+            <p>Usuário atual: {settings.userDisplayName}</p>
             <p>Moeda base: {settings.baseCurrency}</p>
             <p>Locale: {settings.locale}</p>
             <p>Horizonte futuro: {settings.projectionMonths} meses</p>

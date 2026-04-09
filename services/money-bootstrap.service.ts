@@ -22,6 +22,7 @@ import { materializeOccurrences } from "@/lib/finance";
 import { nowTs } from "@/lib/dates";
 import { slugify, toJson, uid } from "@/lib/utils";
 import { ensureSettings } from "@/services/settings.service";
+import { repairDeepText } from "@/lib/text";
 
 export type MoneyBootstrapResult = {
   accountsCreated: number;
@@ -55,7 +56,7 @@ function ensureMoneyBatch(now: number) {
       .update(importBatches)
       .set({
         status: "committed",
-        workbookSummaryJson: toJson(moneyBootstrapDataset.sheetInventory),
+        workbookSummaryJson: toJson({ sheets: moneyBootstrapDataset.sheetInventory }),
         dryRunReportJson: toJson({
           recognizedSource: "money",
           detectedSheets: moneyBootstrapDataset.sheetInventory.length,
@@ -79,7 +80,7 @@ function ensureMoneyBatch(now: number) {
       id,
       filename: "Money.xlsx",
       status: "committed",
-      workbookSummaryJson: toJson(moneyBootstrapDataset.sheetInventory),
+      workbookSummaryJson: toJson({ sheets: moneyBootstrapDataset.sheetInventory }),
       dryRunReportJson: toJson({
         recognizedSource: "money",
         detectedSheets: moneyBootstrapDataset.sheetInventory.length,
@@ -97,7 +98,7 @@ function ensureMoneyBatch(now: number) {
 }
 
 export function getMoneyBootstrapDataset() {
-  return moneyBootstrapDataset;
+  return repairDeepText(moneyBootstrapDataset);
 }
 
 export function getMoneyOnboardingDefaults() {
@@ -106,13 +107,13 @@ export function getMoneyOnboardingDefaults() {
   return {
     source: "money" as const,
     initialSettings: {
-      userDisplayName: currentSettings.userDisplayName === "VocÃª" ? "Felipe" : currentSettings.userDisplayName,
-      baseCurrency: currentSettings.baseCurrency || moneyBootstrapDataset.currency,
-      locale: currentSettings.locale || moneyBootstrapDataset.locale,
+      userDisplayName: currentSettings.userDisplayName === "Você" ? "Felipe" : currentSettings.userDisplayName,
+      baseCurrency: currentSettings.baseCurrency || getMoneyBootstrapDataset().currency,
+      locale: currentSettings.locale || getMoneyBootstrapDataset().locale,
       themePreference: currentSettings.themePreference || "system",
       projectionMonths: currentSettings.projectionMonths || 6
     },
-    dataset: moneyBootstrapDataset
+    dataset: getMoneyBootstrapDataset()
   };
 }
 

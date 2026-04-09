@@ -1,6 +1,6 @@
 import { eq } from "drizzle-orm";
 import { db } from "@/db/client";
-import { creditCardBills, monthlyClosings, transactions } from "@/db/schema";
+import { accounts, creditCardBills, monthlyClosings, transactions } from "@/db/schema";
 import { endOfMonthIso, nowTs } from "@/lib/dates";
 import { closeMonthSnapshot, signedAmount, type TransactionDirection } from "@/lib/finance";
 import { uid, fromJson, toJson } from "@/lib/utils";
@@ -13,8 +13,9 @@ function getMonthRange(month: string) {
 
 function getOpeningBalanceForMonth(month: string) {
   const { start } = getMonthRange(month);
+  const openingFromAccounts = db.select().from(accounts).all().reduce((sum, account) => sum + account.openingBalanceCents, 0);
   const priorTransactions = db.select().from(transactions).all().filter((row) => row.occurredOn < start && row.status !== "void");
-  return priorTransactions.reduce((sum, row) => sum + signedAmount(row.direction as TransactionDirection, row.amountCents), 0);
+  return priorTransactions.reduce((sum, row) => sum + signedAmount(row.direction as TransactionDirection, row.amountCents), openingFromAccounts);
 }
 
 export function buildMonthlyClosing(month: string) {
@@ -66,4 +67,12 @@ export function listMonthlyClosings() {
     ...row,
     snapshot: fromJson<{ transactionCount?: number; openBills?: number }>(row.snapshotJson, {})
   }));
+}
+
+
+export function reopenMonthlyClosing(month: string) {
+  const existing = db.select().from(monthlyClosings).where(eq(monthlyClosings.month, month)).get();
+  if (!existing) return null;
+  db.delete(monthlyClosings).where(eq(monthlyClosings.id, existing.id)).run();
+  return existing.id;
 }

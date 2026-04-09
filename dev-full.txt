@@ -1,0 +1,304 @@
+
+> aurea-finance@0.1.0 dev D:\Dev\Projetos VibeCoding\aurea-finance
+> next dev
+
+   Ôû▓ Next.js 15.2.0
+   - Local:        http://localhost:3000
+   - Network:      http://192.168.0.6:3000
+
+ Ô£ô Starting...
+ Ô£ô Ready in 1915ms
+ Ôùï Compiling /dashboard ...
+ Ô£ô Compiled /dashboard in 7.2s (2102 modules)
+node.exe :  Ô¿» TypeError: Cannot read properties of undefined (reading 'length')
+No C:\nvm4w\nodejs\pnpm.ps1:16 caractere:5
++     & "$basedir/node$exe"  "$basedir/node_modules/corepack/dist/pnpm. ...
++     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ( Ô¿» TypeError:...ading 'length'):String) [], Rem 
+   oteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+    at eval (services\cards.service.ts:70:90)
+    at Array.filter (<anonymous>)
+    at eval (services\cards.service.ts:70:33)
+    at Array.map (<anonymous>)
+    at getCardsSummary (services\cards.service.ts:69:27)
+    at getDashboardData (services\dashboard.service.ts:10:31)
+    at DashboardPage (app\(workspace)\dashboard\page.tsx:11:31)
+  68 |   const horizonEnd = addMonthsIso(`${today.slice(0, 7)}-01`, 
+Math.max(ensureSettings().projectionMonths, 12));
+  69 |   return listCreditCards().map((card) => {
+> 70 |     const openBills = card.bills.filter((bill) => bill.status !== "paid" && 
+(bill.entries.length > 0 || bill.totalAmountCents > 0));
+     |                                                                                         
+ ^
+  71 |     const usedCents = openBills.reduce((sum, bill) => sum + 
+Math.max(bill.totalAmountCents - bill.paidAmountCents, 0), 0);
+  72 |     const visibleFutureBills = openBills.filter((bill) => bill.dueOn <= horizonEnd);
+  73 |     const nextBill = [...visibleFutureBills].sort((a, b) => 
+a.dueOn.localeCompare(b.dueOn))[0] ?? null; {
+  digest: '3595624425'
+}
+ GET /dashboard 200 in 8856ms
+ Ô£ô Compiled in 1784ms (899 modules)
+ Ô£ô Compiled in 233ms (899 modules)
+ Ô£ô Compiled in 207ms (899 modules)
+ Ô£ô Compiled in 156ms (899 modules)
+ Ô£ô Compiled in 156ms (899 modules)
+ Ô£ô Compiled in 182ms (899 modules)
+ Ô£ô Compiled in 193ms (899 modules)
+ Ô£ô Compiled in 160ms (899 modules)
+ Ô£ô Compiled in 157ms (899 modules)
+ Ô£ô Compiled in 149ms (899 modules)
+ Ô£ô Compiled in 175ms (899 modules)
+ Ôùï Compiling /accounts ...
+ Ô£ô Compiled /accounts in 3.9s (2434 modules)
+ GET /accounts 200 in 4488ms
+ Ô¿» TypeError: Cannot read properties of undefined (reading 'length')
+    at eval (services\cards.service.ts:70:90)
+    at Array.filter (<anonymous>)
+    at eval (services\cards.service.ts:70:33)
+    at Array.map (<anonymous>)
+    at getCardsSummary (services\cards.service.ts:69:27)
+    at getDashboardData (services\dashboard.service.ts:10:31)
+    at DashboardPage (app\(workspace)\dashboard\page.tsx:11:31)
+  68 |   const horizonEnd = addMonthsIso(`${today.slice(0, 7)}-01`, 
+Math.max(ensureSettings().projectionMonths, 12));
+  69 |   return listCreditCards().map((card) => {
+> 70 |     const openBills = card.bills.filter((bill) => bill.status !== "paid" && 
+(bill.entries.length > 0 || bill.totalAmountCents > 0));
+     |                                                                                         
+ ^
+  71 |     const usedCents = openBills.reduce((sum, bill) => sum + 
+Math.max(bill.totalAmountCents - bill.paidAmountCents, 0), 0);
+  72 |     const visibleFutureBills = openBills.filter((bill) => bill.dueOn <= horizonEnd);
+  73 |     const nextBill = [...visibleFutureBills].sort((a, b) => 
+a.dueOn.localeCompare(b.dueOn))[0] ?? null; {
+  digest: '3595624425'
+}
+ GET /dashboard 200 in 85ms
+ Ôùï Compiling /transactions ...
+ Ô£ô Compiled /transactions in 606ms (2461 modules)
+ GET /transactions 200 in 856ms
+ Ô£ô Compiled /cards in 393ms (2467 modules)
+ Ô¿» TypeError: Cannot read properties of undefined (reading 'length')
+    at eval (services\cards.service.ts:70:90)
+    at Array.filter (<anonymous>)
+    at eval (services\cards.service.ts:70:33)
+    at Array.map (<anonymous>)
+    at getCardsSummary (services\cards.service.ts:69:27)
+    at CardsPage (app\(workspace)\cards\page.tsx:16:31)
+  68 |   const horizonEnd = addMonthsIso(`${today.slice(0, 7)}-01`, 
+Math.max(ensureSettings().projectionMonths, 12));
+  69 |   return listCreditCards().map((card) => {
+> 70 |     const openBills = card.bills.filter((bill) => bill.status !== "paid" && 
+(bill.entries.length > 0 || bill.totalAmountCents > 0));
+     |                                                                                         
+ ^
+  71 |     const usedCents = openBills.reduce((sum, bill) => sum + 
+Math.max(bill.totalAmountCents - bill.paidAmountCents, 0), 0);
+  72 |     const visibleFutureBills = openBills.filter((bill) => bill.dueOn <= horizonEnd);
+  73 |     const nextBill = [...visibleFutureBills].sort((a, b) => 
+a.dueOn.localeCompare(b.dueOn))[0] ?? null; {
+  digest: '3470361009'
+}
+ GET /cards 200 in 539ms
+ Ô£ô Compiled /bills in 422ms (2469 modules)
+ GET /bills 200 in 601ms
+ Ô£ô Compiled /recurring in 479ms (2473 modules)
+ GET /recurring 200 in 926ms
+ Ô£ô Compiled in 627ms (925 modules)
+ Ô£ô Compiled in 168ms (925 modules)
+ Ô£ô Compiled in 152ms (925 modules)
+ Ô£ô Compiled in 149ms (925 modules)
+ Ô£ô Compiled in 145ms (925 modules)
+ Ô£ô Compiled in 147ms (925 modules)
+ Ô£ô Compiled in 154ms (925 modules)
+ Ô£ô Compiled in 148ms (925 modules)
+ Ô£ô Compiled in 144ms (925 modules)
+ Ô£ô Compiled in 144ms (925 modules)
+ Ô£ô Compiled in 142ms (925 modules)
+ Ô£ô Compiled in 139ms (925 modules)
+ Ô£ô Compiled in 136ms (925 modules)
+ Ô£ô Compiled in 148ms (925 modules)
+ Ô£ô Compiled in 144ms (925 modules)
+ Ô£ô Compiled in 146ms (925 modules)
+ Ô£ô Compiled in 146ms (925 modules)
+ Ô£ô Compiled in 146ms (925 modules)
+ Ôùï Compiling /calendar ...
+ Ô£ô Compiled /calendar in 527ms (2489 modules)
+ GET /calendar 200 in 808ms
+ Ô£ô Compiled in 359ms (925 modules)
+ GET /calendar 200 in 205ms
+ Ô£ô Compiled in 241ms (925 modules)
+ GET /calendar 200 in 193ms
+ Ô£ô Compiled in 265ms (925 modules)
+ GET /calendar 200 in 250ms
+ Ô£ô Compiled in 250ms (925 modules)
+ GET /calendar 200 in 199ms
+ Ô£ô Compiled in 256ms (925 modules)
+ GET /calendar 200 in 240ms
+ Ô£ô Compiled in 255ms (925 modules)
+ GET /calendar 200 in 240ms
+ Ô£ô Compiled in 258ms (925 modules)
+ GET /calendar 200 in 241ms
+ Ô£ô Compiled in 244ms (925 modules)
+ GET /calendar 200 in 237ms
+ Ô£ô Compiled in 245ms (925 modules)
+ GET /calendar 200 in 238ms
+ Ô£ô Compiled in 249ms (925 modules)
+ GET /calendar 200 in 243ms
+ Ô£ô Compiled in 243ms (925 modules)
+ GET /calendar 200 in 237ms
+ Ô£ô Compiled in 247ms (925 modules)
+ GET /calendar 200 in 239ms
+ Ô£ô Compiled in 296ms (925 modules)
+ GET /calendar 200 in 289ms
+ Ô£ô Compiled in 254ms (925 modules)
+ GET /calendar 200 in 248ms
+ Ô£ô Compiled in 254ms (925 modules)
+ GET /calendar 200 in 237ms
+ Ô£ô Compiled in 268ms (925 modules)
+ GET /calendar 200 in 255ms
+ Ôùï Compiling /closings ...
+ Ô£ô Compiled /future in 1963ms (2493 modules)
+ Ôùï Compiling /net-worth ...
+ Ô£ô Compiled /categories in 975ms (2497 modules)
+ Ô£ô Compiled in 484ms (914 modules)
+ GET /closings 200 in 4076ms
+ GET /categories 200 in 1258ms
+ GET /net-worth 200 in 2071ms
+ GET /future 200 in 2857ms
+ GET /net-worth 200 in 44ms
+ GET /future 200 in 142ms
+ GET /closings 200 in 19ms
+ GET /calendar 200 in 102ms
+ GET /recurring 200 in 183ms
+ GET /net-worth 200 in 47ms
+ GET /categories 200 in 26ms
+ Ôùï Compiling /import ...
+ Ô£ô Compiled /import in 1332ms (2544 modules)
+ GET /import 200 in 1592ms
+ Ôùï Compiling /settings ...
+ Ô£ô Compiled /settings in 677ms (2548 modules)
+ GET /settings 200 in 787ms
+ Ô£ô Compiled in 166ms (938 modules)
+ GET /settings 200 in 46ms
+ Ô£ô Compiled in 155ms (938 modules)
+ GET /settings 200 in 34ms
+ Ô£ô Compiled in 153ms (938 modules)
+ GET /settings 200 in 32ms
+ Ô£ô Compiled in 226ms (938 modules)
+ GET /settings 200 in 33ms
+ Ô£ô Compiled in 148ms (938 modules)
+ GET /settings 200 in 32ms
+ Ô£ô Compiled in 152ms (938 modules)
+ GET /settings 200 in 34ms
+ Ô£ô Compiled in 153ms (938 modules)
+ GET /settings 200 in 31ms
+ Ô£ô Compiled in 180ms (938 modules)
+ GET /settings 200 in 42ms
+ Ô£ô Compiled in 176ms (938 modules)
+ GET /settings 200 in 52ms
+ Ô£ô Compiled in 169ms (938 modules)
+ GET /settings 200 in 40ms
+ Ô£ô Compiled in 1771ms (938 modules)
+ GET /settings 200 in 39ms
+ Ô£ô Compiled in 398ms (938 modules)
+ GET /settings 200 in 46ms
+ Ô£ô Compiled in 214ms (938 modules)
+ GET /settings 200 in 34ms
+ Ô£ô Compiled in 210ms (938 modules)
+ GET /settings 200 in 87ms
+ Ô£ô Compiled in 202ms (938 modules)
+ GET /settings 200 in 46ms
+ Ô£ô Compiled in 388ms (938 modules)
+ GET /settings 200 in 250ms
+ Ô£ô Compiled in 243ms (938 modules)
+ GET /settings 200 in 37ms
+ Ô£ô Compiled in 181ms (938 modules)
+ GET /settings 200 in 49ms
+ Ô£ô Compiled in 220ms (938 modules)
+ GET /settings 200 in 37ms
+ Ô£ô Compiled in 411ms (938 modules)
+ Ô£ô Compiled in 301ms (938 modules)
+ GET /settings 200 in 310ms
+ GET /settings 200 in 39ms
+ Ô£ô Compiled in 278ms (938 modules)
+ GET /settings 200 in 40ms
+ Ô£ô Compiled in 168ms (938 modules)
+ GET /settings 200 in 45ms
+ Ô£ô Compiled in 164ms (938 modules)
+ GET /settings 200 in 39ms
+ Ô£ô Compiled in 160ms (938 modules)
+ GET /settings 200 in 78ms
+ Ô£ô Compiled in 170ms (938 modules)
+ GET /settings 200 in 47ms
+ Ô£ô Compiled in 164ms (938 modules)
+ GET /settings 200 in 40ms
+ Ô£ô Compiled in 166ms (938 modules)
+ GET /settings 200 in 36ms
+ Ô£ô Compiled in 204ms (938 modules)
+ GET /settings 200 in 43ms
+ Ô£ô Compiled in 184ms (938 modules)
+ GET /settings 200 in 57ms
+ Ô£ô Compiled in 157ms (938 modules)
+ GET /settings 200 in 38ms
+ Ô£ô Compiled in 155ms (938 modules)
+ GET /settings 200 in 32ms
+ Ô£ô Compiled in 185ms (938 modules)
+ GET /settings 200 in 187ms
+ Ô£ô Compiled in 197ms (938 modules)
+ GET /settings 200 in 40ms
+ Ô£ô Compiled in 169ms (938 modules)
+ GET /settings 200 in 36ms
+ Ô£ô Compiled in 1080ms (938 modules)
+ GET /settings 200 in 71ms
+ Ô£ô Compiled in 231ms (938 modules)
+ GET /settings 200 in 36ms
+ Ô£ô Compiled in 165ms (938 modules)
+ GET /settings 200 in 32ms
+ Ô£ô Compiled in 183ms (938 modules)
+ GET /settings 200 in 44ms
+ Ô£ô Compiled in 150ms (938 modules)
+ GET /settings 200 in 33ms
+ Ô£ô Compiled in 143ms (938 modules)
+ GET /settings 200 in 30ms
+ Ô£ô Compiled in 166ms (938 modules)
+ GET /settings 200 in 72ms
+ Ô£ô Compiled in 229ms (938 modules)
+ Ô£ô Compiled in 171ms (938 modules)
+ Ô£ô Compiled in 167ms (938 modules)
+ Ô£ô Compiled in 160ms (938 modules)
+ Ô£ô Compiled in 150ms (938 modules)
+ Ô£ô Compiled in 232ms (938 modules)
+ Ô£ô Compiled in 149ms (938 modules)
+ Ô£ô Compiled in 156ms (938 modules)
+ Ô£ô Compiled in 153ms (938 modules)
+ Ô£ô Compiled in 163ms (938 modules)
+ Ô£ô Compiled in 158ms (938 modules)
+ Ô£ô Compiled in 187ms (938 modules)
+ Ô£ô Compiled in 160ms (938 modules)
+ Ô£ô Compiled in 206ms (938 modules)
+ Ô£ô Compiled in 164ms (938 modules)
+ Ô£ô Compiled in 155ms (938 modules)
+ Ô£ô Compiled in 154ms (938 modules)
+ Ô£ô Compiled in 153ms (938 modules)
+ Ô£ô Compiled in 150ms (938 modules)
+ Ô£ô Compiled in 148ms (938 modules)
+ Ô£ô Compiled in 295ms (938 modules)
+ Ô£ô Compiled in 159ms (938 modules)
+ Ô£ô Compiled in 144ms (938 modules)
+ Ô£ô Compiled in 149ms (938 modules)
+ Ô£ô Compiled in 189ms (938 modules)
+ Ô£ô Compiled in 154ms (938 modules)
+ Ô£ô Compiled in 163ms (938 modules)
+ Ô£ô Compiled in 160ms (938 modules)
+ Ô£ô Compiled in 169ms (938 modules)
+ Ô£ô Compiled in 185ms (938 modules)
+ Ô£ô Compiled in 156ms (938 modules)
+ Ô£ô Compiled in 1237ms (938 modules)
+ Ô£ô Compiled in 516ms (938 modules)
+ Ô£ô Compiled in 286ms (938 modules)
+ Ô£ô Compiled in 153ms (938 modules)
+ Ô£ô Compiled in 3.4s (2433 modules)

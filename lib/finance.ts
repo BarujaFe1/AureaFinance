@@ -1,5 +1,5 @@
-import { INSTALLMENT_LABEL_PATTERN } from "@/lib/constants";
-import { addMonthsIso, isoDate, isoMonth, startOfMonthIso } from "@/lib/dates";
+import { INSTALLMENT_LABEL_PATTERN } from "./constants";
+import { addDaysIso, addMonthsIso, isoDate, isoMonth, startOfMonthIso, withDayOfMonthIso } from "./dates";
 
 export type TransactionDirection =
   | "income"
@@ -16,6 +16,29 @@ export type BalanceTransaction = {
   amountCents: number;
   status: TransactionStatus;
 };
+
+const transactionDirections: TransactionDirection[] = ["income", "expense", "transfer_in", "transfer_out", "bill_payment", "adjustment"];
+const transactionStatuses: TransactionStatus[] = ["posted", "scheduled", "void"];
+
+export function isTransactionDirection(value: unknown): value is TransactionDirection {
+  return transactionDirections.includes(value as TransactionDirection);
+}
+
+export function isTransactionStatus(value: unknown): value is TransactionStatus {
+  return transactionStatuses.includes(value as TransactionStatus);
+}
+
+export function toBalanceTransaction(value: { direction: unknown; amountCents: number; status: unknown }): BalanceTransaction {
+  return {
+    direction: isTransactionDirection(value.direction) ? value.direction : "expense",
+    amountCents: value.amountCents,
+    status: isTransactionStatus(value.status) ? value.status : "posted"
+  };
+}
+
+export function toBalanceTransactions<T extends { direction: unknown; amountCents: number; status: unknown }>(values: T[]) {
+  return values.map(toBalanceTransaction);
+}
 
 export function signedAmount(direction: TransactionDirection, amountCents: number) {
   if (direction === "income" || direction === "transfer_in") return Math.abs(amountCents);
@@ -42,22 +65,18 @@ export function splitInstallments(totalAmountCents: number, count: number) {
 }
 
 export function resolveBillMonthForPurchase(purchaseDate: string, closeDay: number) {
-  const date = new Date(purchaseDate);
-  const purchaseDay = Number(isoDate(date).slice(8, 10));
-  if (purchaseDay <= closeDay) return isoMonth(date);
-  return isoMonth(new Date(addMonthsIso(startOfMonthIso(date), 1)));
+  const normalized = isoDate(purchaseDate);
+  const purchaseDay = Number(normalized.slice(8, 10));
+  if (purchaseDay <= closeDay) return normalized.slice(0, 7);
+  return addMonthsIso(`${normalized.slice(0, 7)}-01`, 1).slice(0, 7);
 }
 
 export function resolveBillDueDate(billMonth: string, dueDay: number) {
-  const due = new Date(addMonthsIso(`${billMonth}-01`, 1));
-  due.setDate(dueDay);
-  return isoDate(due);
+  return withDayOfMonthIso(addMonthsIso(`${billMonth}-01`, 1), dueDay);
 }
 
 export function resolveBillCloseDate(billMonth: string, closeDay: number) {
-  const close = new Date(`${billMonth}-01`);
-  close.setDate(closeDay);
-  return isoDate(close);
+  return withDayOfMonthIso(`${billMonth}-01`, closeDay);
 }
 
 export function generateInstallments(input: {
@@ -69,7 +88,7 @@ export function generateInstallments(input: {
 }) {
   const firstBillMonth = resolveBillMonthForPurchase(input.purchaseDate, input.closeDay);
   return splitInstallments(input.totalAmountCents, input.installmentCount).map((amountCents, index) => {
-    const billMonth = isoMonth(new Date(addMonthsIso(`${firstBillMonth}-01`, index)));
+    const billMonth = addMonthsIso(`${firstBillMonth}-01`, index).slice(0, 7);
     return {
       installmentNumber: index + 1,
       amountCents,
@@ -80,6 +99,15 @@ export function generateInstallments(input: {
   });
 }
 
+function occurrenceOnInterval(anchorDate: string, frequency: "weekly" | "monthly" | "yearly", step: number) {
+  if (step === 0) return anchorDate;
+  if (frequency === "weekly") return addDaysIso(anchorDate, step * 7);
+  const anchorDay = Number(anchorDate.slice(8, 10));
+  const anchorMonthStart = startOfMonthIso(anchorDate);
+  const monthJump = frequency === "yearly" ? step * 12 : step;
+  return withDayOfMonthIso(addMonthsIso(anchorMonthStart, monthJump), anchorDay);
+}
+
 export function materializeOccurrences(rule: {
   nextRunOn: string;
   endsOn?: string | null;
@@ -88,21 +116,22 @@ export function materializeOccurrences(rule: {
   direction: TransactionDirection;
 }, horizonMonths = 3) {
   const items: { dueOn: string; amountCents: number; direction: TransactionDirection }[] = [];
-  let cursor = rule.nextRunOn;
-  const limit = addMonthsIso(startOfMonthIso(rule.nextRunOn), horizonMonths);
-  while (cursor <= limit) {
-    if (!rule.endsOn || cursor <= rule.endsOn) {
-      items.push({ dueOn: cursor, amountCents: rule.amountCents, direction: rule.direction });
-    }
-    cursor = rule.frequency === "weekly" ? addDaysIso(cursor, 7) : rule.frequency === "yearly" ? addMonthsIso(cursor, 12) : addMonthsIso(cursor, 1);
-  }
-  return items;
-}
+  const anchorDate = isoDate(rule.nextRunOn);
+  const limit = addMonthsIso(anchorDate, horizonMonths);
+  let step = 0;
+  let guard = 0;
 
-function addDaysIso(date: string, amount: number) {
-  const next = new Date(date);
-  next.setDate(next.getDate() + amount);
-  return isoDate(next);
+  while (guard < 512) {
+    const dueOn = occurrenceOnInterval(anchorDate, rule.frequency, step);
+    if (dueOn > limit) break;
+    if (!rule.endsOn || dueOn <= rule.endsOn) {
+      items.push({ dueOn, amountCents: rule.amountCents, direction: rule.direction });
+    }
+    step += 1;
+    guard += 1;
+  }
+
+  return items;
 }
 
 export function closeMonthSnapshot(input: {

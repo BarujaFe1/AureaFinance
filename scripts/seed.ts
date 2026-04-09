@@ -1,6 +1,6 @@
 import { eq } from "drizzle-orm";
 import { db } from "@/db/client";
-import { accounts, categories, creditCardBills, creditCards, recurringRules, settings, tags } from "@/db/schema";
+import { accountBalanceSnapshots, accounts, categories, creditCardBills, creditCards, cryptoPositions, netWorthSnapshots, recurringRules, reserves, settings, stockPositions, tags } from "@/db/schema";
 import { parseCurrencyToCents } from "@/lib/currency";
 import { nowTs } from "@/lib/dates";
 import { slugify, uid } from "@/lib/utils";
@@ -108,6 +108,91 @@ function ensureBill(cardId: string, dueOn: string, amount: string) {
   }).run();
 }
 
+
+function ensureAccountSnapshot(accountId: string, snapshotDate: string, amount: string, source = "seed") {
+  const existing = db.select().from(accountBalanceSnapshots).all().find((row) => row.accountId === accountId && row.snapshotDate === snapshotDate);
+  if (existing) return;
+  db.insert(accountBalanceSnapshots).values({
+    id: uid("snap"),
+    accountId,
+    snapshotDate,
+    balanceCents: parseCurrencyToCents(amount),
+    source,
+    createdAt: now
+  }).run();
+}
+
+function ensureReserve(name: string, amount: string) {
+  const existing = db.select().from(reserves).all().find((row) => row.name === name);
+  if (existing) return existing;
+  const id = uid("res");
+  db.insert(reserves).values({
+    id,
+    name,
+    investedCents: parseCurrencyToCents(amount),
+    previousValueCents: parseCurrencyToCents(amount),
+    currentValueCents: parseCurrencyToCents(amount),
+    totalProfitCents: 0,
+    monthlyProfitCents: 0,
+    accountId: null,
+    createdAt: now,
+    updatedAt: now
+  }).run();
+  return db.select().from(reserves).where(eq(reserves.id, id)).get()!;
+}
+
+function ensureStock(ticker: string, fullName: string, quantity: number, amount: string) {
+  const existing = db.select().from(stockPositions).all().find((row) => row.ticker === ticker);
+  if (existing) return existing;
+  const id = uid("stk");
+  db.insert(stockPositions).values({
+    id,
+    ticker,
+    fullName,
+    quantity,
+    investedCents: parseCurrencyToCents(amount),
+    previousCents: parseCurrencyToCents(amount),
+    currentCents: parseCurrencyToCents(amount),
+    resultTotalCents: 0,
+    createdAt: now,
+    updatedAt: now
+  }).run();
+  return db.select().from(stockPositions).where(eq(stockPositions.id, id)).get()!;
+}
+
+function ensureCrypto(name: string, quantity: number, amount: string) {
+  const existing = db.select().from(cryptoPositions).all().find((row) => row.name === name);
+  if (existing) return existing;
+  const id = uid("cry");
+  db.insert(cryptoPositions).values({
+    id,
+    name,
+    quantity,
+    investedCents: parseCurrencyToCents(amount),
+    previousCents: parseCurrencyToCents(amount),
+    currentCents: parseCurrencyToCents(amount),
+    totalProfitCents: 0,
+    createdAt: now,
+    updatedAt: now
+  }).run();
+  return db.select().from(cryptoPositions).where(eq(cryptoPositions.id, id)).get()!;
+}
+
+function ensureDailyNetWorthSnapshot(date: string, totalCents: number) {
+  const existing = db.select().from(netWorthSnapshots).where(eq(netWorthSnapshots.date, date)).get();
+  if (existing) return;
+  db.insert(netWorthSnapshots).values({
+    id: uid("nws"),
+    date,
+    accountBalanceCents: 250_000,
+    investment1Cents: 300_000,
+    investment2Cents: totalCents - 550_000,
+    totalCents,
+    variationType: "seed",
+    createdAt: now
+  }).run();
+}
+
 function ensureRecurring(title: string, accountId: string, amount: string, nextRunOn: string, direction: "income" | "expense", notes = "") {
   const exists = db.select().from(recurringRules).all().find((row) => row.title === title);
   if (exists) return;
@@ -183,5 +268,15 @@ function firstBusinessDayAfter12() {
 ensureRecurring("Mesada Olga", mercadoPagoCc.id, "1000,00", firstBusinessDayAfter12(), "income", "FIRST_BUSINESS_DAY_AFTER_12");
 ensureRecurring("Internet/GloboPlay", mercadoPagoCc.id, "79,89", `${new Date().toISOString().slice(0, 7)}-21`, "expense");
 ensureRecurring("SmartFit", nuBankCc.id, "149,90", `${new Date().toISOString().slice(0, 7)}-25`, "expense", "CARD_RECURRING");
+
+ensureAccountSnapshot(mercadoPagoCc.id, new Date().toISOString().slice(0, 10), "1984,21");
+ensureAccountSnapshot(nuBankCc.id, new Date().toISOString().slice(0, 10), "0,00");
+ensureReserve("Reserva de emergência", "3806,69");
+ensureReserve("Notebook", "695,93");
+ensureStock("MELI34", "Mercado Livre", 1, "141,68");
+ensureStock("BABA34", "Alibaba", 1, "118,00");
+ensureCrypto("Bitcoin", 0.00032967, "239,71");
+ensureCrypto("Ethereum", 0.02030612, "232,36");
+ensureDailyNetWorthSnapshot(new Date().toISOString().slice(0, 10), parseCurrencyToCents("12856,52"));
 
 console.log("Seed concluída.");

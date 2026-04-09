@@ -65,16 +65,38 @@ export const settingsUpdateSchema = z.object({
   locale: z.string().min(2).default("pt-BR"),
   projectionMonths: z.coerce.number().int().min(1).max(36).default(6),
   themePreference: z.enum(["light", "dark", "system"]).default("system"),
-  userDisplayName: z.string().optional().default("VocÃª")
+  userDisplayName: z.string().optional().default("Você")
 });
 export type SettingsUpdateInput = z.infer<typeof settingsUpdateSchema>;
 
 export const onboardingPayloadSchema = z.object({
   source: z.enum(["manual", "money"]).default("manual"),
-  userDisplayName: z.string().min(1).default("VocÃª"),
+  userDisplayName: z.string().min(1).default("Você"),
   baseCurrency: z.string().min(3).default("BRL"),
   locale: z.string().min(2).default("pt-BR"),
   projectionMonths: z.coerce.number().int().min(1).max(36).default(6),
   themePreference: z.enum(["light", "dark", "system"]).default("system")
 });
 export type OnboardingPayload = z.infer<typeof onboardingPayloadSchema>;
+
+
+export const accountBalanceSnapshotSchema = z.object({
+  accountId: z.string().min(1),
+  snapshotDate: z.string().min(10),
+  balance: z.string().min(1),
+  source: z.string().optional().default("manual")
+});
+export type AccountBalanceSnapshotInput = z.infer<typeof accountBalanceSnapshotSchema>;
+
+export const assetPositionUpsertSchema = z.object({
+  assetType: z.enum(["reserve", "stock", "crypto"]),
+  assetId: z.string().optional(),
+  label: z.string().min(1),
+  fullName: z.string().optional(),
+  quantity: z.string().optional(),
+  invested: z.string().optional(),
+  currentValue: z.string().min(1),
+  snapshotDate: z.string().optional(),
+  notes: z.string().optional().default("")
+});
+export type AssetPositionUpsertInput = z.infer<typeof assetPositionUpsertSchema>;

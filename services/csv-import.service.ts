@@ -276,7 +276,7 @@ function findAccountByLabel(label: string) {
   const normalized = slugify(label);
   const allAccounts = db.select().from(accounts).all();
   return allAccounts.find((row) => slugify(row.name) === normalized)
-    || allAccounts.find((row) => slugify(row.institution) === normalized && row.type === "checking")
+    || allAccounts.find((row) => slugify(row.institution ?? "") === normalized && row.type === "checking")
     || allAccounts.find((row) => (row.notes || "").toLowerCase().includes(label.toLowerCase()))
     || allAccounts[0]
     || null;

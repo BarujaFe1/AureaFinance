@@ -103,14 +103,14 @@ export type MoneyBootstrapDataset = {
         "Saldo de Hoje (25/03/2026)",
         "941.54",
         "-1281.65",
-        "Realidade do Dia (25/03) nos PrÃ³ximos Meses",
+        "Realidade do Dia (25/03) nos Próximos Meses",
         "2026-03-25 00:00:00",
         "1631.61",
         "0"
       ]
     },
     {
-      "name": "2. VisÃ£o Geral",
+      "name": "2. Visão Geral",
       "rows": 1005,
       "columns": 21,
       "sampleHeaders": [
@@ -121,7 +121,7 @@ export type MoneyBootstrapDataset = {
         "Inter",
         "Binance",
         "NuBank",
-        "AÃ§Ãµes:"
+        "Ações:"
       ]
     },
     {
@@ -129,7 +129,7 @@ export type MoneyBootstrapDataset = {
       "rows": 363,
       "columns": 68,
       "sampleHeaders": [
-        "Ãgua",
+        "Água",
         "BK1",
         "2026-03-25 00:00:00",
         "HOJE",
@@ -140,29 +140,29 @@ export type MoneyBootstrapDataset = {
       ]
     },
     {
-      "name": "4. TransaÃ§Ãµes",
+      "name": "4. Transações",
       "rows": 150,
       "columns": 12,
       "sampleHeaders": [
-        "AÃ§Ã£o:",
+        "Ação:",
         "CriptoMoeda:",
         "Quantidade:",
         "Data:",
-        "HorÃ¡rio:",
+        "Horário:",
         "Valor Inicial:",
         "Valor Inicial p/Unid",
         "Valor Final:"
       ]
     },
     {
-      "name": "5. CartÃµes",
+      "name": "5. Cartões",
       "rows": 97,
       "columns": 16,
       "sampleHeaders": [
-        "CartÃ£o Nubank",
-        "CartÃ£o MercadoPago",
-        "CartÃ£o Nubank",
-        "CartÃ£o MercadoPago"
+        "Cartão Nubank",
+        "Cartão MercadoPago",
+        "Cartão Nubank",
+        "Cartão MercadoPago"
       ]
     },
     {
@@ -170,14 +170,14 @@ export type MoneyBootstrapDataset = {
       "rows": 17,
       "columns": 12,
       "sampleHeaders": [
-        "Incluir no MÃªs Atual?",
-        "Incluir no MÃªs Seguinte?",
-        "Incluir no MÃªs Posterior ao seguinte?",
+        "Incluir no Mês Atual?",
+        "Incluir no Mês Seguinte?",
+        "Incluir no Mês Posterior ao seguinte?",
         "Emoji",
         "Nome da Conta:",
         "Valor",
-        "ðŸ“† *MarÃ§o*\n\nðŸ’³ Nubank: *R$ 566,25*\n - Violino (4/10) R$ 160,00\n - SmartFit R$ 149,90\n - Iphone 16e (2/12) R$ 256,35\n\nðŸ’³ Mercado Pago: *R$ 53,50*\n - Airfryer (4/4) R$ 53,50\n\nðŸ  Aluguel: *R$ 601,83*\nâš¡ Internet: *R$ 40,76*\n Micro-Ondas: *R$ 50,67*\n\nâœ… *Total MarÃ§o: R$ 1.313,01*",
-        "ðŸ“† *Abril*\n\nðŸ’³ Nubank: *R$ 566,25*\n - Violino (5/10) R$ 160,00\n - SmartFit R$ 149,90\n - Iphone 16e (3/12) R$ 256,35\n\nðŸ’³ Mercado Pago: *R$ 0,00*\n\n\nðŸ  Aluguel: *R$ 601,83*\nâš¡ Internet: *R$ 40,76*\nðŸŒ Energia: *R$ 55,41*\n Micro-Ondas: *R$ 50,67*\n\nâœ… *Total Abril: R$ 1.314,91*"
+        " *Março*\n\n Nubank: *R$ 566,25*\n - Violino (4/10) R$ 160,00\n - SmartFit R$ 149,90\n - Iphone 16e (2/12) R$ 256,35\n\n Mercado Pago: *R$ 53,50*\n - Airfryer (4/4) R$ 53,50\n\n  Aluguel: *R$ 601,83*\n Internet: *R$ 40,76*\n Micro-Ondas: *R$ 50,67*\n\n *Total Março: R$ 1.313,01*",
+        " *Abril*\n\n Nubank: *R$ 566,25*\n - Violino (5/10) R$ 160,00\n - SmartFit R$ 149,90\n - Iphone 16e (3/12) R$ 256,35\n\n Mercado Pago: *R$ 0,00*\n\n\n  Aluguel: *R$ 601,83*\n Internet: *R$ 40,76*\n Energia: *R$ 55,41*\n Micro-Ondas: *R$ 50,67*\n\n *Total Abril: R$ 1.314,91*"
       ]
     },
     {
@@ -185,11 +185,11 @@ export type MoneyBootstrapDataset = {
       "rows": 1,
       "columns": 1,
       "sampleHeaders": [
-        "Resumo do Investimento:\n--- AÃ§Ãµes ---\nEquatorial Energia - EQTL3: Investido R$ 65,02 | Atual R$ 82,34\nOuro - GOLD11: Investido R$ 26,81 | Atual R$ 24,03\nMercadoLibre - MELI34: Investido R$ 206,07 | Atual R$ 141,68\nApple - AAPL34: Investido R$ 0,00 | Atual R$ 0,00\nTotal AÃ§Ãµes: R$ 423,39 â†’ R$ 370,42\n--- Criptomoedas ---\nCriptomoedas:: Investido R$ Valor Investido: | Atual R$ Valor Atual:\nPi: Investido R$ 750,00 | Atual R$ 817,22\nBitcoin: Investido R$ 133,28 | Atual R$ 239,71\nEthereum: Investido R$ 427,24 | Atual R$ 232,36\nSolana: Investido R$ 386,07 | Atual R$ 183,10\nChainLink: Investido R$ 120,00 | Atual R$ 48,87\nRender: Investido R$ 54,00 | Atual R$ 40,05\nFartCoin: Investido R$ 29,00 | Atual R$ 19,54\nSui: Investido R$ 54,00 | Atual R$ 18,20\nCurve DAO: Investido R$ 28,25 | Atual R$ 18,14\nSAPIEN: Investido R$ 29,16 | Atual R$ 14,42\nUSDT: Investido R$ 0,00 | Atual R$ 0,00\nTotal Cripto: R$ 2011,00 â†’ R$ 1631,61\n--- Reservas ---\nReservas:: Investido R$ Valor Anterior: | Atual R$ Valor Atual:\nMeliDÃ³lar: Investido R$ 3731,43 | Atual R$ 3806,69\nCarta de Motorista: Investido R$ 2136,87 | Atual R$ 2139,03\nFuturo: Investido R$ 811,82 | Atual R$ 812,64\nNotebook: Investido R$ 695,23 | Atual R$ 695,93\nAÃ§Ãµes: Investido R$ 32,41 | Atual R$ 32,26\nCrypto: Investido R$ 32,23 | Atual R$ 32,44\nTotal Reservas: R$ 7439,99 â†’ R$ 7518,99\n--- Investimento Geral ---\nTotal Investido: R$ 9874,38 | Total Atual: R$ 9521,02\n--- TransaÃ§Ãµes Recentes ---\nComprei 13 Alibaba - BABA34 no dia 28/08/2025 Ã s 10:38:00. O valor de compra (p/unid): R$ 23,17. Atualmente (p/unid): R$ 23,60, gerando acrÃ©scimo de 1,87%.\nVendi 4 Alibaba - BABA34 no dia 02/09/2025 Ã s 10:48:00. O valor de compra (p/unid): R$ 23,17. O valor de venda (p/unid): R$ 26,58, gerando lucro de 1,87%.\nVendi 2 Alibaba - BABA34 no dia 03/09/2025 Ã s 10:23:00. O valor de compra (p/unid): R$ 23,17. O valor de venda (p/unid): R$ 26,57, gerando lucro de 1,87%.\nVendi 2 Alibaba - BABA34 no dia 04/09/2025 Ã s 11:12:00. O valor de compra (p/unid): R$ 23,17. O valor de venda (p/unid): R$ 25,41, gerando lucro de 1,87%.\nComprei 0,83 ChainLink no dia 05/09/2025 Ã s 14:58:00. O valor de compra (p/unid): R$ 119,67. Atualmente (p/unid): R$ 49,33, gerando decrÃ©scimo de 58,78%.\nComprei 2 MercadoLibre - MELI34 no dia 12/09/2025 Ã s 11:08:00. O valor de compra (p/unid): R$ 103,00. Atualmente (p/unid): R$ 70,84, gerando decrÃ©scimo de 31,22%.\nComprei 0,01690952 Ethereum no dia 25/09/2025 Ã s 07:18:28. O valor de compra (p/unid): R$ 19.683,59. Atualmente (p/unid): R$ 11.442,86, gerando decrÃ©scimo de 41,87%.\nComprei 3,6 Sui no dia 10/10/2025 Ã s 20:29:23. O valor de compra (p/unid): R$ 15,05. Atualmente (p/unid): R$ 5,06, gerando decrÃ©scimo de 66,37%.\nComprei 4,09 Render no dia 10/10/2025 Ã s 20:29:58. O valor de compra (p/unid): R$ 13,43. Atualmente (p/unid): R$ 9,80, gerando decrÃ©scimo de 27,01%.\nComprei 0,33 Solana no dia 10/10/2025 Ã s 02:54:21. O valor de compra (p/unid): R$ 1.018,00. Atualmente (p/unid): R$ 486,46, gerando decrÃ©scimo de 52,21%.\nComprei 0,0034 Ethereum no dia 25/03/2026 Ã s 05:16:16. O valor de compra (p/unid): R$ 20.400,00. Atualmente (p/unid): R$ 11.442,86, gerando decrÃ©scimo de 43,91%.\nComprei 35,4645 SAPIEN no dia 09/12/2025 Ã s 05:31:50. O valor de compra (p/unid): R$ 0,83. Atualmente (p/unid): R$ 0,41, gerando decrÃ©scimo de 51,12%.\nComprei 14,8 Curve DAO no dia 15/12/2025 Ã s 14:32:42. O valor de compra (p/unid): R$ 1,91. Atualmente (p/unid): R$ 1,23, gerando decrÃ©scimo de 35,79%.\nComprei 19,13824 FartCoin no dia 18/12/2025 Ã s 08:04:51. O valor de compra (p/unid): R$ 1,52. Atualmente (p/unid): R$ 1,02, gerando decrÃ©scimo de 32,62%."
+        "Resumo do Investimento:\n--- Ações ---\nEquatorial Energia - EQTL3: Investido R$ 65,02 | Atual R$ 82,34\nOuro - GOLD11: Investido R$ 26,81 | Atual R$ 24,03\nMercadoLibre - MELI34: Investido R$ 206,07 | Atual R$ 141,68\nApple - AAPL34: Investido R$ 0,00 | Atual R$ 0,00\nTotal Ações: R$ 423,39  R$ 370,42\n--- Criptomoedas ---\nCriptomoedas:: Investido R$ Valor Investido: | Atual R$ Valor Atual:\nPi: Investido R$ 750,00 | Atual R$ 817,22\nBitcoin: Investido R$ 133,28 | Atual R$ 239,71\nEthereum: Investido R$ 427,24 | Atual R$ 232,36\nSolana: Investido R$ 386,07 | Atual R$ 183,10\nChainLink: Investido R$ 120,00 | Atual R$ 48,87\nRender: Investido R$ 54,00 | Atual R$ 40,05\nFartCoin: Investido R$ 29,00 | Atual R$ 19,54\nSui: Investido R$ 54,00 | Atual R$ 18,20\nCurve DAO: Investido R$ 28,25 | Atual R$ 18,14\nSAPIEN: Investido R$ 29,16 | Atual R$ 14,42\nUSDT: Investido R$ 0,00 | Atual R$ 0,00\nTotal Cripto: R$ 2011,00  R$ 1631,61\n--- Reservas ---\nReservas:: Investido R$ Valor Anterior: | Atual R$ Valor Atual:\nMeliDólar: Investido R$ 3731,43 | Atual R$ 3806,69\nCarta de Motorista: Investido R$ 2136,87 | Atual R$ 2139,03\nFuturo: Investido R$ 811,82 | Atual R$ 812,64\nNotebook: Investido R$ 695,23 | Atual R$ 695,93\nAções: Investido R$ 32,41 | Atual R$ 32,26\nCrypto: Investido R$ 32,23 | Atual R$ 32,44\nTotal Reservas: R$ 7439,99  R$ 7518,99\n--- Investimento Geral ---\nTotal Investido: R$ 9874,38 | Total Atual: R$ 9521,02\n--- Transações Recentes ---\nComprei 13 Alibaba - BABA34 no dia 28/08/2025  s 10:38:00. O valor de compra (p/unid): R$ 23,17. Atualmente (p/unid): R$ 23,60, gerando acréscimo de 1,87%.\nVendi 4 Alibaba - BABA34 no dia 02/09/2025  s 10:48:00. O valor de compra (p/unid): R$ 23,17. O valor de venda (p/unid): R$ 26,58, gerando lucro de 1,87%.\nVendi 2 Alibaba - BABA34 no dia 03/09/2025  s 10:23:00. O valor de compra (p/unid): R$ 23,17. O valor de venda (p/unid): R$ 26,57, gerando lucro de 1,87%.\nVendi 2 Alibaba - BABA34 no dia 04/09/2025  s 11:12:00. O valor de compra (p/unid): R$ 23,17. O valor de venda (p/unid): R$ 25,41, gerando lucro de 1,87%.\nComprei 0,83 ChainLink no dia 05/09/2025  s 14:58:00. O valor de compra (p/unid): R$ 119,67. Atualmente (p/unid): R$ 49,33, gerando decréscimo de 58,78%.\nComprei 2 MercadoLibre - MELI34 no dia 12/09/2025  s 11:08:00. O valor de compra (p/unid): R$ 103,00. Atualmente (p/unid): R$ 70,84, gerando decréscimo de 31,22%.\nComprei 0,01690952 Ethereum no dia 25/09/2025  s 07:18:28. O valor de compra (p/unid): R$ 19.683,59. Atualmente (p/unid): R$ 11.442,86, gerando decréscimo de 41,87%.\nComprei 3,6 Sui no dia 10/10/2025  s 20:29:23. O valor de compra (p/unid): R$ 15,05. Atualmente (p/unid): R$ 5,06, gerando decréscimo de 66,37%.\nComprei 4,09 Render no dia 10/10/2025  s 20:29:58. O valor de compra (p/unid): R$ 13,43. Atualmente (p/unid): R$ 9,80, gerando decréscimo de 27,01%.\nComprei 0,33 Solana no dia 10/10/2025  s 02:54:21. O valor de compra (p/unid): R$ 1.018,00. Atualmente (p/unid): R$ 486,46, gerando decréscimo de 52,21%.\nComprei 0,0034 Ethereum no dia 25/03/2026  s 05:16:16. O valor de compra (p/unid): R$ 20.400,00. Atualmente (p/unid): R$ 11.442,86, gerando decréscimo de 43,91%.\nComprei 35,4645 SAPIEN no dia 09/12/2025  s 05:31:50. O valor de compra (p/unid): R$ 0,83. Atualmente (p/unid): R$ 0,41, gerando decréscimo de 51,12%.\nComprei 14,8 Curve DAO no dia 15/12/2025  s 14:32:42. O valor de compra (p/unid): R$ 1,91. Atualmente (p/unid): R$ 1,23, gerando decréscimo de 35,79%.\nComprei 19,13824 FartCoin no dia 18/12/2025  s 08:04:51. O valor de compra (p/unid): R$ 1,52. Atualmente (p/unid): R$ 1,02, gerando decréscimo de 32,62%."
       ]
     },
     {
-      "name": "8. Registro DiÃ¡rio",
+      "name": "8. Registro Diário",
       "rows": 1162,
       "columns": 8,
       "sampleHeaders": [
@@ -199,7 +199,7 @@ export type MoneyBootstrapDataset = {
       ]
     },
     {
-      "name": "9. Registro DiÃ¡rio de Investime",
+      "name": "9. Registro Diário de Investime",
       "rows": 1199,
       "columns": 12,
       "sampleHeaders": [
@@ -220,7 +220,7 @@ export type MoneyBootstrapDataset = {
       "type": "checking",
       "openingBalanceCents": 23,
       "includeInNetWorth": true,
-      "notes": "Conta corrente identificada na aba VisÃ£o Geral."
+      "notes": "Conta corrente identificada na aba Visão Geral."
     },
     {
       "name": "Banco do Brasil CC",
@@ -228,7 +228,7 @@ export type MoneyBootstrapDataset = {
       "type": "checking",
       "openingBalanceCents": 1425,
       "includeInNetWorth": true,
-      "notes": "Conta corrente identificada na aba VisÃ£o Geral."
+      "notes": "Conta corrente identificada na aba Visão Geral."
     },
     {
       "name": "MercadoPago CC",
@@ -260,7 +260,7 @@ export type MoneyBootstrapDataset = {
       "type": "investment",
       "openingBalanceCents": 37042,
       "includeInNetWorth": true,
-      "notes": "Carteira de aÃ§Ãµes ligada ao ecossistema Nubank."
+      "notes": "Carteira de ações ligada ao ecossistema Nubank."
     },
     {
       "name": "Binance",
@@ -273,7 +273,7 @@ export type MoneyBootstrapDataset = {
   ],
   "cards": [
     {
-      "name": "CartÃ£o Nubank",
+      "name": "Cartão Nubank",
       "brand": "Nubank",
       "network": "Mastercard",
       "limitAmountCents": 300000,
@@ -282,7 +282,7 @@ export type MoneyBootstrapDataset = {
       "settlementAccountName": "NuBank CC"
     },
     {
-      "name": "CartÃ£o MercadoPago",
+      "name": "Cartão MercadoPago",
       "brand": "Mercado Pago",
       "network": "Visa",
       "limitAmountCents": 150000,
@@ -300,7 +300,7 @@ export type MoneyBootstrapDataset = {
       "startsOn": "2026-01-12",
       "nextRunOn": "2026-04-12",
       "accountName": "MercadoPago CC",
-      "notes": "Reconhecido pela repetiÃ§Ã£o mensal na aba Contas."
+      "notes": "Reconhecido pela repetição mensal na aba Contas."
     },
     {
       "title": "MPInvest",
@@ -350,7 +350,7 @@ export type MoneyBootstrapDataset = {
       "startsOn": "2026-04-19",
       "nextRunOn": "2026-04-19",
       "accountName": "MercadoPago CC",
-      "notes": "Compromisso fixo inferido com revisÃ£o assistida."
+      "notes": "Compromisso fixo inferido com revisão assistida."
     },
     {
       "title": "Micro-Ondas",
@@ -1173,7 +1173,7 @@ export type MoneyBootstrapDataset = {
   },
   "reserves": [
     {
-      "name": "MeliDÃ³lar",
+      "name": "MeliDólar",
       "investedCents": 305084,
       "previousValueCents": 373143,
       "currentValueCents": 380669,
@@ -1213,7 +1213,7 @@ export type MoneyBootstrapDataset = {
       "yieldMonthlyPercent": 0.001006861039
     },
     {
-      "name": "AÃ§Ãµes",
+      "name": "Ações",
       "investedCents": 1600,
       "previousValueCents": 3241,
       "currentValueCents": 3226,
@@ -1406,7 +1406,7 @@ export type MoneyBootstrapDataset = {
       "totalCurrentCents": 11800,
       "pricePerUnitCurrentCents": 2360,
       "yieldPercent": 0.01865993758,
-      "descriptionText": "Comprei 13 Alibaba - BABA34 no dia 28/08/2025 Ã s 10:38:00. O valor de compra (p/unid): R$ 23,17. Atualmente (p/unid): R$ 23,60, gerando acrÃ©scimo de 1,87%.",
+      "descriptionText": "Comprei 13 Alibaba - BABA34 no dia 28/08/2025  s 10:38:00. O valor de compra (p/unid): R$ 23,17. Atualmente (p/unid): R$ 23,60, gerando acréscimo de 1,87%.",
       "isCompleted": true
     },
     {
@@ -1419,7 +1419,7 @@ export type MoneyBootstrapDataset = {
       "totalCurrentCents": 11800,
       "pricePerUnitCurrentCents": 2360,
       "yieldPercent": 0.1472873365,
-      "descriptionText": "Vendi 4 Alibaba - BABA34 no dia 02/09/2025 Ã s 10:48:00. O valor de compra (p/unid): R$ 23,17. O valor de venda (p/unid): R$ 26,58, gerando lucro de 1,87%.",
+      "descriptionText": "Vendi 4 Alibaba - BABA34 no dia 02/09/2025  s 10:48:00. O valor de compra (p/unid): R$ 23,17. O valor de venda (p/unid): R$ 26,58, gerando lucro de 1,87%.",
       "isCompleted": true
     },
     {
@@ -1432,7 +1432,7 @@ export type MoneyBootstrapDataset = {
       "totalCurrentCents": 11800,
       "pricePerUnitCurrentCents": 2360,
       "yieldPercent": 0.1468557009,
-      "descriptionText": "Vendi 2 Alibaba - BABA34 no dia 03/09/2025 Ã s 10:23:00. O valor de compra (p/unid): R$ 23,17. O valor de venda (p/unid): R$ 26,57, gerando lucro de 1,87%.",
+      "descriptionText": "Vendi 2 Alibaba - BABA34 no dia 03/09/2025  s 10:23:00. O valor de compra (p/unid): R$ 23,17. O valor de venda (p/unid): R$ 26,57, gerando lucro de 1,87%.",
       "isCompleted": true
     },
     {
@@ -1445,7 +1445,7 @@ export type MoneyBootstrapDataset = {
       "totalCurrentCents": 11800,
       "pricePerUnitCurrentCents": 2360,
       "yieldPercent": 0.09678597516,
-      "descriptionText": "Vendi 2 Alibaba - BABA34 no dia 04/09/2025 Ã s 11:12:00. O valor de compra (p/unid): R$ 23,17. O valor de venda (p/unid): R$ 25,41, gerando lucro de 1,87%.",
+      "descriptionText": "Vendi 2 Alibaba - BABA34 no dia 04/09/2025  s 11:12:00. O valor de compra (p/unid): R$ 23,17. O valor de venda (p/unid): R$ 25,41, gerando lucro de 1,87%.",
       "isCompleted": true
     },
     {
@@ -1458,7 +1458,7 @@ export type MoneyBootstrapDataset = {
       "totalCurrentCents": 4887,
       "pricePerUnitCurrentCents": 4933,
       "yieldPercent": -0.587804848,
-      "descriptionText": "Comprei 0,83 ChainLink no dia 05/09/2025 Ã s 14:58:00. O valor de compra (p/unid): R$ 119,67. Atualmente (p/unid): R$ 49,33, gerando decrÃ©scimo de 58,78%.",
+      "descriptionText": "Comprei 0,83 ChainLink no dia 05/09/2025  s 14:58:00. O valor de compra (p/unid): R$ 119,67. Atualmente (p/unid): R$ 49,33, gerando decréscimo de 58,78%.",
       "isCompleted": true
     },
     {
@@ -1471,7 +1471,7 @@ export type MoneyBootstrapDataset = {
       "totalCurrentCents": 14168,
       "pricePerUnitCurrentCents": 7084,
       "yieldPercent": -0.3122330097,
-      "descriptionText": "Comprei 2 MercadoLibre - MELI34 no dia 12/09/2025 Ã s 11:08:00. O valor de compra (p/unid): R$ 103,00. Atualmente (p/unid): R$ 70,84, gerando decrÃ©scimo de 31,22%.",
+      "descriptionText": "Comprei 2 MercadoLibre - MELI34 no dia 12/09/2025  s 11:08:00. O valor de compra (p/unid): R$ 103,00. Atualmente (p/unid): R$ 70,84, gerando decréscimo de 31,22%.",
       "isCompleted": true
     },
     {
@@ -1484,7 +1484,7 @@ export type MoneyBootstrapDataset = {
       "totalCurrentCents": 23236,
       "pricePerUnitCurrentCents": 1144286,
       "yieldPercent": -0.4186600274,
-      "descriptionText": "Comprei 0,01690952 Ethereum no dia 25/09/2025 Ã s 07:18:28. O valor de compra (p/unid): R$ 19.683,59. Atualmente (p/unid): R$ 11.442,86, gerando decrÃ©scimo de 41,87%.",
+      "descriptionText": "Comprei 0,01690952 Ethereum no dia 25/09/2025  s 07:18:28. O valor de compra (p/unid): R$ 19.683,59. Atualmente (p/unid): R$ 11.442,86, gerando decréscimo de 41,87%.",
       "isCompleted": true
     },
     {
@@ -1497,7 +1497,7 @@ export type MoneyBootstrapDataset = {
       "totalCurrentCents": 1820,
       "pricePerUnitCurrentCents": 506,
       "yieldPercent": -0.6637464338,
-      "descriptionText": "Comprei 3,6 Sui no dia 10/10/2025 Ã s 20:29:23. O valor de compra (p/unid): R$ 15,05. Atualmente (p/unid): R$ 5,06, gerando decrÃ©scimo de 66,37%.",
+      "descriptionText": "Comprei 3,6 Sui no dia 10/10/2025  s 20:29:23. O valor de compra (p/unid): R$ 15,05. Atualmente (p/unid): R$ 5,06, gerando decréscimo de 66,37%.",
       "isCompleted": true
     },
     {
@@ -1510,7 +1510,7 @@ export type MoneyBootstrapDataset = {
       "totalCurrentCents": 4005,
       "pricePerUnitCurrentCents": 980,
       "yieldPercent": -0.2701431112,
-      "descriptionText": "Comprei 4,09 Render no dia 10/10/2025 Ã s 20:29:58. O valor de compra (p/unid): R$ 13,43. Atualmente (p/unid): R$ 9,80, gerando decrÃ©scimo de 27,01%.",
+      "descriptionText": "Comprei 4,09 Render no dia 10/10/2025  s 20:29:58. O valor de compra (p/unid): R$ 13,43. Atualmente (p/unid): R$ 9,80, gerando decréscimo de 27,01%.",
       "isCompleted": true
     },
     {
@@ -1523,7 +1523,7 @@ export type MoneyBootstrapDataset = {
       "totalCurrentCents": 18310,
       "pricePerUnitCurrentCents": 48646,
       "yieldPercent": -0.5221457136,
-      "descriptionText": "Comprei 0,33 Solana no dia 10/10/2025 Ã s 02:54:21. O valor de compra (p/unid): R$ 1.018,00. Atualmente (p/unid): R$ 486,46, gerando decrÃ©scimo de 52,21%.",
+      "descriptionText": "Comprei 0,33 Solana no dia 10/10/2025  s 02:54:21. O valor de compra (p/unid): R$ 1.018,00. Atualmente (p/unid): R$ 486,46, gerando decréscimo de 52,21%.",
       "isCompleted": true
     },
     {
@@ -1536,7 +1536,7 @@ export type MoneyBootstrapDataset = {
       "totalCurrentCents": 23236,
       "pricePerUnitCurrentCents": 1144286,
       "yieldPercent": -0.4390757034,
-      "descriptionText": "Comprei 0,0034 Ethereum no dia 25/03/2026 Ã s 05:16:16. O valor de compra (p/unid): R$ 20.400,00. Atualmente (p/unid): R$ 11.442,86, gerando decrÃ©scimo de 43,91%.",
+      "descriptionText": "Comprei 0,0034 Ethereum no dia 25/03/2026  s 05:16:16. O valor de compra (p/unid): R$ 20.400,00. Atualmente (p/unid): R$ 11.442,86, gerando decréscimo de 43,91%.",
       "isCompleted": true
     },
     {
@@ -1549,7 +1549,7 @@ export type MoneyBootstrapDataset = {
       "totalCurrentCents": 1442,
       "pricePerUnitCurrentCents": 41,
       "yieldPercent": -0.5111864407,
-      "descriptionText": "Comprei 35,4645 SAPIEN no dia 09/12/2025 Ã s 05:31:50. O valor de compra (p/unid): R$ 0,83. Atualmente (p/unid): R$ 0,41, gerando decrÃ©scimo de 51,12%.",
+      "descriptionText": "Comprei 35,4645 SAPIEN no dia 09/12/2025  s 05:31:50. O valor de compra (p/unid): R$ 0,83. Atualmente (p/unid): R$ 0,41, gerando decréscimo de 51,12%.",
       "isCompleted": true
     },
     {
@@ -1562,7 +1562,7 @@ export type MoneyBootstrapDataset = {
       "totalCurrentCents": 1814,
       "pricePerUnitCurrentCents": 123,
       "yieldPercent": -0.3578761062,
-      "descriptionText": "Comprei 14,8 Curve DAO no dia 15/12/2025 Ã s 14:32:42. O valor de compra (p/unid): R$ 1,91. Atualmente (p/unid): R$ 1,23, gerando decrÃ©scimo de 35,79%.",
+      "descriptionText": "Comprei 14,8 Curve DAO no dia 15/12/2025  s 14:32:42. O valor de compra (p/unid): R$ 1,91. Atualmente (p/unid): R$ 1,23, gerando decréscimo de 35,79%.",
       "isCompleted": true
     },
     {
@@ -1575,7 +1575,7 @@ export type MoneyBootstrapDataset = {
       "totalCurrentCents": 1954,
       "pricePerUnitCurrentCents": 102,
       "yieldPercent": -0.3262068966,
-      "descriptionText": "Comprei 19,13824 FartCoin no dia 18/12/2025 Ã s 08:04:51. O valor de compra (p/unid): R$ 1,52. Atualmente (p/unid): R$ 1,02, gerando decrÃ©scimo de 32,62%.",
+      "descriptionText": "Comprei 19,13824 FartCoin no dia 18/12/2025  s 08:04:51. O valor de compra (p/unid): R$ 1,52. Atualmente (p/unid): R$ 1,02, gerando decréscimo de 32,62%.",
       "isCompleted": true
     }
   ],
@@ -1610,14 +1610,14 @@ export const moneyBootstrapDataset = {
         "Saldo de Hoje (25/03/2026)",
         "941.54",
         "-1281.65",
-        "Realidade do Dia (25/03) nos PrÃ³ximos Meses",
+        "Realidade do Dia (25/03) nos Próximos Meses",
         "2026-03-25 00:00:00",
         "1631.61",
         "0"
       ]
     },
     {
-      "name": "2. VisÃ£o Geral",
+      "name": "2. Visão Geral",
       "rows": 1005,
       "columns": 21,
       "sampleHeaders": [
@@ -1628,7 +1628,7 @@ export const moneyBootstrapDataset = {
         "Inter",
         "Binance",
         "NuBank",
-        "AÃ§Ãµes:"
+        "Ações:"
       ]
     },
     {
@@ -1636,7 +1636,7 @@ export const moneyBootstrapDataset = {
       "rows": 363,
       "columns": 68,
       "sampleHeaders": [
-        "Ãgua",
+        "Água",
         "BK1",
         "2026-03-25 00:00:00",
         "HOJE",
@@ -1647,29 +1647,29 @@ export const moneyBootstrapDataset = {
       ]
     },
     {
-      "name": "4. TransaÃ§Ãµes",
+      "name": "4. Transações",
       "rows": 150,
       "columns": 12,
       "sampleHeaders": [
-        "AÃ§Ã£o:",
+        "Ação:",
         "CriptoMoeda:",
         "Quantidade:",
         "Data:",
-        "HorÃ¡rio:",
+        "Horário:",
         "Valor Inicial:",
         "Valor Inicial p/Unid",
         "Valor Final:"
       ]
     },
     {
-      "name": "5. CartÃµes",
+      "name": "5. Cartões",
       "rows": 97,
       "columns": 16,
       "sampleHeaders": [
-        "CartÃ£o Nubank",
-        "CartÃ£o MercadoPago",
-        "CartÃ£o Nubank",
-        "CartÃ£o MercadoPago"
+        "Cartão Nubank",
+        "Cartão MercadoPago",
+        "Cartão Nubank",
+        "Cartão MercadoPago"
       ]
     },
     {
@@ -1677,14 +1677,14 @@ export const moneyBootstrapDataset = {
       "rows": 17,
       "columns": 12,
       "sampleHeaders": [
-        "Incluir no MÃªs Atual?",
-        "Incluir no MÃªs Seguinte?",
-        "Incluir no MÃªs Posterior ao seguinte?",
+        "Incluir no Mês Atual?",
+        "Incluir no Mês Seguinte?",
+        "Incluir no Mês Posterior ao seguinte?",
         "Emoji",
         "Nome da Conta:",
         "Valor",
-        "ðŸ“† *MarÃ§o*\n\nðŸ’³ Nubank: *R$ 566,25*\n - Violino (4/10) R$ 160,00\n - SmartFit R$ 149,90\n - Iphone 16e (2/12) R$ 256,35\n\nðŸ’³ Mercado Pago: *R$ 53,50*\n - Airfryer (4/4) R$ 53,50\n\nðŸ  Aluguel: *R$ 601,83*\nâš¡ Internet: *R$ 40,76*\n Micro-Ondas: *R$ 50,67*\n\nâœ… *Total MarÃ§o: R$ 1.313,01*",
-        "ðŸ“† *Abril*\n\nðŸ’³ Nubank: *R$ 566,25*\n - Violino (5/10) R$ 160,00\n - SmartFit R$ 149,90\n - Iphone 16e (3/12) R$ 256,35\n\nðŸ’³ Mercado Pago: *R$ 0,00*\n\n\nðŸ  Aluguel: *R$ 601,83*\nâš¡ Internet: *R$ 40,76*\nðŸŒ Energia: *R$ 55,41*\n Micro-Ondas: *R$ 50,67*\n\nâœ… *Total Abril: R$ 1.314,91*"
+        " *Março*\n\n Nubank: *R$ 566,25*\n - Violino (4/10) R$ 160,00\n - SmartFit R$ 149,90\n - Iphone 16e (2/12) R$ 256,35\n\n Mercado Pago: *R$ 53,50*\n - Airfryer (4/4) R$ 53,50\n\n  Aluguel: *R$ 601,83*\n Internet: *R$ 40,76*\n Micro-Ondas: *R$ 50,67*\n\n *Total Março: R$ 1.313,01*",
+        " *Abril*\n\n Nubank: *R$ 566,25*\n - Violino (5/10) R$ 160,00\n - SmartFit R$ 149,90\n - Iphone 16e (3/12) R$ 256,35\n\n Mercado Pago: *R$ 0,00*\n\n\n  Aluguel: *R$ 601,83*\n Internet: *R$ 40,76*\n Energia: *R$ 55,41*\n Micro-Ondas: *R$ 50,67*\n\n *Total Abril: R$ 1.314,91*"
       ]
     },
     {
@@ -1692,11 +1692,11 @@ export const moneyBootstrapDataset = {
       "rows": 1,
       "columns": 1,
       "sampleHeaders": [
-        "Resumo do Investimento:\n--- AÃ§Ãµes ---\nEquatorial Energia - EQTL3: Investido R$ 65,02 | Atual R$ 82,34\nOuro - GOLD11: Investido R$ 26,81 | Atual R$ 24,03\nMercadoLibre - MELI34: Investido R$ 206,07 | Atual R$ 141,68\nApple - AAPL34: Investido R$ 0,00 | Atual R$ 0,00\nTotal AÃ§Ãµes: R$ 423,39 â†’ R$ 370,42\n--- Criptomoedas ---\nCriptomoedas:: Investido R$ Valor Investido: | Atual R$ Valor Atual:\nPi: Investido R$ 750,00 | Atual R$ 817,22\nBitcoin: Investido R$ 133,28 | Atual R$ 239,71\nEthereum: Investido R$ 427,24 | Atual R$ 232,36\nSolana: Investido R$ 386,07 | Atual R$ 183,10\nChainLink: Investido R$ 120,00 | Atual R$ 48,87\nRender: Investido R$ 54,00 | Atual R$ 40,05\nFartCoin: Investido R$ 29,00 | Atual R$ 19,54\nSui: Investido R$ 54,00 | Atual R$ 18,20\nCurve DAO: Investido R$ 28,25 | Atual R$ 18,14\nSAPIEN: Investido R$ 29,16 | Atual R$ 14,42\nUSDT: Investido R$ 0,00 | Atual R$ 0,00\nTotal Cripto: R$ 2011,00 â†’ R$ 1631,61\n--- Reservas ---\nReservas:: Investido R$ Valor Anterior: | Atual R$ Valor Atual:\nMeliDÃ³lar: Investido R$ 3731,43 | Atual R$ 3806,69\nCarta de Motorista: Investido R$ 2136,87 | Atual R$ 2139,03\nFuturo: Investido R$ 811,82 | Atual R$ 812,64\nNotebook: Investido R$ 695,23 | Atual R$ 695,93\nAÃ§Ãµes: Investido R$ 32,41 | Atual R$ 32,26\nCrypto: Investido R$ 32,23 | Atual R$ 32,44\nTotal Reservas: R$ 7439,99 â†’ R$ 7518,99\n--- Investimento Geral ---\nTotal Investido: R$ 9874,38 | Total Atual: R$ 9521,02\n--- TransaÃ§Ãµes Recentes ---\nComprei 13 Alibaba - BABA34 no dia 28/08/2025 Ã s 10:38:00. O valor de compra (p/unid): R$ 23,17. Atualmente (p/unid): R$ 23,60, gerando acrÃ©scimo de 1,87%.\nVendi 4 Alibaba - BABA34 no dia 02/09/2025 Ã s 10:48:00. O valor de compra (p/unid): R$ 23,17. O valor de venda (p/unid): R$ 26,58, gerando lucro de 1,87%.\nVendi 2 Alibaba - BABA34 no dia 03/09/2025 Ã s 10:23:00. O valor de compra (p/unid): R$ 23,17. O valor de venda (p/unid): R$ 26,57, gerando lucro de 1,87%.\nVendi 2 Alibaba - BABA34 no dia 04/09/2025 Ã s 11:12:00. O valor de compra (p/unid): R$ 23,17. O valor de venda (p/unid): R$ 25,41, gerando lucro de 1,87%.\nComprei 0,83 ChainLink no dia 05/09/2025 Ã s 14:58:00. O valor de compra (p/unid): R$ 119,67. Atualmente (p/unid): R$ 49,33, gerando decrÃ©scimo de 58,78%.\nComprei 2 MercadoLibre - MELI34 no dia 12/09/2025 Ã s 11:08:00. O valor de compra (p/unid): R$ 103,00. Atualmente (p/unid): R$ 70,84, gerando decrÃ©scimo de 31,22%.\nComprei 0,01690952 Ethereum no dia 25/09/2025 Ã s 07:18:28. O valor de compra (p/unid): R$ 19.683,59. Atualmente (p/unid): R$ 11.442,86, gerando decrÃ©scimo de 41,87%.\nComprei 3,6 Sui no dia 10/10/2025 Ã s 20:29:23. O valor de compra (p/unid): R$ 15,05. Atualmente (p/unid): R$ 5,06, gerando decrÃ©scimo de 66,37%.\nComprei 4,09 Render no dia 10/10/2025 Ã s 20:29:58. O valor de compra (p/unid): R$ 13,43. Atualmente (p/unid): R$ 9,80, gerando decrÃ©scimo de 27,01%.\nComprei 0,33 Solana no dia 10/10/2025 Ã s 02:54:21. O valor de compra (p/unid): R$ 1.018,00. Atualmente (p/unid): R$ 486,46, gerando decrÃ©scimo de 52,21%.\nComprei 0,0034 Ethereum no dia 25/03/2026 Ã s 05:16:16. O valor de compra (p/unid): R$ 20.400,00. Atualmente (p/unid): R$ 11.442,86, gerando decrÃ©scimo de 43,91%.\nComprei 35,4645 SAPIEN no dia 09/12/2025 Ã s 05:31:50. O valor de compra (p/unid): R$ 0,83. Atualmente (p/unid): R$ 0,41, gerando decrÃ©scimo de 51,12%.\nComprei 14,8 Curve DAO no dia 15/12/2025 Ã s 14:32:42. O valor de compra (p/unid): R$ 1,91. Atualmente (p/unid): R$ 1,23, gerando decrÃ©scimo de 35,79%.\nComprei 19,13824 FartCoin no dia 18/12/2025 Ã s 08:04:51. O valor de compra (p/unid): R$ 1,52. Atualmente (p/unid): R$ 1,02, gerando decrÃ©scimo de 32,62%."
+        "Resumo do Investimento:\n--- Ações ---\nEquatorial Energia - EQTL3: Investido R$ 65,02 | Atual R$ 82,34\nOuro - GOLD11: Investido R$ 26,81 | Atual R$ 24,03\nMercadoLibre - MELI34: Investido R$ 206,07 | Atual R$ 141,68\nApple - AAPL34: Investido R$ 0,00 | Atual R$ 0,00\nTotal Ações: R$ 423,39  R$ 370,42\n--- Criptomoedas ---\nCriptomoedas:: Investido R$ Valor Investido: | Atual R$ Valor Atual:\nPi: Investido R$ 750,00 | Atual R$ 817,22\nBitcoin: Investido R$ 133,28 | Atual R$ 239,71\nEthereum: Investido R$ 427,24 | Atual R$ 232,36\nSolana: Investido R$ 386,07 | Atual R$ 183,10\nChainLink: Investido R$ 120,00 | Atual R$ 48,87\nRender: Investido R$ 54,00 | Atual R$ 40,05\nFartCoin: Investido R$ 29,00 | Atual R$ 19,54\nSui: Investido R$ 54,00 | Atual R$ 18,20\nCurve DAO: Investido R$ 28,25 | Atual R$ 18,14\nSAPIEN: Investido R$ 29,16 | Atual R$ 14,42\nUSDT: Investido R$ 0,00 | Atual R$ 0,00\nTotal Cripto: R$ 2011,00  R$ 1631,61\n--- Reservas ---\nReservas:: Investido R$ Valor Anterior: | Atual R$ Valor Atual:\nMeliDólar: Investido R$ 3731,43 | Atual R$ 3806,69\nCarta de Motorista: Investido R$ 2136,87 | Atual R$ 2139,03\nFuturo: Investido R$ 811,82 | Atual R$ 812,64\nNotebook: Investido R$ 695,23 | Atual R$ 695,93\nAções: Investido R$ 32,41 | Atual R$ 32,26\nCrypto: Investido R$ 32,23 | Atual R$ 32,44\nTotal Reservas: R$ 7439,99  R$ 7518,99\n--- Investimento Geral ---\nTotal Investido: R$ 9874,38 | Total Atual: R$ 9521,02\n--- Transações Recentes ---\nComprei 13 Alibaba - BABA34 no dia 28/08/2025  s 10:38:00. O valor de compra (p/unid): R$ 23,17. Atualmente (p/unid): R$ 23,60, gerando acréscimo de 1,87%.\nVendi 4 Alibaba - BABA34 no dia 02/09/2025  s 10:48:00. O valor de compra (p/unid): R$ 23,17. O valor de venda (p/unid): R$ 26,58, gerando lucro de 1,87%.\nVendi 2 Alibaba - BABA34 no dia 03/09/2025  s 10:23:00. O valor de compra (p/unid): R$ 23,17. O valor de venda (p/unid): R$ 26,57, gerando lucro de 1,87%.\nVendi 2 Alibaba - BABA34 no dia 04/09/2025  s 11:12:00. O valor de compra (p/unid): R$ 23,17. O valor de venda (p/unid): R$ 25,41, gerando lucro de 1,87%.\nComprei 0,83 ChainLink no dia 05/09/2025  s 14:58:00. O valor de compra (p/unid): R$ 119,67. Atualmente (p/unid): R$ 49,33, gerando decréscimo de 58,78%.\nComprei 2 MercadoLibre - MELI34 no dia 12/09/2025  s 11:08:00. O valor de compra (p/unid): R$ 103,00. Atualmente (p/unid): R$ 70,84, gerando decréscimo de 31,22%.\nComprei 0,01690952 Ethereum no dia 25/09/2025  s 07:18:28. O valor de compra (p/unid): R$ 19.683,59. Atualmente (p/unid): R$ 11.442,86, gerando decréscimo de 41,87%.\nComprei 3,6 Sui no dia 10/10/2025  s 20:29:23. O valor de compra (p/unid): R$ 15,05. Atualmente (p/unid): R$ 5,06, gerando decréscimo de 66,37%.\nComprei 4,09 Render no dia 10/10/2025  s 20:29:58. O valor de compra (p/unid): R$ 13,43. Atualmente (p/unid): R$ 9,80, gerando decréscimo de 27,01%.\nComprei 0,33 Solana no dia 10/10/2025  s 02:54:21. O valor de compra (p/unid): R$ 1.018,00. Atualmente (p/unid): R$ 486,46, gerando decréscimo de 52,21%.\nComprei 0,0034 Ethereum no dia 25/03/2026  s 05:16:16. O valor de compra (p/unid): R$ 20.400,00. Atualmente (p/unid): R$ 11.442,86, gerando decréscimo de 43,91%.\nComprei 35,4645 SAPIEN no dia 09/12/2025  s 05:31:50. O valor de compra (p/unid): R$ 0,83. Atualmente (p/unid): R$ 0,41, gerando decréscimo de 51,12%.\nComprei 14,8 Curve DAO no dia 15/12/2025  s 14:32:42. O valor de compra (p/unid): R$ 1,91. Atualmente (p/unid): R$ 1,23, gerando decréscimo de 35,79%.\nComprei 19,13824 FartCoin no dia 18/12/2025  s 08:04:51. O valor de compra (p/unid): R$ 1,52. Atualmente (p/unid): R$ 1,02, gerando decréscimo de 32,62%."
       ]
     },
     {
-      "name": "8. Registro DiÃ¡rio",
+      "name": "8. Registro Diário",
       "rows": 1162,
       "columns": 8,
       "sampleHeaders": [
@@ -1706,7 +1706,7 @@ export const moneyBootstrapDataset = {
       ]
     },
     {
-      "name": "9. Registro DiÃ¡rio de Investime",
+      "name": "9. Registro Diário de Investime",
       "rows": 1199,
       "columns": 12,
       "sampleHeaders": [
@@ -1727,7 +1727,7 @@ export const moneyBootstrapDataset = {
       "type": "checking",
       "openingBalanceCents": 23,
       "includeInNetWorth": true,
-      "notes": "Conta corrente identificada na aba VisÃ£o Geral."
+      "notes": "Conta corrente identificada na aba Visão Geral."
     },
     {
       "name": "Banco do Brasil CC",
@@ -1735,7 +1735,7 @@ export const moneyBootstrapDataset = {
       "type": "checking",
       "openingBalanceCents": 1425,
       "includeInNetWorth": true,
-      "notes": "Conta corrente identificada na aba VisÃ£o Geral."
+      "notes": "Conta corrente identificada na aba Visão Geral."
     },
     {
       "name": "MercadoPago CC",
@@ -1767,7 +1767,7 @@ export const moneyBootstrapDataset = {
       "type": "investment",
       "openingBalanceCents": 37042,
       "includeInNetWorth": true,
-      "notes": "Carteira de aÃ§Ãµes ligada ao ecossistema Nubank."
+      "notes": "Carteira de ações ligada ao ecossistema Nubank."
     },
     {
       "name": "Binance",
@@ -1780,7 +1780,7 @@ export const moneyBootstrapDataset = {
   ],
   "cards": [
     {
-      "name": "CartÃ£o Nubank",
+      "name": "Cartão Nubank",
       "brand": "Nubank",
       "network": "Mastercard",
       "limitAmountCents": 300000,
@@ -1789,7 +1789,7 @@ export const moneyBootstrapDataset = {
       "settlementAccountName": "NuBank CC"
     },
     {
-      "name": "CartÃ£o MercadoPago",
+      "name": "Cartão MercadoPago",
       "brand": "Mercado Pago",
       "network": "Visa",
       "limitAmountCents": 150000,
@@ -1807,7 +1807,7 @@ export const moneyBootstrapDataset = {
       "startsOn": "2026-01-12",
       "nextRunOn": "2026-04-12",
       "accountName": "MercadoPago CC",
-      "notes": "Reconhecido pela repetiÃ§Ã£o mensal na aba Contas."
+      "notes": "Reconhecido pela repetição mensal na aba Contas."
     },
     {
       "title": "MPInvest",
@@ -1857,7 +1857,7 @@ export const moneyBootstrapDataset = {
       "startsOn": "2026-04-19",
       "nextRunOn": "2026-04-19",
       "accountName": "MercadoPago CC",
-      "notes": "Compromisso fixo inferido com revisÃ£o assistida."
+      "notes": "Compromisso fixo inferido com revisão assistida."
     },
     {
       "title": "Micro-Ondas",
@@ -2680,7 +2680,7 @@ export const moneyBootstrapDataset = {
   },
   "reserves": [
     {
-      "name": "MeliDÃ³lar",
+      "name": "MeliDólar",
       "investedCents": 305084,
       "previousValueCents": 373143,
       "currentValueCents": 380669,
@@ -2720,7 +2720,7 @@ export const moneyBootstrapDataset = {
       "yieldMonthlyPercent": 0.001006861039
     },
     {
-      "name": "AÃ§Ãµes",
+      "name": "Ações",
       "investedCents": 1600,
       "previousValueCents": 3241,
       "currentValueCents": 3226,
@@ -2913,7 +2913,7 @@ export const moneyBootstrapDataset = {
       "totalCurrentCents": 11800,
       "pricePerUnitCurrentCents": 2360,
       "yieldPercent": 0.01865993758,
-      "descriptionText": "Comprei 13 Alibaba - BABA34 no dia 28/08/2025 Ã s 10:38:00. O valor de compra (p/unid): R$ 23,17. Atualmente (p/unid): R$ 23,60, gerando acrÃ©scimo de 1,87%.",
+      "descriptionText": "Comprei 13 Alibaba - BABA34 no dia 28/08/2025  s 10:38:00. O valor de compra (p/unid): R$ 23,17. Atualmente (p/unid): R$ 23,60, gerando acréscimo de 1,87%.",
       "isCompleted": true
     },
     {
@@ -2926,7 +2926,7 @@ export const moneyBootstrapDataset = {
       "totalCurrentCents": 11800,
       "pricePerUnitCurrentCents": 2360,
       "yieldPercent": 0.1472873365,
-      "descriptionText": "Vendi 4 Alibaba - BABA34 no dia 02/09/2025 Ã s 10:48:00. O valor de compra (p/unid): R$ 23,17. O valor de venda (p/unid): R$ 26,58, gerando lucro de 1,87%.",
+      "descriptionText": "Vendi 4 Alibaba - BABA34 no dia 02/09/2025  s 10:48:00. O valor de compra (p/unid): R$ 23,17. O valor de venda (p/unid): R$ 26,58, gerando lucro de 1,87%.",
       "isCompleted": true
     },
     {
@@ -2939,7 +2939,7 @@ export const moneyBootstrapDataset = {
       "totalCurrentCents": 11800,
       "pricePerUnitCurrentCents": 2360,
       "yieldPercent": 0.1468557009,
-      "descriptionText": "Vendi 2 Alibaba - BABA34 no dia 03/09/2025 Ã s 10:23:00. O valor de compra (p/unid): R$ 23,17. O valor de venda (p/unid): R$ 26,57, gerando lucro de 1,87%.",
+      "descriptionText": "Vendi 2 Alibaba - BABA34 no dia 03/09/2025  s 10:23:00. O valor de compra (p/unid): R$ 23,17. O valor de venda (p/unid): R$ 26,57, gerando lucro de 1,87%.",
       "isCompleted": true
     },
     {
@@ -2952,7 +2952,7 @@ export const moneyBootstrapDataset = {
       "totalCurrentCents": 11800,
       "pricePerUnitCurrentCents": 2360,
       "yieldPercent": 0.09678597516,
-      "descriptionText": "Vendi 2 Alibaba - BABA34 no dia 04/09/2025 Ã s 11:12:00. O valor de compra (p/unid): R$ 23,17. O valor de venda (p/unid): R$ 25,41, gerando lucro de 1,87%.",
+      "descriptionText": "Vendi 2 Alibaba - BABA34 no dia 04/09/2025  s 11:12:00. O valor de compra (p/unid): R$ 23,17. O valor de venda (p/unid): R$ 25,41, gerando lucro de 1,87%.",
       "isCompleted": true
     },
     {
@@ -2965,7 +2965,7 @@ export const moneyBootstrapDataset = {
       "totalCurrentCents": 4887,
       "pricePerUnitCurrentCents": 4933,
       "yieldPercent": -0.587804848,
-      "descriptionText": "Comprei 0,83 ChainLink no dia 05/09/2025 Ã s 14:58:00. O valor de compra (p/unid): R$ 119,67. Atualmente (p/unid): R$ 49,33, gerando decrÃ©scimo de 58,78%.",
+      "descriptionText": "Comprei 0,83 ChainLink no dia 05/09/2025  s 14:58:00. O valor de compra (p/unid): R$ 119,67. Atualmente (p/unid): R$ 49,33, gerando decréscimo de 58,78%.",
       "isCompleted": true
     },
     {
@@ -2978,7 +2978,7 @@ export const moneyBootstrapDataset = {
       "totalCurrentCents": 14168,
       "pricePerUnitCurrentCents": 7084,
       "yieldPercent": -0.3122330097,
-      "descriptionText": "Comprei 2 MercadoLibre - MELI34 no dia 12/09/2025 Ã s 11:08:00. O valor de compra (p/unid): R$ 103,00. Atualmente (p/unid): R$ 70,84, gerando decrÃ©scimo de 31,22%.",
+      "descriptionText": "Comprei 2 MercadoLibre - MELI34 no dia 12/09/2025  s 11:08:00. O valor de compra (p/unid): R$ 103,00. Atualmente (p/unid): R$ 70,84, gerando decréscimo de 31,22%.",
       "isCompleted": true
     },
     {
@@ -2991,7 +2991,7 @@ export const moneyBootstrapDataset = {
       "totalCurrentCents": 23236,
       "pricePerUnitCurrentCents": 1144286,
       "yieldPercent": -0.4186600274,
-      "descriptionText": "Comprei 0,01690952 Ethereum no dia 25/09/2025 Ã s 07:18:28. O valor de compra (p/unid): R$ 19.683,59. Atualmente (p/unid): R$ 11.442,86, gerando decrÃ©scimo de 41,87%.",
+      "descriptionText": "Comprei 0,01690952 Ethereum no dia 25/09/2025  s 07:18:28. O valor de compra (p/unid): R$ 19.683,59. Atualmente (p/unid): R$ 11.442,86, gerando decréscimo de 41,87%.",
       "isCompleted": true
     },
     {
@@ -3004,7 +3004,7 @@ export const moneyBootstrapDataset = {
       "totalCurrentCents": 1820,
       "pricePerUnitCurrentCents": 506,
       "yieldPercent": -0.6637464338,
-      "descriptionText": "Comprei 3,6 Sui no dia 10/10/2025 Ã s 20:29:23. O valor de compra (p/unid): R$ 15,05. Atualmente (p/unid): R$ 5,06, gerando decrÃ©scimo de 66,37%.",
+      "descriptionText": "Comprei 3,6 Sui no dia 10/10/2025  s 20:29:23. O valor de compra (p/unid): R$ 15,05. Atualmente (p/unid): R$ 5,06, gerando decréscimo de 66,37%.",
       "isCompleted": true
     },
     {
@@ -3017,7 +3017,7 @@ export const moneyBootstrapDataset = {
       "totalCurrentCents": 4005,
       "pricePerUnitCurrentCents": 980,
       "yieldPercent": -0.2701431112,
-      "descriptionText": "Comprei 4,09 Render no dia 10/10/2025 Ã s 20:29:58. O valor de compra (p/unid): R$ 13,43. Atualmente (p/unid): R$ 9,80, gerando decrÃ©scimo de 27,01%.",
+      "descriptionText": "Comprei 4,09 Render no dia 10/10/2025  s 20:29:58. O valor de compra (p/unid): R$ 13,43. Atualmente (p/unid): R$ 9,80, gerando decréscimo de 27,01%.",
       "isCompleted": true
     },
     {
@@ -3030,7 +3030,7 @@ export const moneyBootstrapDataset = {
       "totalCurrentCents": 18310,
       "pricePerUnitCurrentCents": 48646,
       "yieldPercent": -0.5221457136,
-      "descriptionText": "Comprei 0,33 Solana no dia 10/10/2025 Ã s 02:54:21. O valor de compra (p/unid): R$ 1.018,00. Atualmente (p/unid): R$ 486,46, gerando decrÃ©scimo de 52,21%.",
+      "descriptionText": "Comprei 0,33 Solana no dia 10/10/2025  s 02:54:21. O valor de compra (p/unid): R$ 1.018,00. Atualmente (p/unid): R$ 486,46, gerando decréscimo de 52,21%.",
       "isCompleted": true
     },
     {
@@ -3043,7 +3043,7 @@ export const moneyBootstrapDataset = {
       "totalCurrentCents": 23236,
       "pricePerUnitCurrentCents": 1144286,
       "yieldPercent": -0.4390757034,
-      "descriptionText": "Comprei 0,0034 Ethereum no dia 25/03/2026 Ã s 05:16:16. O valor de compra (p/unid): R$ 20.400,00. Atualmente (p/unid): R$ 11.442,86, gerando decrÃ©scimo de 43,91%.",
+      "descriptionText": "Comprei 0,0034 Ethereum no dia 25/03/2026  s 05:16:16. O valor de compra (p/unid): R$ 20.400,00. Atualmente (p/unid): R$ 11.442,86, gerando decréscimo de 43,91%.",
       "isCompleted": true
     },
     {
@@ -3056,7 +3056,7 @@ export const moneyBootstrapDataset = {
       "totalCurrentCents": 1442,
       "pricePerUnitCurrentCents": 41,
       "yieldPercent": -0.5111864407,
-      "descriptionText": "Comprei 35,4645 SAPIEN no dia 09/12/2025 Ã s 05:31:50. O valor de compra (p/unid): R$ 0,83. Atualmente (p/unid): R$ 0,41, gerando decrÃ©scimo de 51,12%.",
+      "descriptionText": "Comprei 35,4645 SAPIEN no dia 09/12/2025  s 05:31:50. O valor de compra (p/unid): R$ 0,83. Atualmente (p/unid): R$ 0,41, gerando decréscimo de 51,12%.",
       "isCompleted": true
     },
     {
@@ -3069,7 +3069,7 @@ export const moneyBootstrapDataset = {
       "totalCurrentCents": 1814,
       "pricePerUnitCurrentCents": 123,
       "yieldPercent": -0.3578761062,
-      "descriptionText": "Comprei 14,8 Curve DAO no dia 15/12/2025 Ã s 14:32:42. O valor de compra (p/unid): R$ 1,91. Atualmente (p/unid): R$ 1,23, gerando decrÃ©scimo de 35,79%.",
+      "descriptionText": "Comprei 14,8 Curve DAO no dia 15/12/2025  s 14:32:42. O valor de compra (p/unid): R$ 1,91. Atualmente (p/unid): R$ 1,23, gerando decréscimo de 35,79%.",
       "isCompleted": true
     },
     {
@@ -3082,7 +3082,7 @@ export const moneyBootstrapDataset = {
       "totalCurrentCents": 1954,
       "pricePerUnitCurrentCents": 102,
       "yieldPercent": -0.3262068966,
-      "descriptionText": "Comprei 19,13824 FartCoin no dia 18/12/2025 Ã s 08:04:51. O valor de compra (p/unid): R$ 1,52. Atualmente (p/unid): R$ 1,02, gerando decrÃ©scimo de 32,62%.",
+      "descriptionText": "Comprei 19,13824 FartCoin no dia 18/12/2025  s 08:04:51. O valor de compra (p/unid): R$ 1,52. Atualmente (p/unid): R$ 1,02, gerando decréscimo de 32,62%.",
       "isCompleted": true
     }
   ],

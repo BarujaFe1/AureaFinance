@@ -99,14 +99,14 @@ export function completeFinancialOnboarding(payload: FinancialOnboardingPayload)
         notes: account.notes ?? ""
       });
       const createdAccountId = findAccountIdByName(account.name);
-      if (!createdAccountId) throw new Error(`Conta ${account.name}: nÃ£o foi possÃ­vel localizar o registro criado.`);
+      if (!createdAccountId) throw new Error(`Conta ${account.name}: não foi possível localizar o registro criado.`);
       accountIdMap.set(account.clientId, createdAccountId);
     }
 
     for (const card of payload.cards) {
       if (!card.name.trim()) continue;
       const settlementAccountId = accountIdMap.get(card.settlementAccountClientId);
-      if (!settlementAccountId) throw new Error(`CartÃ£o ${card.name}: conta de pagamento nÃ£o encontrada no onboarding.`);
+      if (!settlementAccountId) throw new Error(`Cartão ${card.name}: conta de pagamento não encontrada no onboarding.`);
       createCreditCard({
         name: card.name,
         brand: card.brand ?? "",
@@ -139,7 +139,7 @@ export function completeFinancialOnboarding(payload: FinancialOnboardingPayload)
     for (const item of payload.recurring) {
       if (!item.title.trim()) continue;
       const accountId = accountIdMap.get(item.accountClientId);
-      if (!accountId) throw new Error(`RecorrÃªncia ${item.title}: conta vinculada nÃ£o encontrada no onboarding.`);
+      if (!accountId) throw new Error(`Recorrência ${item.title}: conta vinculada não encontrada no onboarding.`);
       createRecurringRule({
         title: item.title,
         accountId,

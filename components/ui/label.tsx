@@ -1,10 +1,8 @@
-import * as React from "react";
+import type { JSX, LabelHTMLAttributes } from "react";
 import { cn } from "@/lib/utils";
 
-export interface LabelProps extends React.LabelHTMLAttributes<HTMLLabelElement> {}
+export type LabelProps = LabelHTMLAttributes<HTMLLabelElement>;
 
-export const Label = React.forwardRef<HTMLLabelElement, LabelProps>(function Label({ className, ...props }, ref) {
-  return <label ref={ref} className={cn("text-sm font-medium text-[var(--foreground)]", className)} {...props} />;
-});
-
-export default Label;
+export function Label({ className, ...props }: LabelProps): JSX.Element {
+  return <label className={cn("text-sm font-medium leading-none", className)} {...props} />;
+}

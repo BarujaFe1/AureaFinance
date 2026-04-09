@@ -29,7 +29,7 @@ function parseSource(value: FormDataEntryValue | null): FinancialOnboardingPaylo
 export async function completeFinancialOnboardingAction(formData: FormData) {
   const payload: FinancialOnboardingPayload = {
     source: parseSource(formData.get("source")),
-    userDisplayName: String(formData.get("userDisplayName") ?? "VocÃª"),
+    userDisplayName: String(formData.get("userDisplayName") ?? "Você"),
     baseCurrency: String(formData.get("baseCurrency") ?? "BRL"),
     locale: String(formData.get("locale") ?? "pt-BR"),
     projectionMonths: Number(formData.get("projectionMonths") ?? 6),

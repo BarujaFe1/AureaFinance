@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { markBillPaidAction } from "@/features/cards/actions";
 import { formatCurrencyFromCents } from "@/lib/currency";
+import { formatBillEntryTypeLabel, formatStatusLabel } from "@/lib/formatters";
 import { listBills } from "@/services/cards.service";
 
 export default function BillsPage() {
@@ -24,31 +25,37 @@ export default function BillsPage() {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex flex-wrap items-center gap-4 text-sm text-[var(--muted-foreground)]">
-                  <span>Fecha em {bill.closesOn}</span>
+                  <span>Competência {bill.billMonth}</span><span>Fecha em {bill.closesOn}</span>
                   <span>Vence em {bill.dueOn}</span>
-                  <span>Status: {bill.status}</span>
+                  <span>Status: {formatStatusLabel(bill.status)}</span>
                   <strong className="text-[var(--foreground)]">
                     {formatCurrencyFromCents(bill.totalAmountCents - bill.paidAmountCents)}
                   </strong>
                 </div>
-                <table>
-                  <thead>
-                    <tr>
-                      <th>Entrada</th>
-                      <th>Tipo</th>
-                      <th>Valor</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {bill.entries.map((entry) => (
-                      <tr key={entry.id}>
-                        <td>{entry.description}</td>
-                        <td>{entry.entryType}</td>
-                        <td>{formatCurrencyFromCents(entry.amountCents)}</td>
+                {bill.entries.length > 0 ? (
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Entrada</th>
+                        <th>Tipo</th>
+                        <th>Valor</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody>
+                      {bill.entries.map((entry) => (
+                        <tr key={entry.id}>
+                          <td>{entry.description}</td>
+                          <td>{formatBillEntryTypeLabel(entry.entryType)}</td>
+                          <td>{formatCurrencyFromCents(entry.amountCents)}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                ) : (
+                  <div className="rounded-2xl border border-[var(--border)] p-3 text-sm text-[var(--muted-foreground)]">
+                    Esta fatura ainda não tem linhas detalhadas visíveis. O total consolidado está salvo, mas as entradas precisam ser revisadas na compra original ou no lote de importação.
+                  </div>
+                )}
                 {bill.status !== "paid" ? (
                   <form action={markBillPaidAction}>
                     <input type="hidden" name="billId" value={bill.id} />

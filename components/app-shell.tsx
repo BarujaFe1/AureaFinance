@@ -10,6 +10,7 @@ import {
   ArrowLeftRight,
   Boxes,
   CalendarDays,
+  ClipboardCheck,
   CircleDollarSign,
   CreditCard,
   FolderTree,
@@ -25,17 +26,18 @@ import {
 const nav = [
   ["/dashboard", "Dashboard", LayoutDashboard],
   ["/accounts", "Contas", Landmark],
-  ["/transactions", "TransaÃ§Ãµes", ArrowLeftRight],
-  ["/cards", "CartÃµes", CreditCard],
+  ["/daily", "Conferência diária", ClipboardCheck],
+  ["/transactions", "Transações", ArrowLeftRight],
+  ["/cards", "Cartões", CreditCard],
   ["/bills", "Faturas", CircleDollarSign],
-  ["/recurring", "RecorrÃªncias", Repeat2],
-  ["/calendar", "CalendÃ¡rio", CalendarDays],
+  ["/recurring", "Recorrências", Repeat2],
+  ["/calendar", "Calendário", CalendarDays],
   ["/closings", "Fechamentos", Boxes],
-  ["/future", "VisÃ£o futura", TrendingUp],
-  ["/net-worth", "PatrimÃ´nio", PieChart],
+  ["/future", "Visão futura", TrendingUp],
+  ["/net-worth", "Patrimônio", PieChart],
   ["/categories", "Categorias", FolderTree],
-  ["/import", "ImportaÃ§Ã£o", Import],
-  ["/settings", "ConfiguraÃ§Ãµes", Settings]
+  ["/import", "Importação", Import],
+  ["/settings", "Configurações", Settings]
 ] as const;
 
 export function AppShell({ children }: { children: ReactNode }) {
@@ -61,6 +63,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                 <Link
                   key={href}
                   href={href}
+                  prefetch
                   className={cn(
                     "flex items-center gap-3 rounded-2xl px-3 py-2.5 text-sm transition-colors",
                     active

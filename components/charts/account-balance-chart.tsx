@@ -2,7 +2,7 @@
 
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 
-export function AccountBalanceChart({ data }: { data: { name: string; current: number; projected: number }[] }) {
+export function AccountBalanceChart({ data }: { data: { name: string; current: number; projected: number; reconciled?: number }[] }) {
   return (
     <div className="h-80 w-full">
       <ResponsiveContainer width="100%" height="100%">
@@ -12,6 +12,7 @@ export function AccountBalanceChart({ data }: { data: { name: string; current: n
           <YAxis tickLine={false} axisLine={false} />
           <Tooltip formatter={(value: number) => `R$ ${value.toFixed(2)}`} />
           <Area type="monotone" dataKey="current" fillOpacity={0.15} strokeWidth={2} />
+          <Area type="monotone" dataKey="reconciled" fillOpacity={0.08} strokeWidth={2} />
           <Area type="monotone" dataKey="projected" fillOpacity={0.08} strokeWidth={2} />
         </AreaChart>
       </ResponsiveContainer>

@@ -26,7 +26,7 @@ export async function bootstrapMoneyImportAction() {
 
 export async function uploadWorkbookAction(formData: FormData) {
   const file = formData.get("file");
-  if (!(file instanceof File)) throw new Error("Arquivo invÃ¡lido.");
+  if (!(file instanceof File)) throw new Error("Arquivo inválido.");
   await ingestWorkbook(file.name, await file.arrayBuffer());
   revalidatePath("/import");
 }

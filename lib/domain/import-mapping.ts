@@ -30,7 +30,7 @@ export type ColumnGuess = { source: string; target: string; confidence: "high" |
 export function guessColumns(headers: string[]): ColumnGuess[] {
   return headers.map((header) => {
     const value = header.toLowerCase();
-    if (value.includes("data")) return { source: header, target: "occurredOn", confidence: "high" };
+    if (value.includes("data")) return { source: header, target: "transactionDate", confidence: "high" };
     if (value.includes("descr") || value.includes("nome")) return { source: header, target: "description", confidence: "high" };
     if (value.includes("valor")) return { source: header, target: "amountCents", confidence: "high" };
     if (value.includes("categoria")) return { source: header, target: "categoryName", confidence: "medium" };

@@ -1,10 +1,10 @@
 import { unstable_cache } from "next/cache";
-import { eq } from "drizzle-orm";
 import { db } from "@/db/client";
-import { accounts, billEntries, cardInstallments, cardPurchases, creditCardBills, creditCards, recurringOccurrences, recurringRules } from "@/db/schema";
+import { accounts, cardInstallments, cardPurchases, creditCardBills, creditCards, recurringOccurrences, recurringRules } from "@/db/schema";
 import { addDaysIso, addMonthsIso, todayIso } from "@/lib/dates";
 import { materializeOccurrences, type TransactionDirection } from "@/lib/finance";
 import { listAccountsWithBalances } from "@/services/accounts.service";
+import { ensureSettings } from "@/services/settings.service";
 
 export type CashflowEvent = {
   date: string;
@@ -27,9 +27,17 @@ export type CashflowDay = {
   is_negative: boolean;
 };
 
+type AccountRow = typeof accounts.$inferSelect;
+type CreditCardRow = typeof creditCards.$inferSelect;
+type BillRow = typeof creditCardBills.$inferSelect;
+type InstallmentRow = typeof cardInstallments.$inferSelect;
+type PurchaseRow = typeof cardPurchases.$inferSelect;
+type RuleRow = typeof recurringRules.$inferSelect;
+type OccurrenceRow = typeof recurringOccurrences.$inferSelect;
+
 function firstBusinessDayAfter12(year: number, monthIndex: number) {
-  const date = new Date(year, monthIndex, 13);
-  while (date.getDay() === 0 || date.getDay() === 6) date.setDate(date.getDate() + 1);
+  const date = new Date(Date.UTC(year, monthIndex, 13));
+  while (date.getUTCDay() === 0 || date.getUTCDay() === 6) date.setUTCDate(date.getUTCDate() + 1);
   return date.toISOString().slice(0, 10);
 }
 
@@ -41,24 +49,42 @@ function normalizeRuleFrequency(value: string): "weekly" | "monthly" | "yearly" 
   return value === "weekly" || value === "yearly" ? value : "monthly";
 }
 
-function expandRule(rule: typeof recurringRules.$inferSelect, endDate: string) {
+function getProjectionHorizonMonths(days: number) {
+  const settingsMonths = ensureSettings().projectionMonths;
+  return Math.max(settingsMonths, Math.ceil(days / 30), 6);
+}
+
+function advanceFrequency(date: string, frequency: "weekly" | "monthly" | "yearly") {
+  if (frequency === "weekly") return addDaysIso(date, 7);
+  if (frequency === "yearly") return addMonthsIso(date, 12);
+  return addMonthsIso(date, 1);
+}
+
+function expandRule(rule: RuleRow, endDate: string, days: number) {
   if (rule.notes?.includes("FIRST_BUSINESS_DAY_AFTER_12")) {
     const out: string[] = [];
-    let cursor = new Date(rule.nextRunOn);
-    const end = new Date(endDate);
-    while (cursor <= end) {
-      out.push(firstBusinessDayAfter12(cursor.getFullYear(), cursor.getMonth()));
-      cursor = new Date(addMonthsIso(cursor.toISOString().slice(0, 10), 1));
+    let cursor = `${rule.nextRunOn.slice(0, 7)}-01`;
+    while (cursor <= endDate) {
+      const monthIndex = Number(cursor.slice(5, 7)) - 1;
+      out.push(firstBusinessDayAfter12(Number(cursor.slice(0, 4)), monthIndex));
+      cursor = addMonthsIso(cursor, 1);
     }
     return out;
   }
+  let nextRunOn = rule.nextRunOn;
+  const today = todayIso();
+  let guard = 0;
+  while (nextRunOn < today && guard < 240) {
+    nextRunOn = advanceFrequency(nextRunOn, normalizeRuleFrequency(rule.frequency));
+    guard += 1;
+  }
   return materializeOccurrences({
-    nextRunOn: rule.nextRunOn,
+    nextRunOn,
     endsOn: rule.endsOn,
     frequency: normalizeRuleFrequency(rule.frequency),
     amountCents: rule.amountCents,
     direction: normalizeRuleDirection(rule.direction)
-  }, 4)
+  }, getProjectionHorizonMonths(days))
     .map((item) => item.dueOn)
     .filter((date) => date <= endDate);
 }
@@ -66,13 +92,26 @@ function expandRule(rule: typeof recurringRules.$inferSelect, endDate: string) {
 async function computeProjectedCashflow(days: number) {
   const currentAccounts = listAccountsWithBalances();
   const initialBalanceCents = currentAccounts.reduce((sum, account) => sum + account.currentBalanceCents, 0);
-  const accountMap = new Map(db.select().from(accounts).all().map((row) => [row.id, row]));
-  const cardMap = new Map(db.select().from(creditCards).all().map((row) => [row.id, row]));
+  const accountRows = db.select().from(accounts).all() as AccountRow[];
+  const cardRows = db.select().from(creditCards).all() as CreditCardRow[];
+  const purchaseRows = db.select().from(cardPurchases).all() as PurchaseRow[];
+  const installmentRows = db.select().from(cardInstallments).all() as InstallmentRow[];
+  const billRows = db.select().from(creditCardBills).all() as BillRow[];
+  const ruleRows = db.select().from(recurringRules).all() as RuleRow[];
+  const occurrenceRows = db.select().from(recurringOccurrences).all() as OccurrenceRow[];
+  const accountMap = new Map<string, AccountRow>(accountRows.map((row) => [row.id, row]));
+  const cardMap = new Map<string, CreditCardRow>(cardRows.map((row) => [row.id, row]));
+  const purchaseMap = new Map<string, PurchaseRow>(purchaseRows.map((row) => [row.id, row]));
+  const occurrencesByRuleAndDate = new Set(occurrenceRows.map((row) => `${row.ruleId}|${row.dueOn}|${row.status}`));
+  const cardBySettlementAccountId = new Map<string, CreditCardRow>();
+  for (const card of cardRows) {
+    if (!cardBySettlementAccountId.has(card.settlementAccountId)) cardBySettlementAccountId.set(card.settlementAccountId, card);
+  }
   const today = todayIso();
   const end = addDaysIso(today, days - 1);
   const events: CashflowEvent[] = [];
 
-  const bills = db.select().from(creditCardBills).all().filter((bill) => bill.status !== "paid" && bill.dueOn >= today && bill.dueOn <= end);
+  const bills = billRows.filter((bill) => bill.status !== "paid" && bill.dueOn >= today && bill.dueOn <= end);
   const billIdsInRange = new Set(bills.map((bill) => bill.id));
 
   for (const bill of bills) {
@@ -81,7 +120,7 @@ async function computeProjectedCashflow(days: number) {
     events.push({
       date: bill.dueOn,
       type: "fatura_cartao",
-      description: `Fatura ${card?.name ?? "CartÃ£o"} ${bill.billMonth}`,
+      description: `Fatura ${card?.name ?? "Cartão"} ${bill.billMonth}`,
       amount_cents: Math.max(bill.totalAmountCents - bill.paidAmountCents, 0),
       direction: "saida",
       account_name: account?.name ?? "Conta de pagamento",
@@ -89,9 +128,9 @@ async function computeProjectedCashflow(days: number) {
     });
   }
 
-  const installments = db.select().from(cardInstallments).all().filter((item) => item.dueOn >= today && item.dueOn <= end && !billIdsInRange.has(item.billId));
+  const installments = installmentRows.filter((item) => item.dueOn >= today && item.dueOn <= end && !billIdsInRange.has(item.billId));
   for (const installment of installments) {
-    const purchase = db.select().from(cardPurchases).where(eq(cardPurchases.id, installment.purchaseId)).get();
+    const purchase = purchaseMap.get(installment.purchaseId);
     if (!purchase) continue;
     const card = cardMap.get(purchase.creditCardId);
     const account = card ? accountMap.get(card.settlementAccountId) : null;
@@ -107,34 +146,23 @@ async function computeProjectedCashflow(days: number) {
     });
   }
 
-  const rules = db.select().from(recurringRules).all().filter((rule) => rule.isActive);
-  const occurrencesByRule = db.select().from(recurringOccurrences).all();
+  const rules = ruleRows.filter((rule) => rule.isActive);
   for (const rule of rules) {
     const account = accountMap.get(rule.accountId);
-    const generatedDates = expandRule(rule, end).filter((date) => date >= today);
+    const generatedDates = expandRule(rule, end, days).filter((date) => date >= today);
     for (const dueOn of generatedDates) {
-      const existing = occurrencesByRule.find((item) => item.ruleId === rule.id && item.dueOn === dueOn);
-      if (existing?.status === "posted") continue;
-      if (rule.notes?.includes("CARD_RECURRING")) {
-        const card = db.select().from(creditCards).all().find((row) => row.settlementAccountId === rule.accountId);
-        events.push({
-          date: dueOn,
-          type: rule.direction === "income" ? "recorrencia_receita" : "recorrencia_despesa",
-          description: rule.title,
-          amount_cents: rule.amountCents,
-          direction: rule.direction === "income" ? "entrada" : "saida",
-          account_name: account?.name ?? "Conta",
-          card_name: card?.name
-        });
-        continue;
-      }
+      if (occurrencesByRuleAndDate.has(`${rule.id}|${dueOn}|posted`)) continue;
+      const card = rule.notes?.includes("CARD_RECURRING")
+        ? cardBySettlementAccountId.get(rule.accountId)
+        : null;
       events.push({
         date: dueOn,
         type: rule.direction === "income" ? "recorrencia_receita" : "recorrencia_despesa",
         description: rule.title,
         amount_cents: rule.amountCents,
         direction: rule.direction === "income" ? "entrada" : "saida",
-        account_name: account?.name ?? "Conta"
+        account_name: account?.name ?? "Conta",
+        card_name: card?.name
       });
     }
   }

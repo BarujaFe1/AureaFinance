@@ -1,7 +1,7 @@
 import { desc } from "drizzle-orm";
 import { db } from "@/db/client";
 import { accountBalanceSnapshots, accounts, transactions } from "@/db/schema";
-import { calculateBalance, calculateProjectedBalance } from "@/lib/finance";
+import { calculateBalance, calculateProjectedBalance, toBalanceTransactions } from "@/lib/finance";
 
 export function getAccountsSnapshot() {
   const accountRows = db.select().from(accounts).all();
@@ -13,8 +13,8 @@ export function getAccountsSnapshot() {
     const latestSnapshot = snapshotRows.find((snapshot) => snapshot.accountId === account.id) ?? null;
     return {
       ...account,
-      realizedBalanceCents: calculateBalance(account.openingBalanceCents, relatedTransactions),
-      projectedBalanceCents: calculateProjectedBalance(account.openingBalanceCents, relatedTransactions),
+      realizedBalanceCents: calculateBalance(account.openingBalanceCents, toBalanceTransactions(relatedTransactions)),
+      projectedBalanceCents: calculateProjectedBalance(account.openingBalanceCents, toBalanceTransactions(relatedTransactions)),
       latestSnapshot
     };
   });

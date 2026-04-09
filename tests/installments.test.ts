@@ -12,7 +12,7 @@ describe("installments", () => {
     });
 
     expect(result).toHaveLength(3);
-    expect(result[0].statementMonth).toBe("2026-03");
+    expect(result[0].billMonth).toBe("2026-03");
     expect(result[0].amountCents + result[1].amountCents + result[2].amountCents).toBe(100000);
   });
 });

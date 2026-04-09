@@ -6,8 +6,14 @@ export async function stageWorkbookImport(params: {
   fileName: string;
   sourceLabel?: string;
 }) {
-  const batchId = await ingestWorkbook(params.fileName, params.buffer.buffer.slice(params.buffer.byteOffset, params.buffer.byteOffset + params.buffer.byteLength));
+  const arrayBuffer = params.buffer.buffer.slice(
+    params.buffer.byteOffset,
+    params.buffer.byteOffset + params.buffer.byteLength
+  ) as ArrayBuffer;
+
+  const batchId = await ingestWorkbook(params.fileName, arrayBuffer);
   const inventory = inventoryWorkbook(params.buffer);
+
   return {
     batchId,
     inventory,

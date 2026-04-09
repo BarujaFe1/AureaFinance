@@ -83,9 +83,9 @@ export function ImportWorkbench({ expectedFiles }: { expectedFiles: string[] }) 
           <form action={uploadWorkbookAction} className="rounded-2xl border border-dashed border-[var(--border)] p-4">
             <div className="mb-3 flex items-center gap-2">
               <UploadCloud className="size-4 text-[var(--muted-foreground)]" />
-              <strong>Workbook genÃ©rico</strong>
+              <strong>Workbook genérico</strong>
             </div>
-            <p className="mb-4 text-sm text-[var(--muted-foreground)]">Envie um XLSX/XLS para inventÃ¡rio de abas, staging e dry-run com mapeamento sugerido.</p>
+            <p className="mb-4 text-sm text-[var(--muted-foreground)]">Envie um XLSX/XLS para inventário de abas, staging e dry-run com mapeamento sugerido.</p>
             <input type="file" name="file" accept=".xlsx,.xls" className="mb-4 block w-full text-sm" />
             <Button type="submit">Enviar workbook</Button>
           </form>
@@ -95,7 +95,7 @@ export function ImportWorkbench({ expectedFiles }: { expectedFiles: string[] }) 
               <FileSpreadsheet className="size-4 text-[var(--muted-foreground)]" />
               <strong>Modo legado CSV</strong>
             </div>
-            <p className="mb-4 text-sm text-[var(--muted-foreground)]">Aceita mÃºltiplos CSVs, detecta preview e executa a importaÃ§Ã£o existente.</p>
+            <p className="mb-4 text-sm text-[var(--muted-foreground)]">Aceita múltiplos CSVs, detecta preview e executa a importação existente.</p>
             <input type="file" name="files" accept=".csv" multiple className="mb-4 block w-full text-sm" onChange={(event) => void handleFiles(event.target.files)} />
             <div className="flex flex-wrap items-center gap-3">
               <Button type="submit" disabled={!hasValidFiles || pending}>Importar CSVs</Button>
@@ -110,7 +110,7 @@ export function ImportWorkbench({ expectedFiles }: { expectedFiles: string[] }) 
           <CardTitle>Preview dos CSVs selecionados</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          {previews.length === 0 ? <p className="text-sm text-[var(--muted-foreground)]">Selecione arquivos CSV para ver prÃ©via real do conteÃºdo.</p> : null}
+          {previews.length === 0 ? <p className="text-sm text-[var(--muted-foreground)]">Selecione arquivos CSV para ver prévia real do conteúdo.</p> : null}
           {previews.map((file) => (
             <div key={file.name} className="rounded-2xl border border-[var(--border)] p-4">
               <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
@@ -118,7 +118,7 @@ export function ImportWorkbench({ expectedFiles }: { expectedFiles: string[] }) 
                   <FileSpreadsheet className="size-5 text-[var(--muted-foreground)]" />
                   <div>
                     <p className="font-medium">{file.name}</p>
-                    <p className="text-xs text-[var(--muted-foreground)]">{file.sizeKb} KB Â· {file.lineCount} linhas</p>
+                    <p className="text-xs text-[var(--muted-foreground)]">{file.sizeKb} KB · {file.lineCount} linhas</p>
                   </div>
                 </div>
                 <div className="inline-flex items-center gap-2 text-sm">
@@ -159,16 +159,18 @@ export function ImportWorkbench({ expectedFiles }: { expectedFiles: string[] }) 
                 </tr>
               </thead>
               <tbody>
-                {state.files.map((file) => (
-                  <Fragment key={file.fileName}>
-                    <tr>
+                {state.files.flatMap((file) => {
+                  const rows = [
+                    <tr key={`${file.fileName}-main`}>
                       <td className="px-2 py-2">{file.fileName}</td>
                       <td className="px-2 py-2">{file.linesProcessed}</td>
                       <td className="px-2 py-2">{file.linesWithError}</td>
-                      <td className="px-2 py-2">{file.status === "success" ? "âœ… Sucesso" : file.status === "partial" ? "âš ï¸ Parcial" : file.status === "skipped" ? "â†· Ignorado" : "âŒ Falhou"}</td>
+                      <td className="px-2 py-2">{file.status === "success" ? "✅ Sucesso" : file.status === "partial" ? "⚠️ Parcial" : file.status === "skipped" ? "↷ Ignorado" : "❌ Falhou"}</td>
                     </tr>
-                    {file.errors.length ? (
-                      <tr>
+                  ];
+                  if (file.errors.length) {
+                    rows.push(
+                      <tr key={`${file.fileName}-errors`}>
                         <td colSpan={4} className="px-2 py-2">
                           <details>
                             <summary className="cursor-pointer text-sm text-[var(--muted-foreground)]">Ver erros</summary>
@@ -178,13 +180,14 @@ export function ImportWorkbench({ expectedFiles }: { expectedFiles: string[] }) 
                           </details>
                         </td>
                       </tr>
-                    ) : null}
-                  </Fragment>
-                ))}
+                    );
+                  }
+                  return rows;
+                })}
               </tbody>
             </table>
           ) : (
-            <p className="text-sm text-[var(--muted-foreground)]">Depois da primeira importaÃ§Ã£o CSV, o relatÃ³rio por arquivo aparece aqui.</p>
+            <p className="text-sm text-[var(--muted-foreground)]">Depois da primeira importação CSV, o relatório por arquivo aparece aqui.</p>
           )}
         </CardContent>
       </Card>

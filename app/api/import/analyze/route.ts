@@ -9,7 +9,8 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Arquivo não enviado." }, { status: 400 });
   }
 
-  const buffer = Buffer.from(await file.arrayBuffer());
+  const arrayBuffer = await file.arrayBuffer();
+  const buffer = Buffer.from(new Uint8Array(arrayBuffer));
   const inventory = inventoryWorkbook(buffer);
 
   return NextResponse.json(inventory);

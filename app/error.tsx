@@ -5,7 +5,7 @@ export default function GlobalError({ error, reset }: { error: Error; reset: () 
     <div className="space-y-4 rounded-3xl border border-red-500/30 bg-red-500/10 p-8 text-red-200">
       <div>
         <h2 className="text-xl font-semibold">Algo saiu do esperado</h2>
-        <p className="mt-2 text-sm text-red-100/80">{error.message || "Falha inesperada ao renderizar a pÃ¡gina."}</p>
+        <p className="mt-2 text-sm text-red-100/80">{error.message || "Falha inesperada ao renderizar a página."}</p>
       </div>
       <button
         type="button"
