@@ -1,8 +1,14 @@
 import * as XLSX from "xlsx";
 import type { WorkBook } from "xlsx";
 import { eq } from "drizzle-orm";
-import { db } from "@/db/client";
+import { db, sqlite } from "@/db/client";
 import { accounts, creditCardBills, creditCards, importBatches, importIssues, importMappings, importRawRows, netWorthSummaries, transactions } from "@/db/schema";
+import {
+  MAX_IMPORT_FILE_BYTES,
+  MAX_IMPORT_ROWS_PER_SHEET,
+  MAX_IMPORT_SHEETS,
+  MAX_IMPORT_TOTAL_ROWS
+} from "@/lib/constants";
 import { parseCurrencyToCents } from "@/lib/currency";
 import { isoMonth, nowTs, parseBrazilianDate } from "@/lib/dates";
 import { repairMojibake, sanitizeText, normalizeLooseText } from "@/lib/text";
@@ -211,10 +217,31 @@ export function getImportBatch(batchId: string) {
 }
 
 export async function ingestWorkbook(fileName: string, arrayBuffer: ArrayBuffer) {
+  if (arrayBuffer.byteLength > MAX_IMPORT_FILE_BYTES) {
+    throw new Error(`Arquivo excede o limite de ${Math.round(MAX_IMPORT_FILE_BYTES / (1024 * 1024))} MB.`);
+  }
+
   const workbook = XLSX.read(arrayBuffer, { type: "array", cellDates: true, raw: false });
   const now = nowTs();
   const batchId = uid("batch");
   const sheets = inventory(workbook);
+
+  if (sheets.length > MAX_IMPORT_SHEETS) {
+    throw new Error(`Workbook excede o limite de ${MAX_IMPORT_SHEETS} abas.`);
+  }
+
+  let totalRows = 0;
+  for (const sheet of sheets) {
+    const rows = XLSX.utils.sheet_to_json<Array<string | number | boolean | null>>(workbook.Sheets[sheet.name], { header: 1, defval: null, raw: false });
+    if (rows.length > MAX_IMPORT_ROWS_PER_SHEET) {
+      throw new Error(`A aba "${sheet.name}" excede o limite de ${MAX_IMPORT_ROWS_PER_SHEET} linhas.`);
+    }
+    totalRows += rows.length;
+  }
+  if (totalRows > MAX_IMPORT_TOTAL_ROWS) {
+    throw new Error(`Workbook excede o limite total de ${MAX_IMPORT_TOTAL_ROWS} linhas.`);
+  }
+
   const meta: BatchMeta = { sheets };
   db.insert(importBatches).values({
     id: batchId,
@@ -269,6 +296,19 @@ export async function ingestWorkbook(fileName: string, arrayBuffer: ArrayBuffer)
   }
 
   return batchId;
+}
+
+/** Discard a staging batch before commit. Cascades to mappings, raw rows and issues. */
+export function discardBatch(batchId: string) {
+  const batch = db.select().from(importBatches).where(eq(importBatches.id, batchId)).get();
+  if (!batch) throw new Error("Lote de importação não encontrado.");
+  if (batch.status === "committed") {
+    throw new Error("Não é possível descartar um lote já commitado.");
+  }
+  db.delete(importIssues).where(eq(importIssues.batchId, batchId)).run();
+  db.delete(importRawRows).where(eq(importRawRows.batchId, batchId)).run();
+  db.delete(importMappings).where(eq(importMappings.batchId, batchId)).run();
+  db.delete(importBatches).where(eq(importBatches.id, batchId)).run();
 }
 
 export function saveSheetMapping(batchId: string, sheetName: string, targetEntity: ImportSheetTarget, columnMap: Record<string, string>) {
@@ -363,159 +403,172 @@ export function validateBatch(batchId: string) {
 export function commitBatch(batchId: string, dryRun = false) {
   const batch = getImportBatch(batchId);
   if (!batch) throw new Error("Lote não encontrado.");
+  if (batch.status === "committed") throw new Error("Este lote já foi commitado.");
   const now = nowTs();
   const report = validateBatch(batchId);
   if (dryRun) return report;
-
-  const existingTxnSignatures = new Set(
-    db.select().from(transactions).all().map((item) => buildTransactionSignature({
-      accountId: item.accountId ?? null,
-      description: item.description,
-      amountCents: item.amountCents,
-      occurredOn: item.occurredOn,
-      direction: item.direction
-    }))
-  );
-
-  for (const mapping of batch.mappings) {
-    const rows = batch.rows.filter((row) => row.sheetName === mapping.sheetName);
-    const map = fromJson<Record<string, string>>(mapping.columnMapJson, {});
-
-    for (const row of rows) {
-      const payload = fromJson<Record<string, unknown>>(row.payloadJson, {});
-
-      if (mapping.targetEntity === "accounts") {
-        const name = toText(getCell(payload, map.name ?? ""));
-        if (!name) continue;
-        const slug = slugify(name);
-        const existing = db.select().from(accounts).where(eq(accounts.slug, slug)).get();
-        const accountPayload = {
-          name,
-          slug,
-          type: toText(getCell(payload, map.type ?? "")) || "checking",
-          institution: toText(getCell(payload, map.institution ?? "")),
-          openingBalanceCents: parseCurrencyToCents(getCell(payload, map.balance ?? "") ?? 0),
-          color: "#5b7cfa",
-          notes: "Importado de workbook externo.",
-          includeInNetWorth: map.includeInNetWorth ? toBoolean(getCell(payload, map.includeInNetWorth)) : true,
-          isArchived: false,
-          sortOrder: now,
-          updatedAt: now
-        };
-        if (existing) db.update(accounts).set(accountPayload).where(eq(accounts.id, existing.id)).run();
-        else db.insert(accounts).values({ id: uid("acc"), ...accountPayload, createdAt: now }).run();
-      }
-
-      if (mapping.targetEntity === "transactions") {
-        const isMoneyMonthly = isMoneyMonthlySheet(mapping.sheetName);
-        const occurredOn = normalizeDateText(getCell(payload, map.date ?? ""));
-        const amountCents = parseCurrencyToCents(getCell(payload, map.amount ?? "") ?? 0);
-        if (!occurredOn || amountCents === 0) continue;
-
-        const description = isMoneyMonthly
-          ? toText(getCell(payload, map.description ?? "")) || "Lançamento importado da Money"
-          : toText(getCell(payload, map.description ?? ""));
-        if (!description) continue;
-
-        const mappedAccountName = toText(getCell(payload, map.account ?? ""));
-        const account = mappedAccountName ? findAccountByLooseName(mappedAccountName) : ensureAggregateCashAccount(now);
-        const accountId = account?.id ?? ensureAggregateCashAccount(now).id;
-        const direction = normalizeTransactionDirection(getCell(payload, map.direction ?? ""));
-        const occurredMonth = isoMonth(occurredOn);
-        const signature = buildTransactionSignature({ accountId, description, amountCents, occurredOn, direction });
-        if (existingTxnSignatures.has(signature)) continue;
-
-        db.insert(transactions).values({
-          id: uid("txn"),
-          accountId,
-          categoryId: null,
-          subcategoryId: null,
-          transferId: null,
-          recurringOccurrenceId: null,
-          sourceImportRowId: row.id,
-          direction,
-          status: "posted",
-          description,
-          counterparty: toText(getCell(payload, map.counterparty ?? "")),
-          amountCents,
-          occurredOn,
-          dueOn: occurredOn,
-          competenceMonth: occurredMonth,
-          notes: isMoneyMonthly
-            ? "Importado automaticamente da aba Acompanhamento Mensal da Money."
-            : toText(getCell(payload, map.notes ?? "")) || `Importado do lote ${batch.filename}.`,
-          isProjected: false,
-          createdAt: now,
-          updatedAt: now
-        }).run();
-        existingTxnSignatures.add(signature);
-      }
-
-      if (mapping.targetEntity === "credit_cards") {
-        const name = toText(getCell(payload, map.name ?? ""));
-        if (!name) continue;
-        const cardSlug = slugify(name);
-        const existing = db.select().from(creditCards).all().find((item) => item.slug === cardSlug || slugify(item.name) === cardSlug);
-        const settlementAccountName = toText(getCell(payload, map.settlementAccount ?? ""));
-        const settlementAccount = settlementAccountName ? findAccountByLooseName(settlementAccountName) : null;
-        if (!settlementAccount) continue;
-        const cardPayload = {
-          name,
-          slug: cardSlug,
-          brand: toText(getCell(payload, map.brand ?? "")),
-          network: toText(getCell(payload, map.network ?? "")),
-          limitTotalCents: parseCurrencyToCents(getCell(payload, map.limitAmount ?? "") ?? 0),
-          closeDay: Number(getCell(payload, map.closeDay ?? "") ?? 8),
-          dueDay: Number(getCell(payload, map.dueDay ?? "") ?? 15),
-          settlementAccountId: settlementAccount.id,
-          color: "#111827",
-          isArchived: false,
-          updatedAt: now
-        };
-        if (existing) db.update(creditCards).set(cardPayload).where(eq(creditCards.id, existing.id)).run();
-        else db.insert(creditCards).values({ id: uid("card"), ...cardPayload, createdAt: now }).run();
-      }
-
-      if (mapping.targetEntity === "card_bills") {
-        const cardName = toText(getCell(payload, map.cardName ?? ""));
-        const card = db.select().from(creditCards).all().find((item) => slugify(item.name) === slugify(cardName) || item.slug === slugify(cardName));
-        if (!card) continue;
-        const dueOn = normalizeDateText(getCell(payload, map.dueOn ?? "")) || `${new Date().toISOString().slice(0, 7)}-15`;
-        const billMonth = toText(getCell(payload, map.billMonth ?? "")) || isoMonth(dueOn);
-        const existing = db.select().from(creditCardBills).all().find((item) => item.creditCardId === card.id && item.billMonth === billMonth);
-        const billPayload = {
-          creditCardId: card.id,
-          billMonth,
-          closesOn: normalizeDateText(getCell(payload, map.closesOn ?? "")) || `${billMonth}-08`,
-          dueOn,
-          totalAmountCents: parseCurrencyToCents(getCell(payload, map.totalAmount ?? "") ?? 0),
-          paidAmountCents: parseCurrencyToCents(getCell(payload, map.paidAmount ?? "") ?? 0),
-          status: "open" as const,
-          settlementTransactionId: null,
-          updatedAt: now
-        };
-        if (existing) db.update(creditCardBills).set(billPayload).where(eq(creditCardBills.id, existing.id)).run();
-        else db.insert(creditCardBills).values({ id: uid("bill"), ...billPayload, createdAt: now }).run();
-      }
-
-      if (mapping.targetEntity === "net_worth" || mapping.targetEntity === "investment_snapshots") {
-        const month = toText(getCell(payload, map.month ?? "")) || new Date().toISOString().slice(0, 7);
-        const existing = db.select().from(netWorthSummaries).where(eq(netWorthSummaries.month, month)).get();
-        const snapshot = {
-          month,
-          reservesCents: parseCurrencyToCents(getCell(payload, map.reserves ?? "") ?? 0),
-          investmentsCents: parseCurrencyToCents(getCell(payload, map.investments ?? "") ?? 0),
-          debtsCents: parseCurrencyToCents(getCell(payload, map.debts ?? "") ?? 0),
-          notes: toText(getCell(payload, map.notes ?? "")) || `Importado do lote ${batch.filename}.`,
-          source: "import",
-          updatedAt: now
-        };
-        if (existing) db.update(netWorthSummaries).set(snapshot).where(eq(netWorthSummaries.id, existing.id)).run();
-        else db.insert(netWorthSummaries).values({ id: uid("nw"), ...snapshot, createdAt: now }).run();
-      }
-    }
+  if (report.summary.issues > 0) {
+    throw new Error(`Não é possível commitar: dry-run encontrou ${report.summary.issues} issue(s). Corrija o mapeamento e rode o dry-run novamente.`);
   }
 
-  db.update(importBatches).set({ status: "committed", updatedAt: now }).where(eq(importBatches.id, batchId)).run();
+  const txn = sqlite.transaction(() => {
+    const existingTxnSignatures = new Set(
+      db.select().from(transactions).all().map((item) => buildTransactionSignature({
+        accountId: item.accountId ?? null,
+        description: item.description,
+        amountCents: item.amountCents,
+        occurredOn: item.occurredOn,
+        direction: item.direction
+      }))
+    );
+
+    for (const mapping of batch.mappings) {
+      const rows = batch.rows.filter((row) => row.sheetName === mapping.sheetName);
+      const map = fromJson<Record<string, string>>(mapping.columnMapJson, {});
+
+      for (const row of rows) {
+        const payload = fromJson<Record<string, unknown>>(row.payloadJson, {});
+
+        if (mapping.targetEntity === "accounts") {
+          const name = toText(getCell(payload, map.name ?? ""));
+          if (!name) continue;
+          const slug = slugify(name);
+          const existing = db.select().from(accounts).where(eq(accounts.slug, slug)).get();
+          const accountPayload = {
+            name,
+            slug,
+            type: toText(getCell(payload, map.type ?? "")) || "checking",
+            institution: toText(getCell(payload, map.institution ?? "")),
+            openingBalanceCents: parseCurrencyToCents(getCell(payload, map.balance ?? "") ?? 0),
+            color: "#5b7cfa",
+            notes: "Importado de workbook externo.",
+            includeInNetWorth: map.includeInNetWorth ? toBoolean(getCell(payload, map.includeInNetWorth)) : true,
+            isArchived: false,
+            sortOrder: now,
+            sourceImportBatchId: batchId,
+            updatedAt: now
+          };
+          if (existing) db.update(accounts).set(accountPayload).where(eq(accounts.id, existing.id)).run();
+          else db.insert(accounts).values({ id: uid("acc"), ...accountPayload, createdAt: now }).run();
+        }
+
+        if (mapping.targetEntity === "transactions") {
+          const isMoneyMonthly = isMoneyMonthlySheet(mapping.sheetName);
+          const occurredOn = normalizeDateText(getCell(payload, map.date ?? ""));
+          const amountCents = parseCurrencyToCents(getCell(payload, map.amount ?? "") ?? 0);
+          if (!occurredOn || amountCents === 0) continue;
+
+          const description = isMoneyMonthly
+            ? toText(getCell(payload, map.description ?? "")) || "Lançamento importado da Money"
+            : toText(getCell(payload, map.description ?? ""));
+          if (!description) continue;
+
+          const mappedAccountName = toText(getCell(payload, map.account ?? ""));
+          const account = mappedAccountName ? findAccountByLooseName(mappedAccountName) : ensureAggregateCashAccount(now);
+          const accountId = account?.id ?? ensureAggregateCashAccount(now).id;
+          const direction = normalizeTransactionDirection(getCell(payload, map.direction ?? ""));
+          const occurredMonth = isoMonth(occurredOn);
+          const signature = buildTransactionSignature({ accountId, description, amountCents, occurredOn, direction });
+          if (existingTxnSignatures.has(signature)) continue;
+
+          db.insert(transactions).values({
+            id: uid("txn"),
+            accountId,
+            categoryId: null,
+            subcategoryId: null,
+            transferId: null,
+            recurringOccurrenceId: null,
+            sourceImportRowId: row.id,
+            sourceImportBatchId: batchId,
+            direction,
+            status: "posted",
+            description,
+            counterparty: toText(getCell(payload, map.counterparty ?? "")),
+            amountCents,
+            occurredOn,
+            dueOn: occurredOn,
+            competenceMonth: occurredMonth,
+            notes: isMoneyMonthly
+              ? "Importado automaticamente da aba Acompanhamento Mensal da Money."
+              : toText(getCell(payload, map.notes ?? "")) || `Importado do lote ${batch.filename}.`,
+            isProjected: false,
+            createdAt: now,
+            updatedAt: now
+          }).run();
+          existingTxnSignatures.add(signature);
+        }
+
+        if (mapping.targetEntity === "credit_cards") {
+          const name = toText(getCell(payload, map.name ?? ""));
+          if (!name) continue;
+          const cardSlug = slugify(name);
+          const existing = db.select().from(creditCards).all().find((item) => item.slug === cardSlug || slugify(item.name) === cardSlug);
+          const settlementAccountName = toText(getCell(payload, map.settlementAccount ?? ""));
+          const settlementAccount = settlementAccountName ? findAccountByLooseName(settlementAccountName) : null;
+          if (!settlementAccount) continue;
+          const cardPayload = {
+            name,
+            slug: cardSlug,
+            brand: toText(getCell(payload, map.brand ?? "")),
+            network: toText(getCell(payload, map.network ?? "")),
+            limitTotalCents: parseCurrencyToCents(getCell(payload, map.limitAmount ?? "") ?? 0),
+            closeDay: Number(getCell(payload, map.closeDay ?? "") ?? 8),
+            dueDay: Number(getCell(payload, map.dueDay ?? "") ?? 15),
+            settlementAccountId: settlementAccount.id,
+            color: "#111827",
+            isArchived: false,
+            sourceImportBatchId: batchId,
+            updatedAt: now
+          };
+          if (existing) db.update(creditCards).set(cardPayload).where(eq(creditCards.id, existing.id)).run();
+          else db.insert(creditCards).values({ id: uid("card"), ...cardPayload, createdAt: now }).run();
+        }
+
+        if (mapping.targetEntity === "card_bills") {
+          const cardName = toText(getCell(payload, map.cardName ?? ""));
+          const card = db.select().from(creditCards).all().find((item) => slugify(item.name) === slugify(cardName) || item.slug === slugify(cardName));
+          if (!card) continue;
+          const dueOn = normalizeDateText(getCell(payload, map.dueOn ?? "")) || `${new Date().toISOString().slice(0, 7)}-15`;
+          const billMonth = toText(getCell(payload, map.billMonth ?? "")) || isoMonth(dueOn);
+          const existing = db.select().from(creditCardBills).all().find((item) => item.creditCardId === card.id && item.billMonth === billMonth);
+          const billPayload = {
+            creditCardId: card.id,
+            billMonth,
+            closesOn: normalizeDateText(getCell(payload, map.closesOn ?? "")) || `${billMonth}-08`,
+            dueOn,
+            totalAmountCents: parseCurrencyToCents(getCell(payload, map.totalAmount ?? "") ?? 0),
+            paidAmountCents: parseCurrencyToCents(getCell(payload, map.paidAmount ?? "") ?? 0),
+            status: "open" as const,
+            settlementTransactionId: null,
+            sourceImportBatchId: batchId,
+            updatedAt: now
+          };
+          if (existing) db.update(creditCardBills).set(billPayload).where(eq(creditCardBills.id, existing.id)).run();
+          else db.insert(creditCardBills).values({ id: uid("bill"), ...billPayload, createdAt: now }).run();
+        }
+
+        if (mapping.targetEntity === "net_worth" || mapping.targetEntity === "investment_snapshots") {
+          const month = toText(getCell(payload, map.month ?? "")) || new Date().toISOString().slice(0, 7);
+          const existing = db.select().from(netWorthSummaries).where(eq(netWorthSummaries.month, month)).get();
+          const snapshot = {
+            month,
+            reservesCents: parseCurrencyToCents(getCell(payload, map.reserves ?? "") ?? 0),
+            investmentsCents: parseCurrencyToCents(getCell(payload, map.investments ?? "") ?? 0),
+            debtsCents: parseCurrencyToCents(getCell(payload, map.debts ?? "") ?? 0),
+            notes: toText(getCell(payload, map.notes ?? "")) || `Importado do lote ${batch.filename}.`,
+            source: "import",
+            sourceImportBatchId: batchId,
+            updatedAt: now
+          };
+          if (existing) db.update(netWorthSummaries).set(snapshot).where(eq(netWorthSummaries.id, existing.id)).run();
+          else db.insert(netWorthSummaries).values({ id: uid("nw"), ...snapshot, createdAt: now }).run();
+        }
+      }
+    }
+
+    db.update(importBatches).set({ status: "committed", updatedAt: now }).where(eq(importBatches.id, batchId)).run();
+  });
+
+  txn();
   return report;
 }

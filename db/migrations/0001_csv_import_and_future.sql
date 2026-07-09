@@ -1,5 +1,5 @@
-ALTER TABLE card_purchases ADD COLUMN purchase_type TEXT NOT NULL DEFAULT 'parcelado';
-ALTER TABLE card_purchases ADD COLUMN responsible TEXT DEFAULT '';
+ALTER TABLE card_purchases ADD COLUMN IF NOT EXISTS purchase_type TEXT NOT NULL DEFAULT 'parcelado';
+ALTER TABLE card_purchases ADD COLUMN IF NOT EXISTS responsible TEXT DEFAULT '';
 
 CREATE TABLE IF NOT EXISTS reserves (
   id TEXT PRIMARY KEY,

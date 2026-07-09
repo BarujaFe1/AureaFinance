@@ -60,6 +60,14 @@ function recalculateBill(billId: string) {
   const bill = db.select().from(creditCardBills).where(eq(creditCardBills.id, billId)).get();
   if (!bill) return;
   const amount = db.select().from(billEntries).all().filter((entry) => entry.billId === billId).reduce((sum, entry) => sum + entry.amountCents, 0);
+
+  // Paid bills stay paid: never reopen or clamp paidAmountCents when new items arrive.
+  // Operators must explicitly reopen/settle again if the bill total changes after payment.
+  if (bill.status === "paid") {
+    db.update(creditCardBills).set({ totalAmountCents: amount, updatedAt: nowTs() }).where(eq(creditCardBills.id, billId)).run();
+    return;
+  }
+
   const paidAmountCents = Math.min(bill.paidAmountCents, amount);
   const status = amount === 0 ? "open" : (paidAmountCents >= amount ? "paid" : "open");
   db.update(creditCardBills).set({ totalAmountCents: amount, paidAmountCents, status, updatedAt: nowTs() }).where(eq(creditCardBills.id, billId)).run();

@@ -58,11 +58,37 @@ function ensureRuntimeSchema() {
       ON entity_archives(entity_type);
   `);
 
+  sqlite.exec(`
+    CREATE TABLE IF NOT EXISTS category_budgets (
+      id TEXT PRIMARY KEY,
+      category_id TEXT NOT NULL REFERENCES categories(id) ON DELETE CASCADE,
+      month TEXT NOT NULL,
+      limit_cents INTEGER NOT NULL,
+      created_at INTEGER NOT NULL,
+      updated_at INTEGER NOT NULL
+    );
+    CREATE UNIQUE INDEX IF NOT EXISTS category_budgets_category_month_unique
+      ON category_budgets(category_id, month);
+  `);
+
+  if (!columnExists("recurring_rules", "destination_account_id")) {
+    sqlite.exec("ALTER TABLE recurring_rules ADD COLUMN destination_account_id TEXT REFERENCES accounts(id) ON DELETE SET NULL;");
+  }
+
   if (!columnExists("card_purchases", "purchase_type")) {
     sqlite.exec("ALTER TABLE card_purchases ADD COLUMN purchase_type TEXT NOT NULL DEFAULT 'parcelado';");
   }
   if (!columnExists("card_purchases", "responsible")) {
     sqlite.exec("ALTER TABLE card_purchases ADD COLUMN responsible TEXT DEFAULT ''; ");
+  }
+
+  for (const table of ["transactions", "accounts", "credit_cards", "credit_card_bills", "net_worth_summaries"] as const) {
+    if (tableExists(table) && !columnExists(table, "source_import_batch_id")) {
+      sqlite.exec(`ALTER TABLE ${table} ADD COLUMN source_import_batch_id TEXT;`);
+    }
+  }
+  if (tableExists("transactions")) {
+    sqlite.exec("CREATE INDEX IF NOT EXISTS transactions_source_import_batch_idx ON transactions(source_import_batch_id);");
   }
 }
 

@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
+import { ConfirmForm } from "@/components/confirm-form";
 import {
   archiveRecurringRuleAction,
   createRecurringRuleAction,
@@ -51,6 +52,7 @@ export default function RecurringPage() {
           <form action={createRecurringRuleAction} className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
             <label className="grid gap-2 text-sm"><span>Título</span><Input name="title" placeholder="Aluguel, internet, mesada..." /></label>
             <label className="grid gap-2 text-sm"><span>Conta</span><Select name="accountId"><option value="">Selecione a conta</option>{accounts.map((account) => <option key={account.id} value={account.id}>{account.name}</option>)}</Select></label>
+            <label className="grid gap-2 text-sm"><span>Conta destino (transferência)</span><Select name="destinationAccountId"><option value="">Não é transferência</option>{accounts.filter((a) => a.type !== "credit_card_settlement").map((account) => <option key={account.id} value={account.id}>{account.name}</option>)}</Select></label>
             <label className="grid gap-2 text-sm"><span>Valor</span><Input name="amount" defaultValue="0,00" /></label>
             <label className="grid gap-2 text-sm"><span>Tipo</span><Select name="direction" defaultValue="expense"><option value="expense">Despesa</option><option value="income">Receita</option></Select></label>
             <label className="grid gap-2 text-sm"><span>Frequência</span><Select name="frequency" defaultValue="monthly"><option value="monthly">Mensal</option><option value="weekly">Semanal</option><option value="yearly">Anual</option></Select></label>
@@ -80,7 +82,10 @@ export default function RecurringPage() {
                 <div className="flex flex-wrap gap-2">
                   {rule.isActive ? <form action={pauseRecurringRuleAction}><input type="hidden" name="ruleId" value={rule.id} /><Button type="submit" className="h-8 px-3 text-xs">Pausar</Button></form> : <form action={reactivateRecurringRuleAction}><input type="hidden" name="ruleId" value={rule.id} /><Button type="submit" className="h-8 px-3 text-xs">Reativar</Button></form>}
                   <form action={duplicateRecurringRuleAction}><input type="hidden" name="ruleId" value={rule.id} /><Button type="submit" className="h-8 px-3 text-xs">Duplicar</Button></form>
-                  <form action={archiveRecurringRuleAction}><input type="hidden" name="ruleId" value={rule.id} /><Button type="submit" className="h-8 px-3 text-xs">Arquivar</Button></form>
+                  <ConfirmForm action={archiveRecurringRuleAction} message="Arquivar esta regra recorrente? As ocorrências futuras não serão geradas." confirmLabel="Sim, arquivar">
+                    <input type="hidden" name="ruleId" value={rule.id} />
+                    <Button type="submit" className="h-8 px-3 text-xs">Arquivar</Button>
+                  </ConfirmForm>
                 </div>
 
                 <details>
@@ -89,6 +94,7 @@ export default function RecurringPage() {
                     <input type="hidden" name="ruleId" value={rule.id} />
                     <label className="grid gap-2 text-sm"><span>Título</span><Input name="title" defaultValue={rule.title} /></label>
                     <label className="grid gap-2 text-sm"><span>Conta</span><Select name="accountId" defaultValue={rule.accountId}>{accounts.map((account) => <option key={account.id} value={account.id}>{account.name}</option>)}</Select></label>
+                    <label className="grid gap-2 text-sm"><span>Conta destino</span><Select name="destinationAccountId" defaultValue={rule.destinationAccountId ?? ""}><option value="">Não é transferência</option>{accounts.filter((a) => a.type !== "credit_card_settlement").map((account) => <option key={account.id} value={account.id}>{account.name}</option>)}</Select></label>
                     <label className="grid gap-2 text-sm"><span>Valor</span><Input name="amount" defaultValue={centsToInput(rule.amountCents)} /></label>
                     <label className="grid gap-2 text-sm"><span>Tipo</span><Select name="direction" defaultValue={rule.direction}><option value="expense">Despesa</option><option value="income">Receita</option></Select></label>
                     <label className="grid gap-2 text-sm"><span>Frequência</span><Select name="frequency" defaultValue={rule.frequency}><option value="monthly">Mensal</option><option value="weekly">Semanal</option><option value="yearly">Anual</option></Select></label>
@@ -100,7 +106,10 @@ export default function RecurringPage() {
                     <label className="grid gap-2 text-sm md:col-span-3"><span>Observações</span><Input name="notes" defaultValue={rule.notes ?? ""} /></label>
                     <div className="md:col-span-3 flex justify-end gap-3"><Button type="submit">Salvar regra</Button></div>
                   </form>
-                  <form action={deleteRecurringRuleAction} className="mt-3 flex justify-start"><input type="hidden" name="ruleId" value={rule.id} /><Button type="submit">Excluir regra</Button></form>
+                  <ConfirmForm action={deleteRecurringRuleAction} message="Excluir permanentemente esta regra e todas as ocorrências vinculadas? Esta ação não pode ser desfeita.">
+                    <input type="hidden" name="ruleId" value={rule.id} />
+                    <Button type="submit">Excluir regra</Button>
+                  </ConfirmForm>
                 </details>
 
                 <table>

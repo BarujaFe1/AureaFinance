@@ -38,6 +38,13 @@ data/*.sqlite-wal
 *.sqlite-shm
 *.sqlite-wal
 
+# personal finance source workbook (never publish real Money.xlsx)
+Money.xlsx
+**/Money.xlsx
+data/*.xlsx
+public/Money.xlsx
+public/*.xlsx
+
 # backups / temp
 *.bak
 *.tmp

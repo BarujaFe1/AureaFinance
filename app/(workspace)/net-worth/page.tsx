@@ -3,6 +3,7 @@ import { PageHeader } from "@/components/page-header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { ConfirmForm } from "@/components/confirm-form";
 import { archiveAssetAction, deleteAssetAction, deleteAssetSnapshotAction, restoreAssetAction, saveDailyNetWorthSnapshotAction, saveNetWorthAction, upsertAssetPositionAction } from "@/features/net-worth/actions";
 import { formatCurrencyFromCents } from "@/lib/currency";
 import { formatAssetTypeLabel } from "@/lib/formatters";
@@ -83,8 +84,16 @@ export default function NetWorthPage() {
                   </div>
                 </form>
                 <div className="mt-3 flex flex-wrap gap-2">
-                  <form action={archiveAssetAction}><input type="hidden" name="assetType" value={asset.assetType} /><input type="hidden" name="assetId" value={asset.assetId} /><Button type="submit" className="h-8 px-3 text-xs">Arquivar</Button></form>
-                  <form action={deleteAssetAction}><input type="hidden" name="assetType" value={asset.assetType} /><input type="hidden" name="assetId" value={asset.assetId} /><Button type="submit" className="h-8 px-3 text-xs">Excluir ativo</Button></form>
+                  <ConfirmForm action={archiveAssetAction} message="Arquivar este ativo? Ele ficará oculto e poderá ser restaurado depois." confirmLabel="Sim, arquivar">
+                    <input type="hidden" name="assetType" value={asset.assetType} />
+                    <input type="hidden" name="assetId" value={asset.assetId} />
+                    <Button type="submit" className="h-8 px-3 text-xs">Arquivar</Button>
+                  </ConfirmForm>
+                  <ConfirmForm action={deleteAssetAction} message="Excluir permanentemente este ativo? Todos os snapshots vinculados também serão removidos.">
+                    <input type="hidden" name="assetType" value={asset.assetType} />
+                    <input type="hidden" name="assetId" value={asset.assetId} />
+                    <Button type="submit" className="h-8 px-3 text-xs">Excluir ativo</Button>
+                  </ConfirmForm>
                 </div>
               </details>
             );
@@ -210,7 +219,12 @@ export default function NetWorthPage() {
                       <td>{snapshot.assetLabel}</td>
                       <td>{snapshot.quantity ?? "—"}</td>
                       <td>{formatCurrencyFromCents(snapshot.valueCents)}</td>
-                      <td><form action={deleteAssetSnapshotAction}><input type="hidden" name="snapshotId" value={snapshot.id} /><Button type="submit" className="h-8 px-3 text-xs">Excluir</Button></form></td>
+                      <td>
+                        <ConfirmForm action={deleteAssetSnapshotAction} message="Excluir este snapshot de posição? O histórico do ativo será recalculado com os dados restantes.">
+                          <input type="hidden" name="snapshotId" value={snapshot.id} />
+                          <Button type="submit" className="h-8 px-3 text-xs">Excluir</Button>
+                        </ConfirmForm>
+                      </td>
                     </tr>
                   ))}
                 </tbody>

@@ -24,6 +24,7 @@ export async function createRecurringRuleAction(formData: FormData) {
     nextRunOn: formData.get("nextRunOn"),
     frequency: formData.get("frequency"),
     categoryId: formData.get("categoryId") || undefined,
+    destinationAccountId: formData.get("destinationAccountId") || undefined,
     notes: formData.get("notes")
   }));
   revalidateRecurringRoutes();
@@ -45,6 +46,7 @@ export async function updateRecurringRuleSeriesAction(formData: FormData) {
     title: String(formData.get("title") ?? ""),
     accountId: String(formData.get("accountId") ?? ""),
     categoryId: formData.get("categoryId") ? String(formData.get("categoryId")) : undefined,
+    destinationAccountId: formData.get("destinationAccountId") ? String(formData.get("destinationAccountId")) : undefined,
     direction: String(formData.get("direction") ?? "expense"),
     frequency: String(formData.get("frequency") ?? "monthly"),
     amount: String(formData.get("amount") ?? "0"),

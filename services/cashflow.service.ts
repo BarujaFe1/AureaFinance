@@ -102,7 +102,7 @@ async function computeProjectedCashflow(days: number) {
   const accountMap = new Map<string, AccountRow>(accountRows.map((row) => [row.id, row]));
   const cardMap = new Map<string, CreditCardRow>(cardRows.map((row) => [row.id, row]));
   const purchaseMap = new Map<string, PurchaseRow>(purchaseRows.map((row) => [row.id, row]));
-  const occurrencesByRuleAndDate = new Set(occurrenceRows.map((row) => `${row.ruleId}|${row.dueOn}|${row.status}`));
+  const existingOccurrenceDates = new Set(occurrenceRows.map((row) => `${row.ruleId}|${row.dueOn}`));
   const cardBySettlementAccountId = new Map<string, CreditCardRow>();
   for (const card of cardRows) {
     if (!cardBySettlementAccountId.has(card.settlementAccountId)) cardBySettlementAccountId.set(card.settlementAccountId, card);
@@ -151,7 +151,7 @@ async function computeProjectedCashflow(days: number) {
     const account = accountMap.get(rule.accountId);
     const generatedDates = expandRule(rule, end, days).filter((date) => date >= today);
     for (const dueOn of generatedDates) {
-      if (occurrencesByRuleAndDate.has(`${rule.id}|${dueOn}|posted`)) continue;
+      if (existingOccurrenceDates.has(`${rule.id}|${dueOn}`)) continue;
       const card = rule.notes?.includes("CARD_RECURRING")
         ? cardBySettlementAccountId.get(rule.accountId)
         : null;

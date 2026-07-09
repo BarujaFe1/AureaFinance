@@ -1,6 +1,6 @@
 import { eq } from "drizzle-orm";
 import { db } from "@/db/client";
-import { recurringOccurrences, recurringRules, transactions } from "@/db/schema";
+import { accounts as accountsTable, recurringOccurrences, recurringRules, transactions, transfers } from "@/db/schema";
 import { archiveEntity, listArchivedEntityIds, restoreEntity } from "@/services/archive.service";
 import { addDaysIso, addMonthsIso, isoMonth, nowTs, todayIso } from "@/lib/dates";
 import { materializeOccurrences, type TransactionDirection } from "@/lib/finance";
@@ -79,7 +79,7 @@ function replaceFutureOccurrences(ruleId: string, effectiveDate: string) {
 }
 
 export function listRecurringRules(includeArchived = false) {
-  materializeAllRules();
+  // Read-only: materialization is explicit via materializeAllRules / materializeAllRulesAction.
   const archivedIds = new Set(listArchivedEntityIds("recurring_rule"));
   const occurrences = db.select().from(recurringOccurrences).all();
   return db.select().from(recurringRules).all()
@@ -100,6 +100,7 @@ export function createRecurringRule(input: RecurringRuleCreateInput) {
     id,
     accountId: input.accountId,
     categoryId: input.categoryId ?? null,
+    destinationAccountId: input.destinationAccountId ?? null,
     title: input.title,
     direction: input.direction,
     frequency: input.frequency,
@@ -130,29 +131,96 @@ export function settleOccurrence(occurrenceId: string) {
   const rule = db.select().from(recurringRules).where(eq(recurringRules.id, occurrence.ruleId)).get();
   if (!rule) throw new Error("Regra não encontrada.");
   const now = nowTs();
-  const transactionId = uid("txn");
-  db.insert(transactions).values({
-    id: transactionId,
-    accountId: rule.accountId,
-    categoryId: rule.categoryId,
-    subcategoryId: null,
-    transferId: null,
-    recurringOccurrenceId: occurrence.id,
-    sourceImportRowId: null,
-    direction: occurrence.direction,
-    status: "posted",
-    description: rule.title,
-    counterparty: "",
-    amountCents: occurrence.amountCents,
-    occurredOn: occurrence.dueOn,
-    dueOn: occurrence.dueOn,
-    competenceMonth: isoMonth(occurrence.dueOn),
-    notes: "Gerado a partir de recorrência.",
-    isProjected: false,
-    createdAt: now,
-    updatedAt: now
-  }).run();
-  db.update(recurringOccurrences).set({ status: "posted", transactionId, updatedAt: now }).where(eq(recurringOccurrences.id, occurrence.id)).run();
+
+  if (rule.destinationAccountId) {
+    const fromAccount = db.select().from(accountsTable).where(eq(accountsTable.id, rule.accountId)).get();
+    const toAccount = db.select().from(accountsTable).where(eq(accountsTable.id, rule.destinationAccountId)).get();
+    const fromName = fromAccount?.name ?? "Origem";
+    const toName = toAccount?.name ?? "Destino";
+    const transferId = uid("trf");
+    const outId = uid("txn");
+    const inId = uid("txn");
+    db.insert(transfers).values({
+      id: transferId,
+      fromAccountId: rule.accountId,
+      toAccountId: rule.destinationAccountId,
+      amountCents: occurrence.amountCents,
+      occurredOn: occurrence.dueOn,
+      notes: `${rule.title} (recorrente)`,
+      outTransactionId: outId,
+      inTransactionId: inId,
+      createdAt: now
+    }).run();
+    db.insert(transactions).values([
+      {
+        id: outId,
+        accountId: rule.accountId,
+        categoryId: rule.categoryId,
+        subcategoryId: null,
+        transferId,
+        recurringOccurrenceId: occurrence.id,
+        sourceImportRowId: null,
+        direction: "transfer_out",
+        status: "posted",
+        description: `Transferência para ${toName}`,
+        counterparty: toName,
+        amountCents: occurrence.amountCents,
+        occurredOn: occurrence.dueOn,
+        dueOn: occurrence.dueOn,
+        competenceMonth: isoMonth(occurrence.dueOn),
+        notes: "Gerado a partir de recorrência.",
+        isProjected: false,
+        createdAt: now,
+        updatedAt: now
+      },
+      {
+        id: inId,
+        accountId: rule.destinationAccountId,
+        categoryId: null,
+        subcategoryId: null,
+        transferId,
+        recurringOccurrenceId: occurrence.id,
+        sourceImportRowId: null,
+        direction: "transfer_in",
+        status: "posted",
+        description: `Transferência recebida de ${fromName}`,
+        counterparty: fromName,
+        amountCents: occurrence.amountCents,
+        occurredOn: occurrence.dueOn,
+        dueOn: occurrence.dueOn,
+        competenceMonth: isoMonth(occurrence.dueOn),
+        notes: "Gerado a partir de recorrência.",
+        isProjected: false,
+        createdAt: now,
+        updatedAt: now
+      }
+    ]).run();
+    db.update(recurringOccurrences).set({ status: "posted", transactionId: outId, updatedAt: now }).where(eq(recurringOccurrences.id, occurrence.id)).run();
+  } else {
+    const transactionId = uid("txn");
+    db.insert(transactions).values({
+      id: transactionId,
+      accountId: rule.accountId,
+      categoryId: rule.categoryId,
+      subcategoryId: null,
+      transferId: null,
+      recurringOccurrenceId: occurrence.id,
+      sourceImportRowId: null,
+      direction: occurrence.direction,
+      status: "posted",
+      description: rule.title,
+      counterparty: "",
+      amountCents: occurrence.amountCents,
+      occurredOn: occurrence.dueOn,
+      dueOn: occurrence.dueOn,
+      competenceMonth: isoMonth(occurrence.dueOn),
+      notes: "Gerado a partir de recorrência.",
+      isProjected: false,
+      createdAt: now,
+      updatedAt: now
+    }).run();
+    db.update(recurringOccurrences).set({ status: "posted", transactionId, updatedAt: now }).where(eq(recurringOccurrences.id, occurrence.id)).run();
+  }
   materializeRuleToHorizon(rule.id);
 }
 
@@ -161,6 +229,7 @@ export function updateRecurringRuleSeries(values: {
   title: string;
   accountId: string;
   categoryId?: string | null;
+  destinationAccountId?: string | null;
   direction: string;
   frequency: string;
   amount: string | number;
@@ -178,6 +247,7 @@ export function updateRecurringRuleSeries(values: {
     title: values.title,
     accountId: values.accountId,
     categoryId: values.categoryId || null,
+    destinationAccountId: values.destinationAccountId || null,
     direction: normalizeDirection(values.direction),
     frequency: normalizeFrequency(values.frequency),
     amountCents: parseCurrencyToCents(values.amount),
@@ -245,5 +315,6 @@ export function restoreRecurringRule(ruleId: string) {
 }
 
 export function deleteRecurringRule(ruleId: string) {
+  db.delete(recurringOccurrences).where(eq(recurringOccurrences.ruleId, ruleId)).run();
   db.delete(recurringRules).where(eq(recurringRules.id, ruleId)).run();
 }

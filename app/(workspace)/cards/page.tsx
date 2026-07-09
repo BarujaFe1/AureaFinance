@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
+import { ConfirmForm } from "@/components/confirm-form";
 import { archiveCreditCardAction, createCardPurchaseAction, createCreditCardAction, deleteCardPurchaseAction, restoreCreditCardAction, updateCardPurchaseAction, updateCreditCardAction } from "@/features/cards/actions";
 import { formatCurrencyFromCents } from "@/lib/currency";
 import { listAccounts } from "@/services/accounts.service";
@@ -87,7 +88,10 @@ export default function CardsPage() {
                 <div className="xl:col-span-4 flex justify-end gap-2"><Button type="submit">Salvar cartão</Button></div>
               </form>
               <div className="mt-3 flex flex-wrap gap-2">
-                <form action={archiveCreditCardAction}><input type="hidden" name="cardId" value={card.id} /><Button type="submit" className="h-8 px-3 text-xs">Arquivar cartão</Button></form>
+                <ConfirmForm action={archiveCreditCardAction} message="Arquivar este cartão? Ele ficará oculto e poderá ser restaurado depois." confirmLabel="Sim, arquivar">
+                  <input type="hidden" name="cardId" value={card.id} />
+                  <Button type="submit" className="h-8 px-3 text-xs">Arquivar cartão</Button>
+                </ConfirmForm>
               </div>
               {card.purchases.length > 0 ? (
                 <div className="mt-4 space-y-3">
@@ -106,7 +110,10 @@ export default function CardsPage() {
                         <div className="xl:col-span-4 flex justify-end gap-2"><Button type="submit">Salvar compra</Button></div>
                       </form>
                       <div className="mt-3 flex flex-wrap gap-2">
-                        <form action={deleteCardPurchaseAction}><input type="hidden" name="purchaseId" value={purchase.id} /><Button type="submit" className="h-8 px-3 text-xs">Excluir compra</Button></form>
+                        <ConfirmForm action={deleteCardPurchaseAction} message="Excluir esta compra? Todas as parcelas lançadas também serão removidas.">
+                          <input type="hidden" name="purchaseId" value={purchase.id} />
+                          <Button type="submit" className="h-8 px-3 text-xs">Excluir compra</Button>
+                        </ConfirmForm>
                       </div>
                     </details>
                   ))}

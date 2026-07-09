@@ -4,6 +4,7 @@ import { accounts, creditCardBills, monthlyClosings, transactions } from "@/db/s
 import { endOfMonthIso, nowTs } from "@/lib/dates";
 import { closeMonthSnapshot, signedAmount, type TransactionDirection } from "@/lib/finance";
 import { uid, fromJson, toJson } from "@/lib/utils";
+import { listArchivedEntityIds } from "@/services/archive.service";
 
 function getMonthRange(month: string) {
   const start = `${month}-01`;
@@ -13,14 +14,18 @@ function getMonthRange(month: string) {
 
 function getOpeningBalanceForMonth(month: string) {
   const { start } = getMonthRange(month);
+  const archivedTxnIds = new Set(listArchivedEntityIds("transaction"));
   const openingFromAccounts = db.select().from(accounts).all().reduce((sum, account) => sum + account.openingBalanceCents, 0);
-  const priorTransactions = db.select().from(transactions).all().filter((row) => row.occurredOn < start && row.status !== "void");
+  const priorTransactions = db.select().from(transactions).all()
+    .filter((row) => row.occurredOn < start && row.status !== "void" && !archivedTxnIds.has(row.id));
   return priorTransactions.reduce((sum, row) => sum + signedAmount(row.direction as TransactionDirection, row.amountCents), openingFromAccounts);
 }
 
 export function buildMonthlyClosing(month: string) {
   const { start, end } = getMonthRange(month);
-  const tx = db.select().from(transactions).all().filter((row) => row.occurredOn >= start && row.occurredOn <= end && row.status !== "void");
+  const archivedTxnIds = new Set(listArchivedEntityIds("transaction"));
+  const tx = db.select().from(transactions).all()
+    .filter((row) => row.occurredOn >= start && row.occurredOn <= end && row.status !== "void" && !archivedTxnIds.has(row.id));
   const bills = db.select().from(creditCardBills).all().filter((bill) => bill.dueOn >= start && bill.dueOn <= end && bill.status !== "paid");
   const incomesCents = tx.filter((row) => row.direction === "income").reduce((sum, row) => sum + row.amountCents, 0);
   const expensesCents = tx.filter((row) => ["expense", "bill_payment", "adjustment"].includes(row.direction)).reduce((sum, row) => sum + row.amountCents, 0);
@@ -50,13 +55,12 @@ export function buildMonthlyClosing(month: string) {
 }
 
 export function runMonthlyClosing(month: string) {
+  const existing = db.select().from(monthlyClosings).where(eq(monthlyClosings.month, month)).get();
+  // Closed months are immutable: re-running must not overwrite. Use reopenMonthlyClosing first.
+  if (existing) return existing.id;
+
   const now = nowTs();
   const built = buildMonthlyClosing(month);
-  const existing = db.select().from(monthlyClosings).where(eq(monthlyClosings.month, month)).get();
-  if (existing) {
-    db.update(monthlyClosings).set({ ...built, updatedAt: now }).where(eq(monthlyClosings.id, existing.id)).run();
-    return existing.id;
-  }
   const id = uid("close");
   db.insert(monthlyClosings).values({ id, ...built, notes: "", createdAt: now, updatedAt: now }).run();
   return id;

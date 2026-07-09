@@ -23,6 +23,16 @@ export async function updateSettingsAction(formData: FormData) {
   revalidatePath("/settings");
   revalidatePath("/dashboard");
   revalidatePath("/future");
+  revalidatePath("/accounts");
+  revalidatePath("/transactions");
+  revalidatePath("/daily");
+  revalidatePath("/cards");
+  revalidatePath("/bills");
+  revalidatePath("/net-worth");
+  revalidatePath("/closings");
+  revalidatePath("/recurring");
+  revalidatePath("/calendar");
+  revalidatePath("/categories");
 }
 
 export async function completeOnboardingAction(formData: FormData) {

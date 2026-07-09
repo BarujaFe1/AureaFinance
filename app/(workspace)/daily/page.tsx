@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { saveAccountBalanceSnapshotAction } from "@/features/accounts/actions";
-import { upsertAssetPositionAction, saveDailyNetWorthSnapshotAction } from "@/features/net-worth/actions";
+import { upsertAssetPositionAction, saveDailyNetWorthSnapshotAction, undoDailyNetWorthSnapshotAction } from "@/features/net-worth/actions";
 import { TransactionForm } from "@/features/transactions/transaction-form";
 import { formatCurrencyFromCents } from "@/lib/currency";
 import { todayIso } from "@/lib/dates";
@@ -32,7 +32,7 @@ export default function DailyPage() {
       <PageHeader
         title="Conferência diária"
         description="Central operacional para conferir saldo real das contas, atualizar ativos, lançar o dia e fechar divergências antes de olhar a projeção."
-        actions={<form action={saveDailyNetWorthSnapshotAction}><input type="hidden" name="snapshotDate" value={today} /><Button type="submit">Fechar dia</Button></form>}
+        actions={<><form action={saveDailyNetWorthSnapshotAction}><input type="hidden" name="snapshotDate" value={today} /><Button type="submit">Fechar dia</Button></form>{netWorthSnapshot ? <form action={undoDailyNetWorthSnapshotAction}><input type="hidden" name="snapshotDate" value={today} /><Button type="submit" variant="outline">Desfazer fechamento</Button></form> : null}</>}
       />
 
       <section className="grid gap-4 md:grid-cols-3">

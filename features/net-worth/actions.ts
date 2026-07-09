@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { assetPositionUpsertSchema } from "@/lib/validation";
-import { archiveAsset, deleteAsset, deleteAssetSnapshot, recordDailyNetWorthSnapshot, restoreAsset, upsertAssetPosition, upsertNetWorthSummary } from "@/services/net-worth.service";
+import { archiveAsset, deleteAsset, deleteAssetSnapshot, deleteDailyNetWorthSnapshot, recordDailyNetWorthSnapshot, restoreAsset, upsertAssetPosition, upsertNetWorthSummary } from "@/services/net-worth.service";
 
 function revalidateNetWorthRoutes() {
   revalidatePath("/net-worth");
@@ -64,5 +64,10 @@ export async function deleteAssetAction(formData: FormData) {
 
 export async function deleteAssetSnapshotAction(formData: FormData) {
   deleteAssetSnapshot(String(formData.get("snapshotId") ?? ""));
+  revalidateNetWorthRoutes();
+}
+
+export async function undoDailyNetWorthSnapshotAction(formData: FormData) {
+  deleteDailyNetWorthSnapshot(String(formData.get("snapshotDate") ?? ""));
   revalidateNetWorthRoutes();
 }

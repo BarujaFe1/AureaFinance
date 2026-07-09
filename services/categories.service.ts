@@ -1,6 +1,6 @@
 import { eq } from "drizzle-orm";
 import { db } from "@/db/client";
-import { categories, tags, transactions } from "@/db/schema";
+import { categories, tags, transactionTags, transactions } from "@/db/schema";
 import { nowTs } from "@/lib/dates";
 import { slugify, uid } from "@/lib/utils";
 import { archiveEntity, listArchivedEntityIds, restoreEntity } from "@/services/archive.service";
@@ -90,5 +90,9 @@ export function restoreTag(tagId: string) {
 }
 
 export function deleteTag(tagId: string) {
+  const linked = db.select().from(transactionTags).where(eq(transactionTags.tagId, tagId)).all();
+  if (linked.length > 0) {
+    throw new Error(`Não é possível excluir: ${linked.length} transação(ões) ainda usam esta tag. Arquive-a ou remova os vínculos.`);
+  }
   db.delete(tags).where(eq(tags.id, tagId)).run();
 }

@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
+import { ConfirmForm } from "@/components/confirm-form";
 import { AccountForm } from "@/features/accounts/account-form";
 import { archiveAccountAction, deleteAccountSnapshotAction, restoreAccountAction, saveAccountBalanceSnapshotAction, updateAccountAction } from "@/features/accounts/actions";
 import { formatCurrencyFromCents } from "@/lib/currency";
@@ -132,11 +133,11 @@ export default function AccountsPage() {
                 </div>
               </form>
               <div className="mt-3 flex flex-wrap gap-2">
-                <form action={archiveAccountAction}>
+                <ConfirmForm action={archiveAccountAction} message="Arquivar esta conta? Ela ficará oculta nos dashboards e poderá ser restaurada depois." confirmLabel="Sim, arquivar">
                   <input type="hidden" name="accountId" value={account.id} />
                   <input type="hidden" name="reason" value="Arquivada pela UI" />
                   <Button type="submit" className="h-9 px-3 text-xs">Arquivar</Button>
-                </form>
+                </ConfirmForm>
               </div>
             </details>
           ))}
@@ -185,7 +186,10 @@ export default function AccountsPage() {
                       <td>{formatCurrencyFromCents(snapshot.balanceCents)}</td>
                       <td>{snapshot.source}</td>
                       <td>
-                        <form action={deleteAccountSnapshotAction}><input type="hidden" name="snapshotId" value={snapshot.id} /><Button type="submit" className="h-8 px-3 text-xs">Excluir</Button></form>
+                        <ConfirmForm action={deleteAccountSnapshotAction} message="Excluir este snapshot de conferência? O saldo da conta voltará ao valor calculado.">
+                          <input type="hidden" name="snapshotId" value={snapshot.id} />
+                          <Button type="submit" className="h-8 px-3 text-xs">Excluir</Button>
+                        </ConfirmForm>
                       </td>
                     </tr>
                   );

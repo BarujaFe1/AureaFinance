@@ -12,7 +12,8 @@ export type ArchivableEntityType =
   | "stock"
   | "crypto"
   | "credit_card"
-  | "recurring_rule";
+  | "recurring_rule"
+  | "transaction";
 
 function ensureArchiveTable() {
   if (!tableExists("entity_archives")) return [] as Array<typeof entityArchives.$inferSelect>;

@@ -1,6 +1,6 @@
 import { desc, eq } from "drizzle-orm";
 import { db, tableExists } from "@/db/client";
-import { accounts, assetValueSnapshots, cryptoPositions, netWorthSnapshots, netWorthSummaries, reserves, stockPositions, transactions } from "@/db/schema";
+import { accounts, assetValueSnapshots, creditCardBills, cryptoPositions, netWorthSnapshots, netWorthSummaries, reserves, stockPositions, transactions } from "@/db/schema";
 import { archiveEntity, listArchivedEntityIds, restoreEntity } from "@/services/archive.service";
 import { parseCurrencyToCents } from "@/lib/currency";
 import { nowTs, todayIso } from "@/lib/dates";
@@ -37,11 +37,13 @@ function assetSnapshotsEnabled() {
 }
 
 function getLiquidAccountBalanceCents() {
+  const archivedTxnIds = new Set(listArchivedEntityIds("transaction"));
   const includedAccounts = db.select().from(accounts).where(eq(accounts.includeInNetWorth, true)).all();
   return includedAccounts
     .filter((account) => ["checking", "savings", "cash"].includes(account.type))
     .reduce((sum, account) => {
-      const related = db.select().from(transactions).where(eq(transactions.accountId, account.id)).all();
+      const related = db.select().from(transactions).where(eq(transactions.accountId, account.id)).all()
+        .filter((row) => !archivedTxnIds.has(row.id));
       return sum + calculateBalance(account.openingBalanceCents, toBalanceTransactions(related));
     }, 0);
 }
@@ -104,15 +106,23 @@ function saveAssetSnapshot(values: { assetType: AssetKind; assetId: string; asse
   return id;
 }
 
+function getOpenCreditCardDebtCents() {
+  return db.select().from(creditCardBills).all()
+    .filter((bill) => bill.status !== "paid")
+    .reduce((sum, bill) => sum + Math.max(bill.totalAmountCents - bill.paidAmountCents, 0), 0);
+}
+
 export function getCurrentNetWorthSummary(): NetWorthSummary {
   const realizedLiquidCents = getLiquidAccountBalanceCents();
   const latest = getLatestNetWorthSummaryRow();
   const positions = listAssetPositions();
   const importedReserveCents = positions.filter((row) => row.assetType === "reserve" && !row.isArchived).reduce((sum, item) => sum + item.currentValueCents, 0);
   const importedInvestmentCents = positions.filter((row) => row.assetType !== "reserve" && !row.isArchived).reduce((sum, item) => sum + item.currentValueCents, 0);
-  const manualReservesCents = importedReserveCents > 0 ? importedReserveCents : latest?.reservesCents ?? 0;
-  const manualInvestmentsCents = importedInvestmentCents > 0 ? importedInvestmentCents : latest?.investmentsCents ?? 0;
-  const manualDebtsCents = latest?.debtsCents ?? 0;
+  // Prefer the higher of imported vs manual so neither source silently discards the other.
+  const manualReservesCents = Math.max(importedReserveCents, latest?.reservesCents ?? 0);
+  const manualInvestmentsCents = Math.max(importedInvestmentCents, latest?.investmentsCents ?? 0);
+  const openCardDebtCents = getOpenCreditCardDebtCents();
+  const manualDebtsCents = (latest?.debtsCents ?? 0) + openCardDebtCents;
 
   return {
     month: latest?.month ?? null,
@@ -342,4 +352,11 @@ export function recordDailyNetWorthSnapshot(date = todayIso()) {
 
 export function getDailyNetWorthSnapshot(date = todayIso()) {
   return db.select().from(netWorthSnapshots).where(eq(netWorthSnapshots.date, date)).get() ?? null;
+}
+
+export function deleteDailyNetWorthSnapshot(date: string) {
+  const existing = db.select().from(netWorthSnapshots).where(eq(netWorthSnapshots.date, date)).get();
+  if (existing) {
+    db.delete(netWorthSnapshots).where(eq(netWorthSnapshots.id, existing.id)).run();
+  }
 }

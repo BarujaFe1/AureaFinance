@@ -4,17 +4,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
+import { ConfirmForm } from "@/components/confirm-form";
 import { TransactionForm } from "@/features/transactions/transaction-form";
-import { deleteTransactionAction, updateTransactionFormAction } from "@/features/transactions/actions";
+import { TransactionsClient } from "@/features/transactions/transactions-client";
+import { restoreTransactionAction } from "@/features/transactions/actions";
 import { formatCurrencyFromCents } from "@/lib/currency";
-import { formatStatusLabel, formatTransactionDirectionLabel } from "@/lib/formatters";
 import { listAccounts } from "@/services/accounts.service";
 import { listCategories } from "@/services/categories.service";
-import { listTransactions } from "@/services/transactions.service";
-
-function centsToInput(value: number) {
-  return (value / 100).toFixed(2).replace(".", ",");
-}
+import { listArchivedTransactions, listTransactions } from "@/services/transactions.service";
 
 export default async function TransactionsPage({ searchParams }: { searchParams?: Promise<Record<string, string | string[] | undefined>> }) {
   const params = (await searchParams) ?? {};
@@ -24,6 +21,7 @@ export default async function TransactionsPage({ searchParams }: { searchParams?
   const accountFilter = String(Array.isArray(params.accountId) ? params.accountId[0] : params.accountId ?? "all");
   const accounts = listAccounts();
   const categories = listCategories();
+  const archived = listArchivedTransactions();
   const transactions = listTransactions().filter((transaction) => {
     if (statusFilter !== "all" && transaction.status !== statusFilter) return false;
     if (directionFilter !== "all" && transaction.direction !== directionFilter) return false;
@@ -37,7 +35,7 @@ export default async function TransactionsPage({ searchParams }: { searchParams?
     <>
       <PageHeader
         title="Transações"
-        description="Lançamentos manuais, previstos, realizados e ajustes. Agora com edição mais visível, exclusão segura, filtros básicos e busca operacional."
+        description="Lançamentos manuais, previstos, realizados e ajustes. Arquivar remove dos saldos com possibilidade de restaurar; exclusão permanente continua disponível."
       />
       <TransactionForm
         accounts={accounts.map((row) => ({ id: row.id, name: row.name }))}
@@ -72,61 +70,22 @@ export default async function TransactionsPage({ searchParams }: { searchParams?
             <div className="xl:col-span-4 flex justify-end"><Button type="submit">Aplicar filtros</Button></div>
           </form>
           {transactions.length > 0 ? (
-            <div className="space-y-3">
-              {transactions.map((transaction) => (
-                <details key={transaction.id} className="rounded-2xl border border-[var(--border)] p-4">
-                  <summary className="flex cursor-pointer list-none flex-wrap items-center justify-between gap-3">
-                    <div>
-                      <div className="font-medium">{transaction.description}</div>
-                      <div className="text-xs text-[var(--muted-foreground)]">{transaction.occurredOn} · {formatTransactionDirectionLabel(transaction.direction)} · {formatStatusLabel(transaction.status)}</div>
-                    </div>
-                    <div className="text-right">
-                      <div className="font-semibold">{formatCurrencyFromCents(transaction.amountCents)}</div>
-                      <div className="text-xs text-[var(--muted-foreground)]">Clique para editar ou excluir</div>
-                    </div>
-                  </summary>
-                  <div className="mt-4 grid gap-3 md:grid-cols-[1fr_auto]">
-                    <form action={updateTransactionFormAction} className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-                      <input type="hidden" name="id" value={transaction.id} />
-                      <Input name="description" defaultValue={transaction.description} />
-                      <Select name="accountId" defaultValue={transaction.accountId ?? undefined}>{accounts.map((account) => <option key={account.id} value={account.id}>{account.name}</option>)}</Select>
-                      <Input name="amount" defaultValue={centsToInput(transaction.amountCents)} />
-                      <Select name="direction" defaultValue={transaction.direction}>
-                        <option value="expense">Despesa</option>
-                        <option value="income">Receita</option>
-                        <option value="adjustment">Ajuste</option>
-                        <option value="transfer_out">Transferência de saída</option>
-                        <option value="transfer_in">Transferência de entrada</option>
-                        <option value="bill_payment">Pagamento de fatura</option>
-                      </Select>
-                      <Select name="status" defaultValue={transaction.status}>
-                        <option value="posted">Realizado</option>
-                        <option value="scheduled">Projetado</option>
-                        <option value="void">Ignorado</option>
-                      </Select>
-                      <Input name="occurredOn" type="date" defaultValue={transaction.occurredOn} />
-                      <Input name="dueOn" type="date" defaultValue={transaction.dueOn ?? transaction.occurredOn} />
-                      <Select name="categoryId" defaultValue={transaction.categoryId ?? undefined}>
-                        <option value="">Sem categoria</option>
-                        {categories.map((category) => <option key={category.id} value={category.id}>{category.name}</option>)}
-                      </Select>
-                      <div className="xl:col-span-4"><Input name="notes" defaultValue={transaction.notes ?? ""} placeholder="Notas" /></div>
-                      <div className="xl:col-span-4 flex justify-end"><Button type="submit">Salvar edição</Button></div>
-                    </form>
-                    <form
-                      action={async () => {
-                        "use server";
-                        await deleteTransactionAction(transaction.id);
-                      }}
-                    >
-                      <Button type="submit" className="h-10 px-3 text-xs">
-                        Excluir com segurança
-                      </Button>
-                    </form>
-                  </div>
-                </details>
-              ))}
-            </div>
+            <TransactionsClient
+              transactions={transactions.map((transaction) => ({
+                id: transaction.id,
+                accountId: transaction.accountId,
+                description: transaction.description,
+                amountCents: transaction.amountCents,
+                direction: transaction.direction,
+                status: transaction.status,
+                occurredOn: transaction.occurredOn,
+                dueOn: transaction.dueOn,
+                categoryId: transaction.categoryId,
+                notes: transaction.notes
+              }))}
+              accounts={accounts.map((a) => ({ id: a.id, name: a.name }))}
+              categories={categories.map((c) => ({ id: c.id, name: c.name }))}
+            />
           ) : (
             <EmptyState
               title="Nenhuma transação encontrada"
@@ -135,6 +94,33 @@ export default async function TransactionsPage({ searchParams }: { searchParams?
           )}
         </CardContent>
       </Card>
+
+      {archived.length > 0 ? (
+        <Card>
+          <CardHeader>
+            <CardTitle>Arquivadas ({archived.length})</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {archived.map((transaction) => (
+              <div key={transaction.id} className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-[var(--border)] p-4">
+                <div>
+                  <div className="font-medium">{transaction.description}</div>
+                  <div className="text-xs text-[var(--muted-foreground)]">{transaction.occurredOn} · {formatCurrencyFromCents(transaction.amountCents)}</div>
+                </div>
+                <ConfirmForm
+                  action={restoreTransactionAction}
+                  message="Restaurar esta transação? Ela volta a entrar nos saldos e listas."
+                  confirmLabel="Sim, restaurar"
+                  variant="default"
+                >
+                  <input type="hidden" name="id" value={transaction.id} />
+                  <Button type="submit" variant="outline" className="h-10 px-3 text-xs">Restaurar</Button>
+                </ConfirmForm>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+      ) : null}
     </>
   );
 }

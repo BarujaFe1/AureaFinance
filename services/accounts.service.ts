@@ -106,7 +106,11 @@ export function listAccountsWithBalances(includeArchived = false) {
   const archivedIds = new Set(listArchivedEntityIds("account"));
   const snapshotRows = listAccountBalanceSnapshots();
   const latestSnapshots = getLatestSnapshotMap(snapshotRows);
-  const relatedTransactions = groupByAccountId(db.select().from(transactions).all() as TransactionRow[]);
+  const archivedTxnIds = new Set(listArchivedEntityIds("transaction"));
+  const relatedTransactions = groupByAccountId(
+    (db.select().from(transactions).all() as TransactionRow[])
+      .filter((row) => !archivedTxnIds.has(row.id))
+  );
   const projectedDeltaByAccount = buildProjectionDeltaMap(accountIds);
   const conservativeProjectionTypes = new Set(["investment", "reserve"]);
 

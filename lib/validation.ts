@@ -56,6 +56,7 @@ export const recurringRuleCreateSchema = z.object({
   nextRunOn: z.string().min(10),
   frequency: z.enum(["weekly", "monthly", "yearly"]),
   categoryId: z.string().optional().nullable(),
+  destinationAccountId: z.string().optional().nullable(),
   notes: z.string().optional().default("")
 });
 export type RecurringRuleCreateInput = z.infer<typeof recurringRuleCreateSchema>;
@@ -99,4 +100,11 @@ export const assetPositionUpsertSchema = z.object({
   snapshotDate: z.string().optional(),
   notes: z.string().optional().default("")
 });
+export const budgetUpsertSchema = z.object({
+  categoryId: z.string().min(1),
+  month: z.string().min(7),
+  limitCents: z.coerce.number().int().min(0)
+});
+export type BudgetUpsertInput = z.infer<typeof budgetUpsertSchema>;
+
 export type AssetPositionUpsertInput = z.infer<typeof assetPositionUpsertSchema>;

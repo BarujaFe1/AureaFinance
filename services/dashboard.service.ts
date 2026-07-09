@@ -4,6 +4,7 @@ import { listTransactions } from "@/services/transactions.service";
 import { getCardsSummary, listBills } from "@/services/cards.service";
 import { listRecurringRules } from "@/services/recurring.service";
 import { getCurrentNetWorthSummary, getDailyNetWorthSnapshot } from "@/services/net-worth.service";
+import { getBudgetVsActual } from "@/services/budget.service";
 import { nowTs } from "@/lib/dates";
 
 export function getDashboardData() {
@@ -28,6 +29,11 @@ export function getDashboardData() {
     + projectedBillsForMonth.reduce((sum, bill) => sum + Math.max(bill.totalAmountCents - bill.paidAmountCents, 0), 0);
   const reconciliation = getAccountsReconciliationSummary();
   const todaysNetWorth = getDailyNetWorthSnapshot();
+  const budgets = getBudgetVsActual(month);
+  const totalBudgetLimitCents = budgets.filter((b) => b.categoryKind === "expense").reduce((sum, b) => sum + b.limitCents, 0);
+  const totalBudgetSpentCents = budgets.filter((b) => b.categoryKind === "expense").reduce((sum, b) => sum + b.spentCents, 0);
+  const savingsRateCents = actualIncomeMonthCents > 0 ? actualIncomeMonthCents - actualExpenseMonthCents : 0;
+  const savingsRatePct = actualIncomeMonthCents > 0 ? Math.round((savingsRateCents / actualIncomeMonthCents) * 100) : 0;
 
   return {
     month,
@@ -39,11 +45,16 @@ export function getDashboardData() {
     netWorth: getCurrentNetWorthSummary(),
     todaysNetWorth,
     reconciliation,
+    budgets,
+    totalBudgetLimitCents,
+    totalBudgetSpentCents,
+    savingsRatePct: actualIncomeMonthCents > 0 ? savingsRatePct : null,
+    emergencyFundMonths: actualExpenseMonthCents > 0 ? Math.round((accounts.reduce((sum, a) => sum + a.currentBalanceCents, 0) / actualExpenseMonthCents) * 10) / 10 : null,
     consolidatedCurrentCents: accounts.reduce((sum, account) => sum + account.currentBalanceCents, 0),
     consolidatedProjectedCents: accounts.reduce((sum, account) => sum + account.projectedBalanceCents, 0),
     consolidatedReconciledCents: accounts.reduce((sum, account) => sum + account.reconciledBalanceCents, 0),
-    incomeMonthCents: actualIncomeMonthCents > 0 ? actualIncomeMonthCents : projectedIncomeMonthCents,
-    expenseMonthCents: actualExpenseMonthCents > 0 ? actualExpenseMonthCents : projectedExpenseMonthCents,
+    incomeMonthCents: monthTransactions.length > 0 ? actualIncomeMonthCents : projectedIncomeMonthCents,
+    expenseMonthCents: monthTransactions.length > 0 ? actualExpenseMonthCents : projectedExpenseMonthCents,
     projectedIncomeMonthCents,
     projectedExpenseMonthCents,
     lastUpdatedAt: nowTs(),

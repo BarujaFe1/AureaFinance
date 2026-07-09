@@ -7,10 +7,13 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { expectedCsvFiles } from "@/services/csv-import.service";
 import { getMoneyBootstrapDataset } from "@/services/money-bootstrap.service";
-import { bootstrapMoneyImportAction, commitBatchAction, validateBatchAction } from "@/features/import/actions";
+import { bootstrapMoneyImportAction, commitBatchAction, discardBatchAction, validateBatchAction } from "@/features/import/actions";
 import { fromJson } from "@/lib/utils";
 import { normalizeBatchMeta, normalizeDryRunReport } from "@/lib/import-meta";
 import { ImportWorkbenchLazy } from "@/components/lazy/import-workbench-lazy";
+import { SheetMappingEditor } from "@/components/import/sheet-mapping-editor";
+import { getImportBatch } from "@/services/import.service";
+import type { ImportSheetTarget } from "@/types/domain";
 
 function formatCreatedAt(timestamp: number) {
   return new Date(timestamp).toLocaleDateString("pt-BR");
@@ -107,6 +110,8 @@ export default function ImportPage() {
             {batches.map((batch) => {
               const meta = normalizeBatchMeta(fromJson<unknown>(batch.workbookSummaryJson, null));
               const report = normalizeDryRunReport(fromJson<unknown>(batch.dryRunReportJson, null));
+              const detail = batch.status !== "committed" ? getImportBatch(batch.id) : null;
+              const canCommit = Boolean(report) && (report?.summary.issues ?? 0) === 0;
               return (
                 <div key={batch.id} className="rounded-2xl border border-[var(--border)] p-4">
                   <div className="flex flex-wrap items-center justify-between gap-3">
@@ -125,24 +130,60 @@ export default function ImportPage() {
                     </div>
                   ) : <div className="mt-3 text-sm text-muted-foreground">Metadados do workbook não estão disponíveis para este lote.</div>}
 
+                  {detail && detail.mappings.length > 0 ? (
+                    <div className="mt-4 space-y-2">
+                      <div className="text-sm font-medium">Revisar mapeamento de colunas</div>
+                      {detail.mappings.map((mapping) => {
+                        const sheetMeta = meta.sheets.find((sheet) => sheet.name === mapping.sheetName);
+                        return (
+                          <SheetMappingEditor
+                            key={mapping.id}
+                            batchId={batch.id}
+                            sheetName={mapping.sheetName}
+                            headers={sheetMeta?.headers ?? []}
+                            targetEntity={mapping.targetEntity as ImportSheetTarget}
+                            columnMap={fromJson<Record<string, string>>(mapping.columnMapJson, {})}
+                          />
+                        );
+                      })}
+                    </div>
+                  ) : null}
+
                   {report ? (
                     <div className="mt-4 rounded-2xl bg-[var(--secondary)] p-3 text-sm">
                       <div>Contas: {report.summary.accounts} · Transações: {report.summary.transactions} · Cartões: {report.summary.creditCards} · Faturas/parcelas: {report.summary.installments}</div>
                       <div>Issues: {report.summary.issues}</div>
                       {report.warnings.length > 0 ? <div className="mt-2 text-[var(--muted-foreground)]">{report.warnings.join(" · ")}</div> : null}
                     </div>
+                  ) : batch.status !== "committed" ? (
+                    <div className="mt-4 rounded-2xl border border-dashed border-[var(--border)] p-3 text-sm text-[var(--muted-foreground)]">
+                      Revise o mapeamento e rode o dry-run antes de commitar.
+                    </div>
                   ) : null}
 
                   <div className="mt-4 flex flex-wrap gap-3">
+                    <a href="/import/review" className="inline-flex h-10 items-center justify-center rounded-2xl border border-[var(--border)] px-4 text-sm font-medium">
+                      Revisar staging
+                    </a>
                     <form action={validateBatchAction}>
                       <input type="hidden" name="batchId" value={batch.id} />
                       <Button type="submit" variant="outline">Rodar dry-run</Button>
                     </form>
-                    <form action={commitBatchAction}>
-                      <input type="hidden" name="batchId" value={batch.id} />
-                      <input type="hidden" name="dryRun" value="false" />
-                      <Button type="submit">Commitar lote</Button>
-                    </form>
+                    {batch.status !== "committed" ? (
+                      <form action={discardBatchAction}>
+                        <input type="hidden" name="batchId" value={batch.id} />
+                        <Button type="submit" variant="outline">Descartar lote</Button>
+                      </form>
+                    ) : null}
+                    {batch.status !== "committed" ? (
+                      <form action={commitBatchAction}>
+                        <input type="hidden" name="batchId" value={batch.id} />
+                        <input type="hidden" name="dryRun" value="false" />
+                        <Button type="submit" disabled={!canCommit} title={!canCommit ? "Rode o dry-run sem issues antes de commitar" : undefined}>
+                          Commitar lote
+                        </Button>
+                      </form>
+                    ) : null}
                   </div>
                 </div>
               );

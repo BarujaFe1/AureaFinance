@@ -3,9 +3,11 @@ import { PageHeader } from "@/components/page-header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { StatCard } from "@/components/stat-card";
+import { Progress } from "@/components/ui/progress";
 import { formatCurrencyFromCents } from "@/lib/currency";
 import { formatShortDate, formatStatusLabel, formatTransactionDirectionLabel } from "@/lib/formatters";
 import { getDashboardData } from "@/services/dashboard.service";
+import { getBudgetVsActual } from "@/services/budget.service";
 import { AccountBalanceChartLazy } from "@/components/lazy/account-balance-chart-lazy";
 
 export default function DashboardPage() {
@@ -57,6 +59,50 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
       </section>
+
+      {data.budgets.length > 0 ? (
+        <Card>
+          <CardHeader><CardTitle>Orçamento mensal</CardTitle></CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex items-center justify-between text-sm">
+              <span>Gasto: {formatCurrencyFromCents(data.totalBudgetSpentCents)} de {formatCurrencyFromCents(data.totalBudgetLimitCents)}</span>
+              <span className={data.totalBudgetSpentCents > data.totalBudgetLimitCents ? "text-red-500 font-semibold" : ""}>
+                {data.totalBudgetLimitCents > 0 ? Math.round((data.totalBudgetSpentCents / data.totalBudgetLimitCents) * 100) : 0}%
+              </span>
+            </div>
+            <Progress value={data.totalBudgetLimitCents > 0 ? Math.min(Math.round((data.totalBudgetSpentCents / data.totalBudgetLimitCents) * 100), 100) : 0}
+              className={data.totalBudgetSpentCents > data.totalBudgetLimitCents ? "bg-red-200 [&>div]:bg-red-500" : ""} />
+            {data.savingsRatePct !== null ? (
+              <div className="rounded-2xl border border-[var(--border)] p-3 text-sm">
+                <div className="flex items-center justify-between">
+                  <span>Taxa de poupança</span>
+                  <strong className={data.savingsRatePct < 10 ? "text-amber-500" : "text-green-500"}>{data.savingsRatePct}%</strong>
+                </div>
+              </div>
+            ) : null}
+            {data.emergencyFundMonths !== null ? (
+              <div className="rounded-2xl border border-[var(--border)] p-3 text-sm">
+                <div className="flex items-center justify-between">
+                  <span>Fundo de emergência</span>
+                  <strong>{data.emergencyFundMonths} meses de despesas</strong>
+                </div>
+              </div>
+            ) : null}
+            <div className="grid gap-2 md:grid-cols-2">
+              {data.budgets.filter((b) => b.categoryKind === "expense").slice(0, 6).map((b) => (
+                <div key={b.id} className="rounded-xl border p-2 text-xs">
+                  <div className="flex items-center justify-between">
+                    <span style={{ color: b.categoryColor ?? undefined }}>{b.categoryName}</span>
+                    <span className={b.percentageUsed > 100 ? "text-red-500" : ""}>{b.percentageUsed}%</span>
+                  </div>
+                  <Progress value={Math.min(b.percentageUsed, 100)} className={b.percentageUsed > 100 ? "mt-1 bg-red-200 [&>div]:bg-red-500" : "mt-1"} />
+                </div>
+              ))}
+            </div>
+            <a href="/categories" className="inline-flex text-xs font-medium text-[var(--foreground)] underline-offset-2 hover:underline">Gerenciar orçamentos em Categorias</a>
+          </CardContent>
+        </Card>
+      ) : null}
 
       <section className="grid gap-4 xl:grid-cols-[1.2fr_1fr_1fr]">
         <Card className="xl:col-span-1">

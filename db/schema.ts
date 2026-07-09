@@ -12,6 +12,7 @@ export const accounts = sqliteTable("accounts", {
   includeInNetWorth: integer("include_in_net_worth", { mode: "boolean" }).notNull().default(true),
   isArchived: integer("is_archived", { mode: "boolean" }).notNull().default(false),
   sortOrder: integer("sort_order").notNull().default(0),
+  sourceImportBatchId: text("source_import_batch_id"),
   createdAt: integer("created_at").notNull(),
   updatedAt: integer("updated_at").notNull()
 }, (table: any) => ({
@@ -74,6 +75,7 @@ export const transactions = sqliteTable("transactions", {
   transferId: text("transfer_id"),
   recurringOccurrenceId: text("recurring_occurrence_id"),
   sourceImportRowId: text("source_import_row_id"),
+  sourceImportBatchId: text("source_import_batch_id"),
   direction: text("direction").notNull(),
   status: text("status").notNull().default("posted"),
   description: text("description").notNull(),
@@ -115,6 +117,7 @@ export const recurringRules = sqliteTable("recurring_rules", {
   id: text("id").primaryKey(),
   accountId: text("account_id").notNull().references(() => accounts.id, { onDelete: "cascade" }),
   categoryId: text("category_id").references(() => categories.id, { onDelete: "set null" }),
+  destinationAccountId: text("destination_account_id").references(() => accounts.id, { onDelete: "set null" }),
   title: text("title").notNull(),
   direction: text("direction").notNull(),
   frequency: text("frequency").notNull(),
@@ -156,6 +159,7 @@ export const creditCards = sqliteTable("credit_cards", {
   dueDay: integer("due_day").notNull(),
   color: text("color").default("#111827"),
   isArchived: integer("is_archived", { mode: "boolean" }).notNull().default(false),
+  sourceImportBatchId: text("source_import_batch_id"),
   createdAt: integer("created_at").notNull(),
   updatedAt: integer("updated_at").notNull()
 }, (table: any) => ({
@@ -172,6 +176,7 @@ export const creditCardBills = sqliteTable("credit_card_bills", {
   paidAmountCents: integer("paid_amount_cents").notNull().default(0),
   status: text("status").notNull().default("open"),
   settlementTransactionId: text("settlement_transaction_id").references(() => transactions.id, { onDelete: "set null" }),
+  sourceImportBatchId: text("source_import_batch_id"),
   createdAt: integer("created_at").notNull(),
   updatedAt: integer("updated_at").notNull()
 }, (table: any) => ({
@@ -304,6 +309,7 @@ export const netWorthSummaries = sqliteTable("net_worth_summaries", {
   debtsCents: integer("debts_cents").notNull().default(0),
   notes: text("notes").default(""),
   source: text("source").notNull().default("manual"),
+  sourceImportBatchId: text("source_import_batch_id"),
   createdAt: integer("created_at").notNull(),
   updatedAt: integer("updated_at").notNull()
 }, (table: any) => ({
@@ -424,6 +430,17 @@ export const entityArchives = sqliteTable("entity_archives", {
 }, (table: any) => ({
   entityUnique: uniqueIndex("entity_archives_entity_unique").on(table.entityType, table.entityId),
   entityTypeIdx: index("entity_archives_type_idx").on(table.entityType)
+}));
+
+export const categoryBudgets = sqliteTable("category_budgets", {
+  id: text("id").primaryKey(),
+  categoryId: text("category_id").notNull().references(() => categories.id, { onDelete: "cascade" }),
+  month: text("month").notNull(),
+  limitCents: integer("limit_cents").notNull(),
+  createdAt: integer("created_at").notNull(),
+  updatedAt: integer("updated_at").notNull()
+}, (table: any) => ({
+  categoryMonthUnique: uniqueIndex("category_budgets_category_month_unique").on(table.categoryId, table.month)
 }));
 
 export const settings = sqliteTable("settings", {

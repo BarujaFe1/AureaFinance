@@ -36,8 +36,25 @@ try {
       continue;
     }
     const sql = fs.readFileSync(path.join(migrationsDir, file), "utf8");
+    const statements = sql
+      .split(";")
+      .map((part) => part.trim())
+      .filter((part) => part.length > 0 && !part.startsWith("--"));
+
     const tx = db.transaction(() => {
-      db.exec(sql);
+      for (const statement of statements) {
+        try {
+          db.exec(statement);
+        } catch (error) {
+          const message = error instanceof Error ? error.message : String(error);
+          // Idempotent ALTERs: column may already exist via ensureRuntimeSchema.
+          if (/duplicate column name/i.test(message)) {
+            log("↷", `${file}: ${message}`);
+            continue;
+          }
+          throw error;
+        }
+      }
       db.prepare("INSERT INTO __migrations (filename, applied_at) VALUES (?, ?)").run(file, Date.now());
     });
     tx();
