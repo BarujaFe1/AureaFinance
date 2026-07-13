@@ -1,7 +1,7 @@
 import { unstable_cache } from "next/cache";
 import { db } from "@/db/client";
 import { accounts, cardInstallments, cardPurchases, creditCardBills, creditCards, recurringOccurrences, recurringRules } from "@/db/schema";
-import { addDaysIso, addMonthsIso, todayIso } from "@/lib/dates";
+import { addDaysIso, addMonthsIso, isoDate, todayIso } from "@/lib/dates";
 import { materializeOccurrences, type TransactionDirection } from "@/lib/finance";
 import { listAccountsWithBalances } from "@/services/accounts.service";
 import { ensureSettings } from "@/services/settings.service";
@@ -38,7 +38,7 @@ type OccurrenceRow = typeof recurringOccurrences.$inferSelect;
 function firstBusinessDayAfter12(year: number, monthIndex: number) {
   const date = new Date(Date.UTC(year, monthIndex, 13));
   while (date.getUTCDay() === 0 || date.getUTCDay() === 6) date.setUTCDate(date.getUTCDate() + 1);
-  return date.toISOString().slice(0, 10);
+  return isoDate(date);
 }
 
 function normalizeRuleDirection(value: string): TransactionDirection {

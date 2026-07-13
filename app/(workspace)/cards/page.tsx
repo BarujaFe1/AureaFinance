@@ -1,4 +1,5 @@
 import { EmptyState } from "@/components/empty-state";
+import { todayIso } from "@/lib/dates";
 import { PageHeader } from "@/components/page-header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -46,7 +47,7 @@ export default function CardsPage() {
             <form action={createCardPurchaseAction} className="grid gap-4 md:grid-cols-2">
               <label className="grid gap-2 text-sm"><span>Cartão</span><Select name="creditCardId"><option value="">Selecione o cartão</option>{cards.map((card) => <option key={card.id} value={card.id}>{card.name}</option>)}</Select></label>
               <label className="grid gap-2 text-sm"><span>Descrição</span><Input name="description" placeholder="Monitor, SmartFit, tênis..." /></label>
-              <label className="grid gap-2 text-sm"><span>Data da compra</span><Input name="purchaseDate" type="date" defaultValue={new Date().toISOString().slice(0, 10)} /></label>
+              <label className="grid gap-2 text-sm"><span>Data da compra</span><Input name="purchaseDate" type="date" defaultValue={todayIso()} /></label>
               <label className="grid gap-2 text-sm"><span>Valor total</span><Input name="amount" placeholder="0,00" /></label>
               <label className="grid gap-2 text-sm"><span>Número de parcelas</span><Input name="installmentCount" type="number" defaultValue={1} min={1} max={48} /></label>
               <label className="grid gap-2 text-sm"><span>Categoria</span><Select name="categoryId"><option value="">Sem categoria</option>{categories.map((category) => <option key={category.id} value={category.id}>{category.name}</option>)}</Select></label>

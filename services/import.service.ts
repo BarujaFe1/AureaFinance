@@ -10,7 +10,7 @@ import {
   MAX_IMPORT_TOTAL_ROWS
 } from "@/lib/constants";
 import { parseCurrencyToCents } from "@/lib/currency";
-import { isoMonth, nowTs, parseBrazilianDate } from "@/lib/dates";
+import { isoDate, isoMonth, nowTs, parseBrazilianDate } from "@/lib/dates";
 import { repairMojibake, sanitizeText, normalizeLooseText } from "@/lib/text";
 import { fromJson, slugify, toJson, uid } from "@/lib/utils";
 import { normalizeBatchMeta, normalizeDryRunReport } from "@/lib/import-meta";
@@ -157,9 +157,9 @@ function normalizeDateText(value: unknown) {
   const text = toText(value);
   if (!text) return "";
   if (/^\d{4}-\d{2}-\d{2}$/.test(text)) return text;
-  if (/^\d{2}\/\d{2}\/\d{4}$/.test(text)) return parseBrazilianDate(text).toISOString().slice(0, 10);
+  if (/^\d{2}\/\d{2}\/\d{4}$/.test(text)) return isoDate(parseBrazilianDate(text));
   const parsed = new Date(text);
-  return Number.isNaN(parsed.getTime()) ? "" : parsed.toISOString().slice(0, 10);
+  return Number.isNaN(parsed.getTime()) ? "" : isoDate(parsed);
 }
 
 function findAccountByLooseName(name: string) {

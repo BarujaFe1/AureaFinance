@@ -1,4 +1,5 @@
 import { PageHeader } from "@/components/page-header";
+import { EmptyState } from "@/components/empty-state";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -105,6 +106,12 @@ export default function CategoriesPage() {
         <Card>
           <CardHeader><CardTitle>Categorias ativas</CardTitle></CardHeader>
           <CardContent className="space-y-4">
+            {categoryRows.length === 0 ? (
+              <EmptyState
+                title="Nenhuma categoria ainda"
+                description="Crie categorias de receita e despesa para orçamento, filtros e relatórios. Você também pode importar a Money.xlsx e revisar classificações depois."
+              />
+            ) : null}
             {categoryRows.map((category) => (
               <details key={category.id} className="rounded-xl border p-4">
                 <summary className="flex cursor-pointer items-center justify-between gap-3">
@@ -148,6 +155,12 @@ export default function CategoriesPage() {
         <Card>
           <CardHeader><CardTitle>Tags ativas</CardTitle></CardHeader>
           <CardContent className="space-y-4">
+            {tagRows.length === 0 ? (
+              <EmptyState
+                title="Nenhuma tag ainda"
+                description="Tags são etiquetas leves para cruzar gastos (ex.: viagem, família) sem poluir o plano de contas."
+              />
+            ) : null}
             {tagRows.map((tag) => (
               <details key={tag.id} className="rounded-xl border p-4">
                 <summary className="flex cursor-pointer items-center justify-between gap-3"><span className="font-medium">{tag.name}</span><Badge variant="outline">tag</Badge></summary>

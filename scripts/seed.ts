@@ -2,7 +2,7 @@ import { eq } from "drizzle-orm";
 import { db } from "@/db/client";
 import { accountBalanceSnapshots, accounts, categories, creditCardBills, creditCards, cryptoPositions, netWorthSnapshots, recurringRules, reserves, settings, stockPositions, tags } from "@/db/schema";
 import { parseCurrencyToCents } from "@/lib/currency";
-import { nowTs } from "@/lib/dates";
+import { addDaysIso, nowTs, todayIso, withDayOfMonthIso } from "@/lib/dates";
 import { slugify, uid } from "@/lib/utils";
 
 const now = nowTs();
@@ -218,11 +218,11 @@ function ensureRecurring(title: string, accountId: string, amount: string, nextR
 ensureMainSettings();
 ensureCategories();
 
-const mercadoPagoCc = ensureAccount("MercadoPago CC", "MercadoPago", "#00bbfe");
-const nuBankCc = ensureAccount("NuBank CC", "NuBank", "#9900ff");
+const walletPayCc = ensureAccount("WalletPay CC", "WalletPay", "#00bbfe");
+const auroraCc = ensureAccount("Aurora CC", "Aurora", "#9900ff");
 
-const nubankCard = ensureCard({ name: "Nubank", slug: "nubank", color: "#9900ff", closeDay: 18, dueDay: 25, settlementAccountName: "NuBank CC", institution: "NuBank" });
-const mercadoPagoCard = ensureCard({ name: "MercadoPago", slug: "mercadopago", color: "#00bbfe", closeDay: 8, dueDay: 15, settlementAccountName: "MercadoPago CC", institution: "MercadoPago" });
+const auroraCard = ensureCard({ name: "Aurora", slug: "aurora", color: "#9900ff", closeDay: 18, dueDay: 25, settlementAccountName: "Aurora CC", institution: "Aurora" });
+const walletPayCard = ensureCard({ name: "WalletPay", slug: "walletpay", color: "#00bbfe", closeDay: 8, dueDay: 15, settlementAccountName: "WalletPay CC", institution: "WalletPay" });
 
 for (const [dueOn, amount] of [
   ["2026-03-25", "990,33"],
@@ -238,7 +238,7 @@ for (const [dueOn, amount] of [
   ["2027-01-25", "256,35"],
   ["2027-02-25", "0,00"],
   ["2027-03-25", "0,00"]
-] as const) ensureBill(nubankCard.id, dueOn, amount);
+] as const) ensureBill(auroraCard.id, dueOn, amount);
 
 for (const [dueOn, amount] of [
   ["2026-04-15", "193,11"],
@@ -256,27 +256,31 @@ for (const [dueOn, amount] of [
   ["2027-04-15", "33,48"],
   ["2027-05-15", "33,48"],
   ["2027-06-15", "0,00"]
-] as const) ensureBill(mercadoPagoCard.id, dueOn, amount);
+] as const) ensureBill(walletPayCard.id, dueOn, amount);
 
 function firstBusinessDayAfter12() {
-  const date = new Date();
-  date.setDate(13);
-  while (date.getDay() === 0 || date.getDay() === 6) date.setDate(date.getDate() + 1);
-  return date.toISOString().slice(0, 10);
+  const today = todayIso();
+  const thirteenth = withDayOfMonthIso(today, 13);
+  let cursor = thirteenth;
+  // weekend roll-forward using UTC calendar math via addDaysIso
+  const weekday = new Date(`${cursor}T00:00:00Z`).getUTCDay();
+  if (weekday === 0) cursor = addDaysIso(cursor, 1);
+  if (weekday === 6) cursor = addDaysIso(cursor, 2);
+  return cursor;
 }
 
-ensureRecurring("Mesada Olga", mercadoPagoCc.id, "1000,00", firstBusinessDayAfter12(), "income", "FIRST_BUSINESS_DAY_AFTER_12");
-ensureRecurring("Internet/GloboPlay", mercadoPagoCc.id, "79,89", `${new Date().toISOString().slice(0, 7)}-21`, "expense");
-ensureRecurring("SmartFit", nuBankCc.id, "149,90", `${new Date().toISOString().slice(0, 7)}-25`, "expense", "CARD_RECURRING");
+ensureRecurring("Allowance", walletPayCc.id, "1000,00", firstBusinessDayAfter12(), "income", "FIRST_BUSINESS_DAY_AFTER_12");
+ensureRecurring("Internet/Streaming", walletPayCc.id, "79,89", `${todayIso().slice(0, 7)}-21`, "expense");
+ensureRecurring("Gym Club", auroraCc.id, "149,90", `${todayIso().slice(0, 7)}-25`, "expense", "CARD_RECURRING");
 
-ensureAccountSnapshot(mercadoPagoCc.id, new Date().toISOString().slice(0, 10), "1984,21");
-ensureAccountSnapshot(nuBankCc.id, new Date().toISOString().slice(0, 10), "0,00");
+ensureAccountSnapshot(walletPayCc.id, todayIso(), "1984,21");
+ensureAccountSnapshot(auroraCc.id, todayIso(), "0,00");
 ensureReserve("Reserva de emergência", "3806,69");
 ensureReserve("Notebook", "695,93");
 ensureStock("MELI34", "Mercado Livre", 1, "141,68");
 ensureStock("BABA34", "Alibaba", 1, "118,00");
 ensureCrypto("Bitcoin", 0.00032967, "239,71");
 ensureCrypto("Ethereum", 0.02030612, "232,36");
-ensureDailyNetWorthSnapshot(new Date().toISOString().slice(0, 10), parseCurrencyToCents("12856,52"));
+ensureDailyNetWorthSnapshot(todayIso(), parseCurrencyToCents("12856,52"));
 
 console.log("Seed concluída.");

@@ -22,7 +22,9 @@
     <img alt="SQLite" src="https://img.shields.io/badge/SQLite-Local--First-003B57?style=for-the-badge&logo=sqlite&logoColor=white" />
     <img alt="Drizzle" src="https://img.shields.io/badge/Drizzle-ORM-C5F74F?style=for-the-badge" />
     <img alt="Recharts" src="https://img.shields.io/badge/Recharts-Analytics-FF7300?style=for-the-badge" />
-    <img alt="Vitest" src="https://img.shields.io/badge/Vitest-85%20tests-22C55E?style=for-the-badge&logo=vitest&logoColor=white" />
+    <img alt="Vitest" src="https://img.shields.io/badge/Vitest-domain%20tests-22C55E?style=for-the-badge&logo=vitest&logoColor=white" />
+    <img alt="CI" src="https://img.shields.io/badge/CI-GitHub%20Actions-2088FF?style=for-the-badge&logo=githubactions&logoColor=white" />
+    <img alt="Local-first" src="https://img.shields.io/badge/Privacy-Local--first-0F766E?style=for-the-badge" />
   </p>
 </div>
 
@@ -382,8 +384,10 @@ pnpm start
 
 ```bash
 pnpm typecheck    # TypeScript estrito (app + tests)
-pnpm test         # Vitest — 85 testes / 10 arquivos
+pnpm test         # Vitest — domínio financeiro + import + datas/moeda
+pnpm lint         # ESLint (next/core-web-vitals)
 pnpm build        # Build de produção Next.js
+pnpm ci           # lint + typecheck + test + build
 pnpm db:doctor    # Diagnóstico do banco local
 pnpm db:backup    # Backup operacional do SQLite
 ```
@@ -391,9 +395,43 @@ pnpm db:backup    # Backup operacional do SQLite
 | Command | Purpose |
 |---|---|
 | `pnpm dbmigrate` | Aplica migrations |
-| `pnpm dbseed` | Popula base demo |
+| `pnpm dbseed` | Popula base demo sintética |
 | `pnpm db:import-csv` | Importação CSV operacional |
 | `pnpm db:restore` | Restaura backup |
+
+Guia completo: [`docs/TESTING.md`](./docs/TESTING.md).
+
+---
+
+## ⚖️ Trade-offs
+
+* **SQLite local vs cloud:** privacidade e simplicidade > multi-device sync. Deploy Vercel “puro” não retém dados.
+* **Bootstrap sintético vs parser 100% live no repo público:** demonstra o shape da Money.xlsx sem vazar finanças reais.
+* **Sem auth:** correto para single-user local; inadequado para URL pública sem camada extra.
+* **UI densa (tríade de saldos):** mais poder operacional, mais curva de aprendizado — mitigada por onboarding e empty states.
+
+---
+
+## 💼 O que este projeto demonstra
+
+1. Traduzir uma planilha operacional real em produto com domínio tipado.
+2. Modelar dinheiro sem float e com invariantes testáveis.
+3. Separar saldo calculado, projetado e conferido (conciliação adulta).
+4. Pipeline de importação revisável (staging / dry-run / commit).
+5. DX de portfólio: CI, docs, seed demo, backup/doctor scripts.
+6. Sensibilidade a privacidade em fintech pessoal.
+
+---
+
+## 🎤 Como eu apresentaria em entrevista
+
+1. **Problema (30s):** “Eu controlava a vida financeira em uma Money.xlsx. Os saldos mentiam porque previsão e realidade estavam misturados.”
+2. **Solução (60s):** “Construí um OS local-first com SQLite. O coração é a conferência diária: calculado × projetado × conferido.”
+3. **Profundidade (2min):** abrir schema + `lib/finance` + um teste de parcela/recorrência; mostrar import workbench.
+4. **Trade-off (30s):** “Escolhi local-first de propósito. Cloud viria depois com storage persistente e auth — não finjo que já é SaaS.”
+5. **Prova (30s):** CI verde, seed demo, docs de arquitetura e decisões.
+
+Roteiro expandido: [`docs/interview-prep.md`](./docs/interview-prep.md).
 
 ---
 
@@ -443,6 +481,12 @@ O Aurea Finance demonstra competências críticas para funções de **Full-Stack
 ## 📚 Documentação Complementar
 
 - [docs/architecture.md](./docs/architecture.md) — arquitetura e camadas
+- [docs/TECHNICAL_DECISIONS.md](./docs/TECHNICAL_DECISIONS.md) — ADRs e trade-offs
+- [docs/TESTING.md](./docs/TESTING.md) — estratégia de testes
+- [docs/DEPLOYMENT.md](./docs/DEPLOYMENT.md) — local-first vs cloud
+- [docs/AUDIT_REPORT.md](./docs/AUDIT_REPORT.md) — auditoria desta pass
+- [docs/HANDOFF.md](./docs/HANDOFF.md) — handoff da revisão
+- [SECURITY_NOTES.md](./SECURITY_NOTES.md) — privacidade e threat model
 - [docs/data-model.md](./docs/data-model.md) — modelagem de dados
 - [docs/planilha-origem.md](./docs/planilha-origem.md) — leitura da Money.xlsx
 - [docs/migration-plan.md](./docs/migration-plan.md) — plano de migração
@@ -451,6 +495,30 @@ O Aurea Finance demonstra competências críticas para funções de **Full-Stack
 - [docs/troubleshooting.md](./docs/troubleshooting.md) — problemas comuns
 - [docs/interview-prep.md](./docs/interview-prep.md) — roteiro de entrevista
 - [docs/roadmap.md](./docs/roadmap.md) — evolução do produto
+
+---
+
+## 🔐 Variáveis de ambiente
+
+```bash
+cp .env.example .env
+```
+
+| Variável | Descrição | Default |
+|---|---|---|
+| `DATABASE_URL` | Caminho do SQLite local | `./data/aurea-finance.sqlite` |
+| `NEXT_PUBLIC_APP_NAME` | Nome exibido no shell | `Aurea Finance` |
+
+Nunca commite `.env`, SQLite real ou `Money.xlsx` pessoal.
+
+---
+
+## 📌 Status atual
+
+- **Produto:** operação diária utilizável localmente (contas, conferência, cartões, recorrências, patrimônio, import).
+- **Qualidade:** typecheck + Vitest + lint + build + CI.
+- **Demo:** `pnpm dbmigrate && pnpm dbseed && pnpm dev`.
+- **Cloud:** build ok; persistência SQLite em Vercel **não** é o modo suportado (ver `docs/DEPLOYMENT.md`).
 
 ---
 

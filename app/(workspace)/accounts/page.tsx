@@ -1,4 +1,5 @@
 import { EmptyState } from "@/components/empty-state";
+import { todayIso } from "@/lib/dates";
 import { PageHeader } from "@/components/page-header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -24,7 +25,7 @@ export default function AccountsPage() {
     reconciled: acc.reconciled + account.reconciledBalanceCents
   }), { current: 0, projected: 0, reconciled: 0 });
   const snapshots = listAccountBalanceSnapshots(undefined, 30);
-  const today = new Date().toISOString().slice(0, 10);
+  const today = todayIso();
 
   return (
     <>

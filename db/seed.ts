@@ -9,7 +9,7 @@ import {
   tags,
   transactions
 } from "@/db/schema";
-import { nowTs, isoMonth } from "@/lib/dates";
+import { nowTs, isoMonth, todayIso, withDayOfMonthIso } from "@/lib/dates";
 import { slugify, uid } from "@/lib/utils";
 import { eq } from "drizzle-orm";
 
@@ -103,8 +103,8 @@ function ensureSampleTransactions(accountId: string) {
   const existing = db.select().from(transactions).all();
   if (existing.length > 0) return;
 
-  const salaryDate = new Date().toISOString().slice(0, 10);
-  const rentDate = new Date(new Date().setDate(5)).toISOString().slice(0, 10);
+  const salaryDate = todayIso();
+  const rentDate = withDayOfMonthIso(salaryDate, 5);
 
   db.insert(transactions)
     .values([

@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { todayIso } from "@/lib/dates";
 import { cardPurchaseCreateSchema, creditCardCreateSchema } from "@/lib/validation";
 import { archiveCreditCard, createCardPurchase, createCreditCard, deleteCardPurchase, markBillPaid, restoreCreditCard, updateCardPurchase, updateCreditCard } from "@/services/cards.service";
 
@@ -68,7 +69,7 @@ export async function updateCardPurchaseAction(formData: FormData) {
     purchaseId: String(formData.get("purchaseId") ?? ""),
     creditCardId: String(formData.get("creditCardId") ?? ""),
     description: String(formData.get("description") ?? ""),
-    purchaseDate: String(formData.get("purchaseDate") ?? new Date().toISOString().slice(0, 10)),
+    purchaseDate: String(formData.get("purchaseDate") ?? todayIso()),
     amount: String(formData.get("amount") ?? "0"),
     installmentCount: Number(formData.get("installmentCount") ?? 1),
     categoryId: formData.get("categoryId") ? String(formData.get("categoryId")) : undefined,

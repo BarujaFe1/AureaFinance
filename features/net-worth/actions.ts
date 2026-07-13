@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { todayIso } from "@/lib/dates";
 import { assetPositionUpsertSchema } from "@/lib/validation";
 import { archiveAsset, deleteAsset, deleteAssetSnapshot, deleteDailyNetWorthSnapshot, recordDailyNetWorthSnapshot, restoreAsset, upsertAssetPosition, upsertNetWorthSummary } from "@/services/net-worth.service";
 
@@ -38,12 +39,12 @@ export async function upsertAssetPositionAction(formData: FormData) {
     snapshotDate: formData.get("snapshotDate") || undefined,
     notes: formData.get("notes") || ""
   }));
-  recordDailyNetWorthSnapshot(String(formData.get("snapshotDate") ?? new Date().toISOString().slice(0, 10)));
+  recordDailyNetWorthSnapshot(String(formData.get("snapshotDate") ?? todayIso()));
   revalidateNetWorthRoutes();
 }
 
 export async function saveDailyNetWorthSnapshotAction(formData: FormData) {
-  recordDailyNetWorthSnapshot(String(formData.get("snapshotDate") ?? new Date().toISOString().slice(0, 10)));
+  recordDailyNetWorthSnapshot(String(formData.get("snapshotDate") ?? todayIso()));
   revalidateNetWorthRoutes();
 }
 

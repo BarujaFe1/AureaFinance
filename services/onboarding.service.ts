@@ -1,7 +1,7 @@
 import { eq } from "drizzle-orm";
 import { db, sqlite } from "@/db/client";
 import { accounts, settings } from "@/db/schema";
-import { nowTs, isoMonth } from "@/lib/dates";
+import { nowTs, isoMonth, todayIso } from "@/lib/dates";
 import { createAccount } from "@/services/accounts.service";
 import { createCreditCard } from "@/services/cards.service";
 import { upsertNetWorthSummary } from "@/services/net-worth.service";
@@ -118,7 +118,7 @@ export function completeFinancialOnboarding(payload: FinancialOnboardingPayload)
       });
     }
 
-    const netWorthMonth = payload.netWorth.month || isoMonth(new Date().toISOString().slice(0, 10));
+    const netWorthMonth = payload.netWorth.month || isoMonth(todayIso());
     const hasNetWorthData = Boolean(
       payload.netWorth.notes ||
         payload.netWorth.reserves !== "0" ||

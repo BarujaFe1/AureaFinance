@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { todayIso } from "@/lib/dates";
 import { recurringRuleCreateSchema } from "@/lib/validation";
 import { archiveRecurringRule, createRecurringRule, deleteRecurringRule, duplicateRecurringRule, materializeAllRules, pauseRecurringRule, reactivateRecurringRule, restoreRecurringRule, settleOccurrence, skipRecurringOccurrence, updateRecurringOccurrence, updateRecurringRuleSeries } from "@/services/recurring.service";
 
@@ -50,8 +51,8 @@ export async function updateRecurringRuleSeriesAction(formData: FormData) {
     direction: String(formData.get("direction") ?? "expense"),
     frequency: String(formData.get("frequency") ?? "monthly"),
     amount: String(formData.get("amount") ?? "0"),
-    startsOn: String(formData.get("startsOn") ?? new Date().toISOString().slice(0, 10)),
-    nextRunOn: String(formData.get("nextRunOn") ?? new Date().toISOString().slice(0, 10)),
+    startsOn: String(formData.get("startsOn") ?? todayIso()),
+    nextRunOn: String(formData.get("nextRunOn") ?? todayIso()),
     notes: String(formData.get("notes") ?? ""),
     scope: String(formData.get("scope") ?? "future") === "entire" ? "entire" : "future",
     effectiveFrom: formData.get("effectiveFrom") ? String(formData.get("effectiveFrom")) : undefined
@@ -62,7 +63,7 @@ export async function updateRecurringRuleSeriesAction(formData: FormData) {
 export async function updateRecurringOccurrenceAction(formData: FormData) {
   updateRecurringOccurrence({
     occurrenceId: String(formData.get("occurrenceId") ?? ""),
-    dueOn: String(formData.get("dueOn") ?? new Date().toISOString().slice(0, 10)),
+    dueOn: String(formData.get("dueOn") ?? todayIso()),
     amount: String(formData.get("amount") ?? "0"),
     notes: String(formData.get("notes") ?? "")
   });

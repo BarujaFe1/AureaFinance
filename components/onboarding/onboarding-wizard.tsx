@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { todayIso } from "@/lib/dates";
 import Link from "next/link";
 import { completeFinancialOnboardingAction } from "@/features/onboarding/actions";
 import type { MoneyBootstrapDataset } from "@/lib/money-bootstrap";
@@ -107,7 +108,7 @@ function emptyCard(defaultAccountId = ""): CardDraft {
 }
 
 function emptyRecurring(defaultAccountId = ""): RecurringDraft {
-  const today = new Date().toISOString().slice(0, 10);
+  const today = todayIso();
   return {
     clientId: makeId("rec"),
     title: "",

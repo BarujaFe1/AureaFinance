@@ -107,7 +107,7 @@ export function getMoneyOnboardingDefaults() {
   return {
     source: "money" as const,
     initialSettings: {
-      userDisplayName: currentSettings.userDisplayName === "Você" ? "Felipe" : currentSettings.userDisplayName,
+      userDisplayName: currentSettings.userDisplayName === "Você" ? "Demo User" : currentSettings.userDisplayName,
       baseCurrency: currentSettings.baseCurrency || getMoneyBootstrapDataset().currency,
       locale: currentSettings.locale || getMoneyBootstrapDataset().locale,
       themePreference: currentSettings.themePreference || "system",

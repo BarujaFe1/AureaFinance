@@ -1,14 +1,22 @@
-import { format } from "date-fns";
-import { formatCurrency } from "@/lib/money";
+import { formatCurrencyFromCents } from "@/lib/currency";
+import { isoDate, isoMonth } from "@/lib/dates";
 
+/** Format calendar dates without timezone shift for yyyy-MM-dd strings. */
 export function formatShortDate(value: Date | string) {
-  const date = typeof value === "string" ? new Date(value) : value;
-  return format(date, "dd/MM/yyyy");
+  const iso = isoDate(value);
+  const [year, month, day] = iso.split("-");
+  return `${day}/${month}/${year}`;
 }
 
 export function formatMonthRef(value: Date | string) {
-  const date = typeof value === "string" ? new Date(value) : value;
-  return format(date, "MM/yyyy");
+  const month = isoMonth(value);
+  const [year, monthPart] = month.split("-");
+  return `${monthPart}/${year}`;
+}
+
+/** @deprecated Prefer formatCurrencyFromCents — kept for gradual migration. */
+export function formatCurrency(cents: number, locale = "pt-BR", currency = "BRL") {
+  return formatCurrencyFromCents(cents, currency, locale);
 }
 
 const transactionDirectionLabels: Record<string, string> = {
@@ -88,5 +96,3 @@ export function formatRecurringFrequencyLabel(value: string) {
 export function formatCategoryKindLabel(value: string) {
   return categoryKindLabels[value] ?? value;
 }
-
-export { formatCurrency };

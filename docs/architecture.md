@@ -38,3 +38,17 @@ flowchart LR
 - parcelas pré-geradas e vinculadas a faturas
 - recorrências geram ocorrências sem corromper histórico
 - fechamento mensal consolidado e legível
+- dia financeiro = calendário local (`todayIso`), não `toISOString().slice(0,10)`
+
+## Camadas
+
+| Camada | Pasta | Responsabilidade |
+|---|---|---|
+| UI / rotas | `app/`, `components/` | App Router, shell, formulários, gráficos |
+| Features | `features/*` | Server Actions + queries por domínio |
+| Services | `services/` | Orquestração e persistência |
+| Domínio puro | `lib/domain/*`, `lib/finance.ts`, `lib/money.ts` | Regras testáveis sem I/O |
+| Persistência | `db/` | Schema Drizzle, client SQLite, migrations |
+| Import | `features/import`, `services/*import*` | Staging, dry-run, bootstrap sintético |
+
+Documentos relacionados: [`TECHNICAL_DECISIONS.md`](./TECHNICAL_DECISIONS.md), [`DEPLOYMENT.md`](./DEPLOYMENT.md), [`TESTING.md`](./TESTING.md).

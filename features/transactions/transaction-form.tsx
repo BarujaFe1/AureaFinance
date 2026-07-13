@@ -1,6 +1,7 @@
 "use client";
 
 import { useTransition } from "react";
+import { todayIso } from "@/lib/dates";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -15,7 +16,7 @@ import { Button } from "@/components/ui/button";
 export function TransactionForm({ accounts, categories }: { accounts: { id: string; name: string }[]; categories: { id: string; name: string }[] }) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
-  const today = new Date().toISOString().slice(0, 10);
+  const today = todayIso();
   const form = useForm<TransactionCreateInput>({
     resolver: zodResolver(transactionCreateSchema),
     defaultValues: { accountId: accounts[0]?.id ?? "", description: "", amount: "0,00", direction: "expense", status: "posted", occurredOn: today, dueOn: today, notes: "" }

@@ -1,6 +1,7 @@
 "use client";
 
 import { useTransition } from "react";
+import { todayIso } from "@/lib/dates";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -28,7 +29,7 @@ export function TransactionForm(props: {
   const [isPending, startTransition] = useTransition();
   const form = useForm<FormValues>({
     resolver: zodResolver(schema),
-    defaultValues: { direction: "expense", status: "posted", occurredOn: new Date().toISOString().slice(0, 10), amount: "" }
+    defaultValues: { direction: "expense", status: "posted", occurredOn: todayIso(), amount: "" }
   });
 
   const onSubmit = form.handleSubmit((values) => {
@@ -51,7 +52,7 @@ export function TransactionForm(props: {
         direction: values.direction,
         status: values.status,
         description: "",
-        occurredOn: new Date().toISOString().slice(0, 10),
+        occurredOn: todayIso(),
         amount: ""
       });
     });
